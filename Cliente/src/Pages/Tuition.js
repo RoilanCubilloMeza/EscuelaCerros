@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Importa el archivo CSS de Bootstrap
 
 const Matricula = () => {
   // Estado para almacenar los datos ingresados por el usuario

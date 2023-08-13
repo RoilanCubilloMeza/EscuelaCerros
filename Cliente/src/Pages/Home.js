@@ -8,7 +8,6 @@ const Home = () => {
       <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img src="/EscudoEscuelaCerros-removebg-preview.png" class="d-block w-100" alt="10" width="10" />
     </div>
     <div class="carousel-item">
     <img src="/EscudoEscuelaCerros-removebg-preview.png" class="d-block w-100" alt="10" width="10" />

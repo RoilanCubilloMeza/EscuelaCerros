@@ -1,19 +1,18 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Home = () => {
   return (
     <div className="container mt-5">
       <h1 className="mb-4">¡Bienvenido a nuestra Escuela!</h1>
-      <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+      <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
-    <div class="carousel-item active">
+    <div className="carousel-item active">
     </div>
-    <div class="carousel-item">
-    <img src="/EscudoEscuelaCerros-removebg-preview.png" class="d-block w-100" alt="10" width="10" />
+    <div className="carousel-item">
+    <img src="/EscudoEscuelaCerros-removebg-preview.png" className="d-block w-100" alt="10" width="10" />
     </div>
-    <div class="carousel-item">
-      <img src="..." class="d-block w-100" alt="..."/>
+    <div className="carousel-item">
+      <img src="..." className="d-block w-100" alt="..."/>
     </div>
   </div>
 </div>

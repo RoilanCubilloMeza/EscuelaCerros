@@ -6,13 +6,25 @@ const Matricula = () => {
   const [edad, setEdad] = useState(0);
   const [grado, setGrado] = useState("");
 
+
+  const [estudiantesList,setEstudiantesList]= useState([])
+
   const add = () => {
     Axios.post("http://localhost:3001/create", {
       nombre: nombre,
       edad: edad,
       grado: grado,
     }).then(() => {
+      getLista();
       alert("prueba exitosa, persona agregada");
+    });
+  };
+
+
+  const getLista = () => {
+    Axios.get("http://localhost:3001/obtener", {
+    }).then((response) => {
+      setEstudiantesList(response.data)
     });
   };
 
@@ -43,25 +55,35 @@ const Matricula = () => {
       </div>
       <div className="form-group">
         <label htmlFor="grado">Grado:</label>
-        <select
+        <input
+          type="text"
           className="form-control"
           id="grado"
           value={grado}
           onChange={(e) => setGrado(e.target.value)}
           required
-        >
-          <option value="">Seleccione un grado</option>
-          <option value="Primero">Primero</option>
-          <option value="Segundo">Segundo</option>
-          <option value="Tercero">Tercero</option>
-          <option value="Cuarto">Cuarto</option>
-          <option value="Quinto">Quinto</option>
-          <option value="Sexto">Sexto</option>
-        </select>
+        />
+  
       </div>
-      <button type="submit" className="btn btn-primary m-3" onClick={add}>
+      <div>   <button type="submit" className="btn btn-primary m-3" onClick={add}>
         Enviar
       </button>
+      </div>
+   <div className="form-group">
+{estudiantesList.map((val,key)=>{
+  return <div className=" form-label">{
+val.nombre 
+  }{val.edad}{val.grado}</div>
+
+
+
+})
+
+}
+
+  
+
+ </div>
     </div>
   );
 };

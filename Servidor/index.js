@@ -9,7 +9,7 @@ app.use(express.json());
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "1234",
+  password: "12345",
   database: "prueba"
 });
 
@@ -19,7 +19,7 @@ app.post("/create", (req, res) => {
   const grado = req.body.grado;
 
   db.query(
-    "INSERT INTO pruebas(nombre,edad,grado) VALUES(?,?,?)",
+    'INSERT INTO pruebas(nombre,edad,grado) VALUES(?,?,?)',
     [nombre, edad, grado],
     (err, result) => {
       if (err) {

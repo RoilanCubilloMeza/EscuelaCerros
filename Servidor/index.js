@@ -47,3 +47,19 @@ app.get("/obtener",(req,res)=>{
     }
     )
 })
+app.put("/actualizar",(req,res)=>{
+  const id=req.body.id;
+  const nombre = req.body.nombre;
+  const edad = req.body.edad;
+  const grado = req.body.grado;
+  db.query('UPDATE pruebas SET nombre=?,edad=?,grado=? WHERE id=?',[nombre,edad,grado,id],
+  (err,result)=>{
+      if(err){
+          console.log(err)
+      }
+      else{
+          res.send("Empleado Actualizado")
+      }
+  }
+  )
+})

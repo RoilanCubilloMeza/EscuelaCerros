@@ -1,17 +1,13 @@
 import React, { useState } from "react";
 import Axios from "axios";
-
+import Swal from "sweetalert2";
 const Matricula = () => {
   const [nombre, setNombre] = useState("");
   const [edad, setEdad] = useState();
   const [grado, setGrado] = useState("");
   const [id, setId] = useState();
-
   const [estudiantesList, setEstudiantesList] = useState([]);
   const [editar, setEditar] = useState(false);
-
-
-
 
   const add = () => {
     Axios.post("http://localhost:3001/create", {
@@ -21,14 +17,27 @@ const Matricula = () => {
     }).then(() => {
       getLista();
       limpiarDatos();
-      alert("prueba exitosa, persona agregada");
+      Swal.fire({
+        title: "<strong >Guardado exitosa</strong>",
+        html: "<i>el Estudiante <strong>" + nombre + "</strong></i>",
+        icon: "success",
+        timer: 3000,
+      });
     });
   };
-
-  const getLista = () => {
-    Axios.get("http://localhost:3001/obtener").then((response) => {
-      setEstudiantesList(response.data);
-    });
+  const getLista = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/obtener");
+      
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      
+      const data = await response.json();
+      setEstudiantesList(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
   getLista();
 
@@ -38,27 +47,50 @@ const Matricula = () => {
     setNombre(val.nombre);
     setEdad(val.edad);
     setGrado(val.grado);
-   
   };
+
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizar", {
       nombre: nombre,
       edad: edad,
       grado: grado,
-      id:id,
+      id: id,
     }).then(() => {
       getLista();
     });
+    Swal.fire({
+      title: "<strong >Editado exitosa</strong>",
+      html: "<i>el Estudiante <strong>" + nombre + "</strong></i>",
+      icon: "success",
+      timer: 3000,
+    });
   };
-  const limpiarDatos=()=>{
+  const limpiarDatos = () => {
     setEdad("");
     setNombre("");
     setGrado("");
     setId("");
-
-
-  }
-
+    setEditar(false);
+  };
+  const eliminar = (id) => {
+    Swal.fire({
+      title: "<strong >Eliminar</strong>",
+      html: "<i>Realmente desea eliminar <strong>" + nombre + "</strong></i>",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "green",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, Eliminar",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        Axios.delete("http://localhost:3001/delete/" + id).then(() => {
+          getLista();
+          limpiarDatos();
+        });
+        Swal.fire("Eliminado", "el usuario ha sido eliminado", "success");
+      }
+    });
+  };
 
   return (
     <div className="container mt-5">
@@ -97,26 +129,31 @@ const Matricula = () => {
         />
       </div>
       <div>
-        {
-          editar?
+        {editar ? (
           <div>
-          <button type="submit" className="btn btn-warning m-3" onClick={actualizar}>
-          Actualizar
-        </button>
-        <button type="submit" className="btn btn-danger m-3" onClick={add}>
-          Cancelar
-        </button>
-        </div>:
-        <button type="submit" className="btn btn-primary m-3" onClick={add}>
-        Enviar
-      </button>
-      
-        
-}
-        
+            <button
+              type="submit"
+              className="btn btn-warning m-3"
+              onClick={actualizar}
+            >
+              Actualizar
+            </button>
+            <button
+              type="submit"
+              className="btn btn-danger m-3"
+              onClick={limpiarDatos}
+            >
+              Cancelar
+            </button>
+          </div>
+        ) : (
+          <button type="submit" className="btn btn-primary m-3" onClick={add}>
+            Registrar
+          </button>
+        )}
       </div>
       <div className="form-group">
-        <table class="table">
+        <table className="table">
           <thead>
             <tr>
               <th scope="col">ID</th>
@@ -129,20 +166,28 @@ const Matricula = () => {
             {estudiantesList.map((val, key) => {
               return (
                 <tr>
-                  <th s>{val.id}</th>
+                  <th>{val.id}</th>
                   <td>{val.nombre}</td>
                   <td>{val.edad}</td>
                   <td>{val.grado}</td>
                   <td>
                     <div className="btn-group" role="group">
-                      <button className="btn btn-info" 
-                      onClick={()=>{
-                        editarEstudiante(val)
-                      }}
-                      type="button">
+                      <button
+                        className="btn btn-info"
+                        onClick={() => {
+                          editarEstudiante(val);
+                        }}
+                        type="button"
+                      >
                         Editar
                       </button>
-                      <button className="btn btn-danger" type="button">
+                      <button
+                        className="btn btn-danger"
+                        type="button"
+                        onClick={() => {
+                          eliminar(val.id);
+                        }}
+                      >
                         Eliminar
                       </button>
                     </div>

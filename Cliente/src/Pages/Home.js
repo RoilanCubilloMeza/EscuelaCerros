@@ -5,7 +5,7 @@ const Home = () => {
     <div className="container mt-5">
       <h1 className="mb-4">¡Bienvenido a nuestra Escuela!</h1>
       <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
-  <div class="carousel-inner">
+  <div className="carousel-inner">
     <div className="carousel-item active">
     </div>
     <div className="carousel-item">

@@ -4,7 +4,8 @@ import Login from "./Pages/Login";
 import Registration from "./Pages/Register";
 import Home from "./Pages/Home";
 import Matricula from "./Pages/Tuition";
-import 'bootstrap/dist/css/bootstrap.min.css';
+
+import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 function App() {
   return (

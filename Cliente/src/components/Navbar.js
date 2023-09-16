@@ -5,7 +5,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-success">
       <div className="container">
-        <Link to="/home" className="navbar-brand">
+        <Link to="/" className="navbar-brand">
           <img
             src="/EscudoEscuelaCerros-removebg-preview.png"
             alt=""

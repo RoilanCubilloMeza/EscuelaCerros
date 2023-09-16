@@ -30,9 +30,6 @@ app.post("/create", (req, res) => {
   );
 });
 
-app.listen(3001, () => {
-  console.log("estas en el puerto 3001");
-});
 
 app.get("/obtener",(req, res)=>{
   db.query('SELECT * FROM pruebas', 
@@ -72,4 +69,8 @@ app.delete("/delete/:id", (req, res) => {
       res.send("Eliminado");
     }
   });
+});
+
+app.listen(3001, () => {
+  console.log("estas en el puerto 3001");
 });

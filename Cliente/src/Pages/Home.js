@@ -11,7 +11,7 @@ const Home = () => {
         <MDBCarouselItem
           className="w-100 d-block"
           itemId={1}
-          src="https://mdbootstrap.com/img/new/slides/041.jpg"
+          src="/pag1.jpg"
           alt="..."
         >
           <h5>Actividades Importantes</h5>
@@ -19,18 +19,20 @@ const Home = () => {
         <MDBCarouselItem
           className="w-100 d-block"
           itemId={2}
-          src="https://mdbootstrap.com/img/new/slides/042.jpg"
+          src="/pag2.jpg"
           alt="..."
         >
           <h5>Actividades Importantes</h5>
+          <p>hola</p>
         </MDBCarouselItem>
         <MDBCarouselItem
           className="w-100 d-block"
           itemId={3}
-          src="https://mdbootstrap.com/img/new/slides/043.jpg"
+          src="/pag3.jpg"
           alt="..."
         >
           <h5>Actividades Importantes</h5>
+          <p>hola</p>
         </MDBCarouselItem>
       </MDBCarousel>
       <div className="mt-5">

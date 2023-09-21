@@ -18,16 +18,14 @@ code {
   padding: 20px;
 }
 
-/* Estilo para los enlaces de redes sociales */
 .footer a {
   color: #fff; /* Color de los enlaces */
   text-decoration: none; /* Quita la subrayado de los enlaces */
   transition: color 0.3s; /* Transición de color suave */
 }
 
-/* Estilo para los enlaces de redes sociales al pasar el mouse */
 .footer a:hover {
-  color: #ff6600; /* Cambia el color al pasar el mouse */
+  color: #ff6600; 
 }
 .footer {
   animation: fadeIn 0.5s ease;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '../components/Theme';
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const Registration = () => {
       [name]: value,
     }));
   };
+  const { darkMode } = useTheme(); // Utiliza el hook useTheme
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,14 +29,14 @@ const Registration = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Registro de Usuario</h2>
+    <div className={`container mt-5 ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
+      <h2 className={darkMode ? 'text-white' : 'text-dark'}>Registro de Usuario</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="username" className="form-label">Nombre de usuario:</label>
+          <label htmlFor="username" className={`form-label ${darkMode ? 'text-white' : 'text-dark'}`}>Nombre de usuario:</label>
           <input
             type="text"
-            className="form-control"
+            className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`}
             id="username"
             name="username"
             value={formData.username}
@@ -43,10 +45,10 @@ const Registration = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="email" className="form-label">Correo electrónico:</label>
+          <label htmlFor="email" className={`form-label ${darkMode ? 'text-white' : 'text-dark'}`}>Correo electrónico:</label>
           <input
             type="email"
-            className="form-control"
+            className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`}
             id="email"
             name="email"
             value={formData.email}
@@ -55,10 +57,10 @@ const Registration = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="password" className="form-label">Contraseña:</label>
+          <label htmlFor="password" className={`form-label ${darkMode ? 'text-white' : 'text-dark'}`}>Contraseña:</label>
           <input
             type="password"
-            className="form-control"
+            className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`}
             id="password"
             name="password"
             value={formData.password}
@@ -73,3 +75,5 @@ const Registration = () => {
 };
 
 export default Registration;
+
+

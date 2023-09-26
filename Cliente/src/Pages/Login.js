@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-
+import { useTheme } from '../components/Theme';
 const Login = () => {
+  const { darkMode } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -23,21 +24,21 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <h2 className='m-3'>Ingreso del Usuario</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Email:</label>
-          <input type="email" className="form-control" value={email} onChange={handleEmailChange} required />
-        </div>
-        <div className="form-group">
-          <label>Password:</label>
-          <input type="password" className="form-control" value={password} onChange={handlePasswordChange} required />
-        </div>
-        <button type="submit" className="btn btn-primary">Login</button>
-      </form>
+    <div className={`container ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
+        <h2 className={`m-3 ${darkMode ? 'text-white' : 'text-dark'}`}>Ingreso del Usuario</h2>
+        <form onSubmit={handleSubmit}>
+            <div className="form-group">
+                <label>Email:</label>
+                <input type="email" className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`} value={email} onChange={handleEmailChange} required />
+            </div>
+            <div className="form-group">
+                <label>Password:</label>
+                <input type="password" className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`} value={password} onChange={handlePasswordChange} required />
+            </div>
+            <button type="submit" className="btn btn-primary">Login</button>
+        </form>
     </div>
-  );
+);
 };
 
 export default Login;

@@ -3,11 +3,12 @@
 import React from "react";
 import { MDBCarousel, MDBCarouselItem } from "mdb-react-ui-kit";
 import { FaFacebook, FaEnvelope, FaPhone } from "react-icons/fa";
-
+import { useTheme } from "../components/Theme";
 const Home = () => {
+  const { darkMode } = useTheme();
   return (
-    <div className="d-flex flex-column justify-content-end align-items-center min-vh-100 bg-secondary">
-      <MDBCarousel showControls showIndicators>
+    <div className={`d-flex flex-column justify-content-end align-items-center min-vh-100 ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
+    <MDBCarousel showControls showIndicators>
         <MDBCarouselItem
           className="w-100 d-block"
           itemId={1}
@@ -45,8 +46,8 @@ const Home = () => {
             />
           </div>
           <div className="col-md-6">
-            <h2>Historia de la Escuela</h2>
-            <p>
+            <h2 className={darkMode ? 'text-white' : 'text-dark'}>Historia de la Escuela</h2>
+            <p className={darkMode ? 'text-white' : 'text-dark'}>
               Aquí puedes agregar información sobre la historia de la escuela.
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
               condimentum eros id consectetur. Sed eleifend lectus id ipsum
@@ -54,7 +55,7 @@ const Home = () => {
               vel nisi sit amet lorem rhoncus tristique.
             </p>
           </div>
-          <div className="mt-5 text-center justify-content-center bg-light">
+          <div className="mt-5 text-center justify-content-center">
             <h2>Ubicación</h2>
             <p>
               Quepos, Cerros, frente a la Iglesia Evangélica Maná
@@ -128,5 +129,4 @@ const Home = () => {
     </div>
   );
 };
-
 export default Home;

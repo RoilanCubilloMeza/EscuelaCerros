@@ -40,4 +40,34 @@ code {
     opacity: 1;
     transform: translateY(0);
   }
+  /* Modo oscuro personalizado */
+body.dark-mode {
+  background-color: #121212; /* Fondo oscuro para el cuerpo */
+  color: #e0e0e0; /* Color claro para el texto general */
+}
+
+.dark-mode .navbar {
+  background-color: #1f1f1f; /* Fondo oscuro para la navbar */
+  border-bottom: 1px solid #333; /* Borde inferior para añadir una ligera separación */
+}
+
+.dark-mode .navbar .nav-link {
+  color: #e0e0e0; /* Color claro para los enlaces de la navbar */
+}
+
+.dark-mode .navbar .nav-link:hover {
+  color: #ffffff; /* Color blanco al pasar el ratón por encima de los enlaces */
+  background-color: rgba(255, 255, 255, 0.1); /* Efecto de resaltado al pasar el ratón */
+}
+
+.dark-mode .btn-outline-secondary {
+  color: #e0e0e0; /* Color claro para el texto del botón */
+  border-color: #e0e0e0; /* Color claro para el borde del botón */
+}
+
+.dark-mode .btn-outline-secondary:hover {
+  background-color: #e0e0e0; /* Fondo claro al pasar el ratón por encima del botón */
+  color: #1f1f1f; /* Color oscuro para el texto del botón al pasar el ratón */
+}
+
 }

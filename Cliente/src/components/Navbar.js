@@ -1,7 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { useTheme } from "./Theme";
 const Navbar = () => {
+  
+  const { darkMode, setDarkMode } = useTheme();
+
+  const toggleDarkMode = () => {
+      setDarkMode(!darkMode);
+  };
+
+
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-success">
       <div className="container">
@@ -25,6 +34,12 @@ const Navbar = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+        <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark' : 'navbar-light bg-success'}`}>
+            {/* ... Resto del código del Navbar ... */}
+            <button onClick={toggleDarkMode} className="btn btn-outline-secondary">
+                {darkMode ? 'Modo Claro' : 'Modo Oscuro'}
+            </button>
+        </nav>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ml-auto">
             {[

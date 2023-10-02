@@ -7,7 +7,7 @@ import { useTheme } from "../components/Theme";
 const Home = () => {
   const { darkMode } = useTheme();
   return (
-    <div className={`d-flex flex-column justify-content-end align-items-center min-vh-100 ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
+    <div className={`d-flex flex-column justify-content-center align-items-center min-vh-100 ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
     <MDBCarousel showControls showIndicators>
         <MDBCarouselItem
           className="w-100 d-block"
@@ -71,7 +71,7 @@ const Home = () => {
               referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
 
-            <footer className="footer row text-center justify-content-center">
+            <footer className="footer justify-content-center align-items-center">
               <div className="container-lg">
                 <div className="row">
                   <div className="col-md-6">
@@ -115,7 +115,7 @@ const Home = () => {
                     </ul>
                   </div>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 justify-content-center align-items-center">
                   <h5>Creado por</h5>
                   <p className="small">
                     Carolina Segura y Roilan Cubillo

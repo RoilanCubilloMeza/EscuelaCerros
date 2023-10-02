@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import Axios from "axios";
 import Swal from "sweetalert2";
+import { useTheme } from '../components/Theme'; // Adjust the path as necessary
+
 const Matricula = () => {
+  const { darkMode } = useTheme();
+
   const [nombre, setNombre] = useState("");
   const [PApellido, setPApellido] = useState("");
   const [SApellido, setSApellido] = useState("");
@@ -154,9 +158,25 @@ const [correoElectronicoEncargado, setCorreoElectronicoEncargado] = useState("")
       }
     });
   };
+  
 
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('bg-dark');
+      document.body.classList.add('text-white');
+    } else {
+      document.body.classList.remove('bg-dark');
+      document.body.classList.remove('text-white');
+      document.body.classList.add('bg-light');
+      document.body.classList.add('text-dark');
+    }
+
+    return () => {
+      document.body.classList.remove('bg-dark', 'text-white', 'bg-light', 'text-dark');
+    };
+  }, [darkMode]);
   return (
-    <div className="container mt-5">
+    <div className="container">
       <h1>Formulario de Matrícula</h1>
 
       {/* Datos personales del estudiante */}
@@ -223,13 +243,22 @@ const [correoElectronicoEncargado, setCorreoElectronicoEncargado] = useState("")
       </div>
       <div className="form-group">
         <label htmlFor="nivelMatricular">Nivel a Matricular:</label>
-        <input
-          type="text"
+        <select
           className="form-control"
           id="nivelMatricular"
           value={nivelMatricular}
           onChange={(e) => setNivelMatricular(e.target.value)}
-        />
+        >
+           <option value="">Seleccione</option>
+          <option value="Primero">Primero</option>
+          <option value="Segundo">Segundo</option>
+          <option value="Tercero">Tercero</option>
+          <option value="Cuarto">Cuarto</option>
+          <option value="Quinto">Quinto </option>
+          <option value="Sexto">Sexto</option>
+        </select>
+         
+        
       </div>
       <div className="form-group">
         <label htmlFor="sexo">Sexo:</label>
@@ -533,6 +562,10 @@ const [correoElectronicoEncargado, setCorreoElectronicoEncargado] = useState("")
 <div className="form-group">
   <label htmlFor="firmaRecibeMatricula">Firma que Recibe la Matrícula:</label>
   <input type="text" className="form-control" id="firmaRecibeMatricula" value={firmaRecibeMatricula} onChange={(e) => setFirmaRecibeMatricula(e.target.value)} />
+</div>
+<div className="form-group">
+  <label htmlFor="fechaMatricula">Fecha de cuando se realizo la Matricula:</label>
+  <input type="date" className="form-control" id="fechaMatricula" value={fechaMatricula} onChange={(e) => setFechaMatricula(e.target.value)} />
 </div>
       <div>
         {editar ? (

@@ -1,12 +1,17 @@
 const express = require('express');
-const router = express.Router();
+const app = express.Router();
+
+const dotenv = require("dotenv");
+dotenv.config();
+//conexión con la base de datos
+const {connection} = require("../config");
 
 app.post("/create", (req, res) => {
     const nombre = req.body.nombre;
     const edad = req.body.edad;
     const grado = req.body.grado;
   
-    db.query(
+    connection.query(
       "INSERT INTO pruebas(nombre,edad,grado) VALUES(?,?,?)",
       [nombre, edad, grado],
       (err, result) => {
@@ -21,7 +26,7 @@ app.post("/create", (req, res) => {
   
   
   app.get("/obtener",(req, res)=>{
-    db.query('SELECT * FROM pruebas', 
+    connection.query('SELECT * FROM pruebas', 
     (err,result) => {
       if (err) {
         console.log(err);
@@ -36,7 +41,7 @@ app.post("/create", (req, res) => {
     const nombre = req.body.nombre;
     const edad = req.body.edad;
     const grado = req.body.grado;
-    db.query(
+    connection.query(
       "UPDATE pruebas SET nombre=?,edad=?,grado=? WHERE id=?",
       [nombre, edad, grado, id],
       (err, result) => {
@@ -51,7 +56,7 @@ app.post("/create", (req, res) => {
   
   app.delete("/delete/:id", (req, res) => {
     const id = req.params.id;
-    db.query("DELETE FROM pruebas WHERE id=?", id, (err, result) => {
+    connection.query("DELETE FROM pruebas WHERE id=?", id, (err, result) => {
       if (err) {
         console.log(err);
       } else {
@@ -59,3 +64,5 @@ app.post("/create", (req, res) => {
       }
     });
   });
+
+  module.exports = app;

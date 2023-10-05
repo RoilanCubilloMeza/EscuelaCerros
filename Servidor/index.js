@@ -11,9 +11,10 @@ app.use(cors())
 
 //cargamos el archivo de rutas
 app.use(require('./services/Matricula'));
+app.use(require('./services/Funcionario'));
 
 
 app.listen(process.env.PORT||3001,() => {
-    console.log("Servidor corriendo en el puerto 3000");
+    console.log("Servidor corriendo en el puerto 3001");
 });
 module.exports = app;

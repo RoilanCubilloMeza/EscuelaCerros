@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Axios from "axios";
 import Swal from "sweetalert2";
-import { useTheme } from '../components/Theme'; // Adjust the path as necessary
-
+import { useTheme } from '../components/Theme'; 
 const Matricula = () => {
   const { darkMode } = useTheme();
 

@@ -49,10 +49,7 @@ const Home = () => {
             <h2 className={darkMode ? 'text-white' : 'text-dark'}>Historia de la Escuela</h2>
             <p className={darkMode ? 'text-white' : 'text-dark'}>
               Aquí puedes agregar información sobre la historia de la escuela.
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-              condimentum eros id consectetur. Sed eleifend lectus id ipsum
-              vulputate, quis efficitur erat posuere. Nulla facilisi. Praesent
-              vel nisi sit amet lorem rhoncus tristique.
+              
             </p>
           </div>
           <div className="mt-5 text-center justify-content-center">
@@ -109,7 +106,7 @@ const Home = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <FaPhone /> 123-456-789
+                          <FaPhone /> Falta
                         </a>
                       </li>
                     </ul>

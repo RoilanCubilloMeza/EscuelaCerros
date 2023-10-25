@@ -10,9 +10,17 @@ var cors = require('cors')
 app.use(cors())
 
 //cargamos el archivo de rutas
-app.use(require('./services/Matricula'));
+app.use(require('./services/Encargado'));
+app.use(require('./services/Enfermedades'));
+app.use(require('./services/Escolaridad'));
+app.use(require('./services/Estudiantes'));
 app.use(require('./services/Funcionario'));
 
+
+app.use(require('./services/Personas'));
+app.use(require('./services/Parentesco'));
+
+app.use(require('./services/Ocupacion'));
 
 app.listen(process.env.PORT||3001,() => {
     console.log("Servidor corriendo en el puerto 3001");

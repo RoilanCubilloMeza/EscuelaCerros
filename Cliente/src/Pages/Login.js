@@ -53,38 +53,40 @@ const Login = () => {
     }
   };
   return (
-    <div className="container">
-      <h2 className="m-3">Ingreso del Usuario</h2>
-      <form className="container" onSubmit={Ingresar}>
-        <div className="form-group">
-          <label>Nombre de Usuario:</label>
-          <input
-            type="text"
-            className="form-control"
-            value={Usuarios_Nombre}
-            onChange={(e) => setUsuarios_Nombre(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Contraseña:</label>
-          <input
-            type="password"
-            className="form-control"
-            value={Usuarios_contraseña}
-            onChange={(e) => setUsuarios_contraseña(e.target.value)}
-            required
-          />
-        </div>
-        <div className="">
-          <button type="submit" className="btn btn-primary ml-2 m-3">
-            Iniciar Sesión
-          </button>
-          <button type="button" className="btn btn-success ml-2">
-            Olvidó su contraseña
-          </button>
-        </div>
-      </form>
+    <div className=" d-flex justify-content-center align-items-center">
+      <div >
+        <h2 className="m-3">Ingreso del Usuario</h2>
+        <form className="container" onSubmit={Ingresar}>
+          <div className="form-group">
+            <label>Nombre de Usuario:</label>
+            <input
+              type="text"
+              className="form-control"
+              value={Usuarios_Nombre}
+              onChange={(e) => setUsuarios_Nombre(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Contraseña:</label>
+            <input
+              type="password"
+              className="form-control"
+              value={Usuarios_contraseña}
+              onChange={(e) => setUsuarios_contraseña(e.target.value)}
+              required
+            />
+          </div>
+          <div className="">
+            <button type="submit" className="btn btn-primary ml-2 m-3">
+              Iniciar Sesión
+            </button>
+            <button type="button" className="btn btn-success ml-2">
+              Olvidó su contraseña
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

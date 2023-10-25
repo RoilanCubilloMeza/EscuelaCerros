@@ -7,8 +7,12 @@ import { useTheme } from "../components/Theme";
 const Home = () => {
   const { darkMode } = useTheme();
   return (
-    <div className={`d-flex flex-column justify-content-center align-items-center min-vh-100 ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
-    <MDBCarousel showControls showIndicators>
+    <div
+      className={`d-flex flex-column justify-content-center align-items-center min-vh-100 ${
+        darkMode ? "bg-dark text-white" : "bg-light text-dark"
+      }`}
+    >
+      <MDBCarousel showControls showIndicators>
         <MDBCarouselItem
           className="w-100 d-block"
           itemId={1}
@@ -46,17 +50,17 @@ const Home = () => {
             />
           </div>
           <div className="col-md-6">
-            <h2 className={darkMode ? 'text-white' : 'text-dark'}>Historia de la Escuela</h2>
-            <p className={darkMode ? 'text-white' : 'text-dark'}>
+            <h2 className={darkMode ? "text-white" : "text-dark"}>
+              Historia de la Escuela
+            </h2>
+            <p className={darkMode ? "text-white" : "text-dark"}>
               Aquí puedes agregar información sobre la historia de la escuela.
-              
             </p>
           </div>
           <div className="mt-5 text-center justify-content-center">
             <h2>Ubicación</h2>
             <p>
-              Quepos, Cerros, frente a la Iglesia Evangélica Maná
-              Nueva Cosecha
+              Quepos, Cerros, frente a la Iglesia Evangélica Maná Nueva Cosecha
             </p>
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15740.153098501758!2d-84.19885284458006!3d9.505400600000023!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa10ca8d6b76487%3A0xc8a0bab6c6e0d2b5!2sEscuela%20Cerros!5e0!3m2!1ses-419!2scr!4v1694377144006!5m2!1ses-419!2scr"
@@ -114,9 +118,7 @@ const Home = () => {
                 </div>
                 <div className="mt-4 justify-content-center align-items-center">
                   <h5>Creado por</h5>
-                  <p className="small">
-                    Carolina Segura y Roilan Cubillo
-                  </p>
+                  <p className="small">Carolina Segura y Roilan Cubillo</p>
                 </div>
               </div>
             </footer>

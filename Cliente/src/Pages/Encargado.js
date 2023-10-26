@@ -25,8 +25,6 @@ const Encargado = () => {
     };
   }, [darkMode]);
   //Encargado
-  const [nacionalidadEncargado, setnacionalidadEncargado] = useState("");
-  const [cedulaEncargado, setcedulaEncargado] = useState("");
   const [telefonoEncargado, setTelefonoEncargado] = useState("");
   const [viveConEstudiante, setViveConEstudiante] = useState(""); // "Sí" o "No"
   const [lugarDeTrabajo, setLugarDeTrabajo] = useState("");
@@ -35,7 +33,6 @@ const Encargado = () => {
   const [escolaridad, setEscolaridad] = useState(""); // Ninguna, Primaria incompleta, etc.
   const [ocupacion, setOcupacion] = useState(""); // Sin ocupación, Trabaja en el hogar, etc.
   const [parentesco, setParentesco] = useState(""); // Padre, Abuelo, Tío, etc.
-  const [correoElectronicoEncargado, setCorreoElectronicoEncargado] =
     useState("");
   //Persona
   const [Persona_Nombre, setNombre] = useState("");

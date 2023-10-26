@@ -6,74 +6,70 @@ dotenv.config();
 //conexión con la base de datos
 const { connection } = require("../config");
 
-app.post("/create", (req, res) => {
-  const Persona_Id = req.body.Persona_Id;
-  const Estudiantes_Estado = req.body.Estudiantes_Estado;
-  const Adecuacion_Id = req.body.Adecuacion_Id;
-  const Residencia_ID = res.body.Residencia_ID;
-  const Enfermedades_Id = req.body.Enfermedades_Id;
+app.post("/createEnfermedades", (req, res) => {
+  const Enfermedades_Nombre = req.body.Enfermedades_Nombre;
+  const Enfermedades_PresentaEnfermedad = req.body.Enfermedades_PresentaEnfermedad;
+  const Enfermedades_Medicamento = req.body.Enfermedades_Medicamento;
+  const Enfermedades_Alergia = req.body.Enfermedades_Alergia;
 
   connection.query(
-    "INSERT INTO pruebas(Persona_Id,Estudiantes_Estado,Adecuacion_Id,Residencia_ID,Enfermedades_Id) VALUES(?,?,?,?,?)",
+    "INSERT INTO enfermedades(Enfermedades_Nombre,Enfermedades_PresentaEnfermedad,Enfermedades_Medicamento,Enfermedades_Alergia) VALUES(?,?,?,?)",
     [
-      Persona_Id,
-      Estudiantes_Estado,
-      Adecuacion_Id,
-      Residencia_ID,
-      Enfermedades_Id,
+      Enfermedades_Nombre,
+      Enfermedades_PresentaEnfermedad,
+      Enfermedades_Medicamento,
+      Enfermedades_Alergia,
     ],
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        res.send("prueba lista");
+        res.send("Enfermedad lista");
       }
     }
   );
 });
 
 app.get("/obtenerEnfermedades", (req, res) => {
-connection.query("SELECT * FROM enfermedades", (err, result) => {
-if (err) {
-console.log(err);
-} else {
-res.send(result);
-}
-});
+  connection.query("SELECT * FROM enfermedades", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
 });
 
-app.put("/actualizar", (req, res) => {
-  const Estudiantes_id = req.body.Estudiantes_id;
-  const Persona_Id = req.body.Persona_Id;
-  const Estudiantes_Estado = req.body.Estudiantes_Estado;
-  const Adecuacion_Id = req.body.Adecuacion_Id;
-  const Residencia_ID = req.body.Residencia_ID;
+app.put("/actualizarEnfermedades", (req, res) => {
+  const Enfermedades_Nombre = req.body.Enfermedades_Nombre;
+  const Enfermedades_PresentaEnfermedad = req.body.Enfermedades_PresentaEnfermedad;
+  const Enfermedades_Medicamento = req.body.Enfermedades_Medicamento;
+  const Enfermedades_Alergia = req.body.Enfermedades_Alergia;
   const Enfermedades_Id = req.body.Enfermedades_Id;
   connection.query(
-    "UPDATE pruebas SET Persona_Id=?,Estudiantes_Estado=?,Adecuacion_Id=?,Residencia_ID=?,Enfermedades_Id=? WHERE Estudiantes_id=?",
+    "UPDATE enfermedades SET Enfermedades_Nombre=?,Enfermedades_PresentaEnfermedad=?, Enfermedades_Medicamento=?,Enfermedades_Alergia=? WHERE Enfermedades_Id=?",
     [
-      Persona_Id,
-      Estudiantes_Estado,
-      Adecuacion_Id,
-      Residencia_ID,
+      Enfermedades_Nombre,
+      Enfermedades_PresentaEnfermedad,
+      Enfermedades_Medicamento,
+      Enfermedades_Alergia,
       Enfermedades_Id,
-      Estudiantes_id,
     ],
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        res.send("Empleado Actualizado");
+        res.send("Enfermedad Actualizada");
       }
     }
   );
 });
 
-app.delete("/delete/:Estudiantes_id", (req, res) => {
-  const id = req.params.id;
+app.delete("/delete/:Enfermedades_Id", (req, res) => {
+  const Enfermedades_Id = req.params.Enfermedades_Id;
   connection.query(
-    "DELETE FROM pruebas WHERE Estudiantes_id=?",
-    Estudiantes_id,
+    "DELETE FROM enfermedades WHERE Enfermedades_Id=?",
+    Enfermedades_Id,
     (err, result) => {
       if (err) {
         console.log(err);
@@ -83,7 +79,5 @@ app.delete("/delete/:Estudiantes_id", (req, res) => {
     }
   );
 });
-
-
 
 module.exports = app;

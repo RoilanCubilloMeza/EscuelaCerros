@@ -105,7 +105,6 @@ const Matricula = () => {
     setNacionalidad("");
     setLugarNacimiento("");
     setCorreoElectronico("");
-    
     setEditar(false);
   };
   const eliminar = (Persona_Id) => {

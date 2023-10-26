@@ -15,12 +15,13 @@ app.use(require('./services/Enfermedades'));
 app.use(require('./services/Escolaridad'));
 app.use(require('./services/Estudiantes'));
 app.use(require('./services/Funcionario'));
-
-
-app.use(require('./services/Personas'));
-app.use(require('./services/Parentesco'));
-
 app.use(require('./services/Ocupacion'));
+app.use(require('./services/Parentesco'));
+app.use(require('./services/Personas'));
+app.use(require('./services/Adecuacion'));
+
+
+
 
 app.listen(process.env.PORT||3001,() => {
     console.log("Servidor corriendo en el puerto 3001");

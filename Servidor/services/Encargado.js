@@ -7,46 +7,20 @@ dotenv.config();
 const { connection } = require("../config");
 
 app.post("/createEncargado", (req, res) => {
-  const Persona_Nombre = req.body.Persona_Nombre;
-  const Persona_PApellido = req.body.Persona_PApellido;
-  const Persona_SApellido = req.body.Persona_SApellido;
-  const Persona_Cedula = req.body.Persona_Cedula;
-  const Persona_Edad = req.body.Persona_Edad;
-  const Persona_Sexo = req.body.Persona_Sexo;
-  const Persona_LuNacimiento = req.body.Persona_LuNacimiento;
-  const Persona_Nacionalidad = req.body.Persona_Nacionalidad;
-  const Persona_Correo = req.body.Persona_Correo;
-
-  const Encargados_LugarTrabajo=req.body.Encargados_LugarTrabajo;
-  const Encargados_ViveEstudiante= req.body.Encargados_ViveEstudiante;
-  const Encargados_Telefono= req.body.Encargados_Telefono;
-  const Encargado_EstadoCivil= req.body.Encargado_EstadoCivil;
-
+  const Escolaridad_Nombre = req.body.Escolaridad_Nombre;
+ 
   connection.query(
-    "INSERT INTO encargados(Persona_Nombre,Persona_PApellido,Persona_SApellido,Persona_Cedula,Persona_Edad,Persona_Sexo,Persona_LuNacimiento,Persona_Nacionalidad ,Persona_Correo,Encargados_LugarTrabajo,Encargados_ViveEstudiante,Encargados_Telefono,Encargado_EstadoCivil) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?,?)",
+    "INSERT INTO escolaridad(Escolaridad_Nombre) VALUES (?)",
     [
-      Persona_Nombre,
-      Persona_PApellido,
-      Persona_SApellido,
-      Persona_Cedula,
-      Persona_Edad,
-      Persona_Sexo,
-      Persona_Nacionalidad,
-      Persona_LuNacimiento,
-      Persona_Correo,
-
-      Encargados_LugarTrabajo,
-      Encargados_ViveEstudiante,
-      Encargados_Telefono,
-      Encargado_EstadoCivil
-
+      Escolaridad_Nombre,
+    
     ],
     (err, result) => {
       if (err) {
         console.log(err);
-        res.status(500).send("Error al crear la persona");
+        res.status(500).send("Error al crear la Encargado");
       } else {
-        res.send("Persona creada exitosamente");
+        res.send("Escolaridad creada exitosamente");
       }
     }
   );
@@ -62,8 +36,8 @@ app.post("/createEncargado", (req, res) => {
 //});
 //});
 
-app.get("/obtenerEncargado", (req, res) => {
-  connection.query("SELECT * FROM personas", (err, result) => {
+app.get("/obtenerEscolaridad", (req, res) => {
+  connection.query("SELECT * FROM escolaridad", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -72,88 +46,37 @@ app.get("/obtenerEncargado", (req, res) => {
   });
 });
 
-app.put("/actualizarEncargado", (req, res) => {
-  const Persona_Id = req.body.Persona_Id;
-  const Persona_Nombre = req.body.Persona_Nombre;
-  const Persona_PApellido = req.body.Persona_PApellido;
-  const Persona_SApellido = req.body.Persona_SApellido;
-  const Persona_Cedula = req.body.Persona_Cedula;
-  const Persona_Edad = req.body.Persona_Edad;
-  const Persona_Sexo = req.body.Persona_Sexo;
-  const Persona_LuNacimiento = req.body.Persona_LuNacimiento;
-  const Persona_Nacionalidad = req.body.Persona_Nacionalidad;
-  const Persona_Correo = req.body.Persona_Correo;
-
-  const Encargados_LugarTrabajo=req.body.Encargados_LugarTrabajo;
-  const Encargados_ViveEstudiante= req.body.Encargados_ViveEstudiante;
-  const Encargados_Telefono= req.body.Encargados_Telefono;
-  const Encargado_EstadoCivil= req.body.Encargado_EstadoCivil;
-  const Encargados_Id = req.body.Encargados_Id;
+app.put("/actualizarEscolaridad", (req, res) => {
+  const Escolaridad_Id = req.body.Escolaridad_Id;
+  const Escolaridad_Nombre= req.body.Escolaridad_Nombre;
   
   connection.query(
-    "UPDATE personas SET Persona_Nombre=?, Persona_PApellido=?, Persona_SApellido=?, Persona_Cedula=?, Persona_Edad=?, Persona_Sexo=?, Persona_LuNacimiento=?, Persona_Nacionalidad=?, Persona_Correo=? WHERE Persona_Id=?",
+    "UPDATE escolaridad SET Escolaridad_Nombre=? WHERE Escolaridad_Id=?",
     [
-      Persona_Nombre,
-      Persona_PApellido,
-      Persona_SApellido,
-      Persona_Cedula,
-      Persona_Edad,
-      Persona_Sexo,
-      Persona_Nacionalidad,
-      Persona_LuNacimiento,
-      Persona_Correo,
-      Persona_Id,
-
-      Encargados_LugarTrabajo,
-      Encargados_ViveEstudiante,
-      Encargados_Telefono,
-      Encargado_EstadoCivil,
-      Encargados_Id,
+    Escolaridad_Nombre,
+      Escolaridad_Id,
     ],
     (err, result) => {
       if (err) {
         console.log(err);
-        res.status(500).send("Error al actualizar la persona");
+        res.status(500).send("Error al actualizar la Escolaridad");
       } else {
-        res.send("Persona actualizada exitosamente");
+        res.send("Escolaridad actualizada exitosamente");
       }
     }
   );
 });
 
-app.delete("/deleteEncargado/:Persona_Id", (req, res) => {
-  const Persona_Id = req.params.Persona_Id;
+app.delete("/deleteEscolaridad/:Escolaridad_Id", (req, res) => {
+  const Escolaridad_Id = req.params.Escolaridad_Id;
   connection.query(
-    "DELETE FROM personas WHERE Persona_Id=?",
-    Persona_Id,
+    "DELETE FROM escolaridad WHERE Escolaridad_Id=?",
+    Escolaridad_Id,
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
         res.send("Eliminado");
-      }
-    }
-  );
-});
-app.get("/Encargado", (req, res) => {
-  connection.query(
-    `SELECT encargados.*, personas.Persona_Nombre as nombreEstudiante,
-                           estudiantes.Estudiantes_Estado,
-                           adecuacion.Adecuacion_Nombre as nombreAdecuaion,
-                           residente.Residencia_Direccion as nombreDireccion,
-                           enfermedades.Enfermedades_Nombre as nombreEnfermedad
-
-      FROM estudiantes
-      JOIN personas ON estudiantes.Persona_Id = personas.Persona_Id
-      JOIN adecuacion ON estudiantes.Adecuacion_Id = adecuacion.Adecuacion_Id
-      JOIN residente ON estudiantes.Residencia_ID = residente.Residencia_ID
-      JOIN enfermedades ON estudiantes.Enfermedades_Id= enfermedades.Enfermedades_Id`,
-
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
       }
     }
   );

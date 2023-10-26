@@ -7,6 +7,8 @@ import Matricula from "./Pages/Estudiantes";
 import Encargado from "./Pages/Encargado";
 import Enfermedades from "./Pages/Enfermedades";
 import Escolaridad from "./Pages/Escolaridad"
+import Ocupacion from "./Pages/Ocupacion";
+import Adecuacion from "./Pages/Adecuacion";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "./components/Theme";
@@ -22,7 +24,9 @@ function App() {
         <Route path="/Estudiantes" element={<Matricula/>}/>
         <Route path="/Encargado" element={<Encargado/>}/>
         <Route path="/Enfermedades" element={<Enfermedades/>}/>     
-           <Route path="/Escolaridad" element={<Escolaridad/>}/>
+        <Route path="/Escolaridad" element={<Escolaridad/>}/>
+        <Route path="/Adecuacion" element={<Adecuacion/>}/>  <Route path="/Ocupacion" element={<Ocupacion/>}/>
+
       </Routes>
     </BrowserRouter>
     </ThemeProvider>

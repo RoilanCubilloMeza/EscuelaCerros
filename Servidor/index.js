@@ -19,6 +19,8 @@ app.use(require('./services/Ocupacion'));
 app.use(require('./services/Parentesco'));
 app.use(require('./services/Personas'));
 app.use(require('./services/Adecuacion'));
+app.use(require('./services/Residente'));
+app.use(require('./services/Prueba'));
 
 
 

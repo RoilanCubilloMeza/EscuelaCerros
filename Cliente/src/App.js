@@ -9,9 +9,11 @@ import Enfermedades from "./Pages/Enfermedades";
 import Escolaridad from "./Pages/Escolaridad"
 import Ocupacion from "./Pages/Ocupacion";
 import Adecuacion from "./Pages/Adecuacion";
+import Residente from "./Pages/Residente";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "./components/Theme";
+import Prueba from "./Pages/prueba";
 function App() {
   return (
     <ThemeProvider>
@@ -25,7 +27,12 @@ function App() {
         <Route path="/Encargado" element={<Encargado/>}/>
         <Route path="/Enfermedades" element={<Enfermedades/>}/>     
         <Route path="/Escolaridad" element={<Escolaridad/>}/>
-        <Route path="/Adecuacion" element={<Adecuacion/>}/>  <Route path="/Ocupacion" element={<Ocupacion/>}/>
+        <Route path="/Adecuacion" element={<Adecuacion/>}/>  
+        <Route path="/Ocupacion" element={<Ocupacion/>}/>
+        <Route path="/Residente" element={<Residente/>}/>
+        <Route path="/Prueba" element={<Prueba/>}/>
+
+        
 
       </Routes>
     </BrowserRouter>

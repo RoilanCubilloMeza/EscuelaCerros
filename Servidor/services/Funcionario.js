@@ -9,9 +9,10 @@ const {connection} = require("../config");
 app.post("/login",(req, res)=>{
   const Usuarios_Nombre = req.body.Usuarios_Nombre;
   const Usuarios_contraseña = req.body.Usuarios_contraseña;
+  const   Roles_Id= req.body.Roles_Id;
 
-  connection.query('SELECT * FROM usuarios WHERE Usuarios_Nombre = ? AND Usuarios_contraseña = ?', 
-    [Usuarios_Nombre, Usuarios_contraseña],
+  connection.query('SELECT * FROM usuarios WHERE Usuarios_Nombre = ? AND Usuarios_contraseña = ? And Roles_Id=?', 
+    [Usuarios_Nombre, Usuarios_contraseña,Roles_Id],
     (err, result) => {
       if (err) {
         console.log(err);

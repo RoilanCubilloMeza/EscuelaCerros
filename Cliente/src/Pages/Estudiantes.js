@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
-const Matricula = () => {
+const Persona = () => {
   const { darkMode } = useTheme();
 
   //Estudiantes
@@ -286,7 +286,7 @@ const Matricula = () => {
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Edad</th>
-              <th scope="col">Grado</th>
+              <th scope="col">cedula</th>
             </tr>
           </thead>
           <tbody>
@@ -295,7 +295,7 @@ const Matricula = () => {
                 <th>{val.Persona_Id}</th>
                 <td>{val.Persona_Nombre}</td>
                 <td>{val.Persona_Edad}</td>
-                <td>{val.grado}</td>
+                <td>{val.Persona_Cedula}</td>
                 <td>
                   <div className="btn-group" role="group">
                     <button
@@ -321,4 +321,4 @@ const Matricula = () => {
   );
 };
 
-export default Matricula;
+export default Persona;

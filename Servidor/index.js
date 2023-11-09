@@ -21,7 +21,10 @@ app.use(require('./services/Personas'));
 app.use(require('./services/Adecuacion'));
 app.use(require('./services/Residente'));
 app.use(require('./services/Prueba'));
-
+app.use(require('./services/Grado'));
+app.use(require('./services/ValorTareas'));
+app.use(require('./services/Materias'))
+app.use(require('./services/Cotidiano'))
 
 
 

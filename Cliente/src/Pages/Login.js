@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 const Login = () => {
   const [Usuarios_Nombre, setUsuarios_Nombre] = useState("");
   const [Usuarios_contraseña, setUsuarios_contraseña] = useState("");
-
+  const [Roles_Id, setRol] = useState("");
   const { darkMode } = useTheme();
   useEffect(() => {
     if (darkMode) {
@@ -32,13 +32,26 @@ const Login = () => {
     try {
       const response = await Axios.post(`http://localhost:3001/login`, {
         Usuarios_Nombre: Usuarios_Nombre,
-        Usuarios_contraseña: Usuarios_contraseña
+        Usuarios_contraseña: Usuarios_contraseña,
+        Roles_Id: Roles_Id,
       });
 
-    console.log(response)
+      console.log(response);
+
+      if (Roles_Id === "1") {
+        // Mostrar componente o realizar acción para Rol 1
+        console.log("Usuario con Rol 1");
+      } else if (Roles_Id === "2") {
+        // Mostrar componente o realizar acción para Rol 2
+        console.log("Usuario con Rol 2");
+      } else if (Roles_Id === "3") {
+        // Mostrar componente o realizar acción para Rol 3
+        console.log("Usuario con Rol 3");
+      }
+
       Swal.fire({
         title: response.data,
-        html: "<i>Usuario <strong>" + Usuarios_Nombre + "</strong></i>",
+        html: "<i>Usuario <strong>" + Usuarios_Nombre + "</strong></i> - Rol <strong>" + Roles_Id + "</strong>",
         icon: "success",
         timer: 3000,
       });
@@ -54,7 +67,7 @@ const Login = () => {
   };
   return (
     <div className=" d-flex justify-content-center align-items-center">
-      <div >
+      <div>
         <h2 className="m-3">Ingreso del Usuario</h2>
         <form className="container" onSubmit={Ingresar}>
           <div className="form-group">
@@ -92,6 +105,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
- 

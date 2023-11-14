@@ -14,6 +14,8 @@ import Grado from "./Pages/Grado";
 import Materias from "./Pages/Materias";
 import Tareas from "./Pages/Tareas";
 import Cotidiano from "./Pages/Cotidiano";
+import Asistencia from "./Pages/Asistencia";
+import Matricula from "./Pages/Matricula";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "./components/Theme";
@@ -37,6 +39,8 @@ function App() {
         <Route path="/Materias" element={<Materias/>}/>
         <Route path="/Tareas" element={<Tareas/>}/>
         <Route path="/Cotidiano" element={<Cotidiano/>}/>
+        <Route path="/Asistencia" element={<Asistencia/>}/>
+        <Route path="/Matricula" element={<Matricula/>}/>
 
 
       </Routes>

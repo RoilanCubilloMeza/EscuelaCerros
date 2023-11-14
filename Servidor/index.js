@@ -25,7 +25,7 @@ app.use(require('./services/Grado'));
 app.use(require('./services/ValorTareas'));
 app.use(require('./services/Materias'))
 app.use(require('./services/Cotidiano'))
-
+app.use(require('./services/Asistencia'))
 
 
 app.listen(process.env.PORT||3001,() => {

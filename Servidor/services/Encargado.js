@@ -36,8 +36,8 @@ app.post("/createEncargado", (req, res) => {
 //});
 //});
 
-app.get("/obtenerEscolaridad", (req, res) => {
-  connection.query("SELECT * FROM escolaridad", (err, result) => {
+app.get("/obtenerEncargados", (req, res) => {
+  connection.query("SELECT * FROM encargados", (err, result) => {
     if (err) {
       console.log(err);
     } else {

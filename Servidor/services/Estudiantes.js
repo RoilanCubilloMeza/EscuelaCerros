@@ -6,43 +6,9 @@ dotenv.config();
 //conexión con la base de datos
 const { connection } = require("../config");
 
-app.post("/create", (req, res) => {
-  const Persona_Id = req.body.Persona_Id;
-  const Estudiantes_Estado = req.body.Estudiantes_Estado;
-  const Adecuacion_Id = req.body.Adecuacion_Id;
-  const Residencia_ID = res.body.Residencia_ID;
-  const Enfermedades_Id = req.body.Enfermedades_Id;
 
-  connection.query(
-    "INSERT INTO Estudiantes(Persona_Id,Estudiantes_Estado,Adecuacion_Id,Residencia_ID,Enfermedades_Id) VALUES(?,?,?,?,?)",
-    [
-      Persona_Id,
-      Estudiantes_Estado,
-      Adecuacion_Id,
-      Residencia_ID,
-      Enfermedades_Id,
-    ],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send("prueba lista");
-      }
-    }
-  );
-});
-
-//app.get("/obtener", (req, res) => {
-//connection.query("SELECT * FROM pruebas", (err, result) => {
-//if (err) {
-//console.log(err);
-//} else {
-//res.send(result);
-//}
-//});
-//});
-app.get("/obtenerPersonas", (req, res) => {
-  connection.query("SELECT * FROM personas", (err, result) => {
+app.get("/obtenerMatricula", (req, res) => {
+  connection.query("SELECT * FROM estudiantes", (err, result) => {
   if (err) {
   console.log(err);
   } else {
@@ -51,37 +17,48 @@ app.get("/obtenerPersonas", (req, res) => {
   });
   });
 
-app.put("/actualizar", (req, res) => {
-  const Estudiantes_id = req.body.Estudiantes_id;
-  const Persona_Id = req.body.Persona_Id;
-  const Estudiantes_Estado = req.body.Estudiantes_Estado;
-  const Adecuacion_Id = req.body.Adecuacion_Id;
-  const Residencia_ID = req.body.Residencia_ID;
-  const Enfermedades_Id = req.body.Enfermedades_Id;
-  connection.query(
-    "UPDATE pruebas SET Persona_Id=?,Estudiantes_Estado=?,Adecuacion_Id=?,Residencia_ID=?,Enfermedades_Id=? WHERE Estudiantes_id=?",
-    [
-      Persona_Id,
-      Estudiantes_Estado,
-      Adecuacion_Id,
-      Residencia_ID,
-      Enfermedades_Id,
-      Estudiantes_id,
-    ],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send("Empleado Actualizado");
+  app.put("/actualizarMatricula", (req, res) => {
+    const Estudiantes_id = req.body.Estudiantes_id;
+    const Persona_Id = req.body.Persona_Id;
+    const Estudiantes_Estado = req.body.Estudiantes_Estado;
+    const Adecuacion_Id = req.body.Adecuacion_Id;
+    const Residencia_ID = req.body.Residencia_ID;
+    const Enfermedades_Id = req.body.Enfermedades_Id;
+    const Estudiantes_Grado = req.body.Estudiantes_Grado;
+    const Encargados_Id = req.body.Encargados_Id;
+  
+    connection.query(
+      "UPDATE estudiantes SET Persona_Id=?, Estudiantes_Estado=?, Adecuacion_Id=?, Residencia_ID=?, Enfermedades_Id=?, Estudiantes_Grado=?, Encargados_Id=? WHERE Estudiantes_id=?",
+      [
+        Persona_Id,
+        Estudiantes_Estado,
+        Adecuacion_Id,
+        Residencia_ID,
+        Enfermedades_Id,
+        Estudiantes_Grado,
+        Encargados_Id,
+        Estudiantes_id,
+      ],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send("Error al actualizar la matrícula");
+        } else {
+          if (result.affectedRows > 0) {
+            res.status(200).send("Matrícula actualizada exitosamente");
+          } else {
+            res.status(404).send("Matrícula no encontrada");
+          }
+        }
       }
-    }
-  );
-});
+    );
+  });
+  
 
-app.delete("/delete/:Estudiantes_id", (req, res) => {
-  const id = req.params.id;
+app.delete("/deleteMatricula/:Estudiantes_id", (req, res) => {
+  const Estudiantes_id = req.params.Estudiantes_id;
   connection.query(
-    "DELETE FROM pruebas WHERE Estudiantes_id=?",
+    "DELETE FROM estudiantes WHERE Estudiantes_id=?",
     Estudiantes_id,
     (err, result) => {
       if (err) {
@@ -116,5 +93,37 @@ app.get("/matricula", (req, res) => {
     }
   );
 });
+
+app.post("/createMatricula", (req, res) => {
+  const Persona_Id = req.body.Persona_Id;
+  const Estudiantes_Estado = req.body.Estudiantes_Estado;
+  const Adecuacion_Id = req.body.Adecuacion_Id;
+  const Residencia_ID = req.body.Residencia_ID;
+  const Enfermedades_Id = req.body.Enfermedades_Id;
+  const Estudiantes_Grado = req.body.Estudiantes_Grado;
+  const Encargados_Id = req.body.Encargados_Id;
+
+  connection.query(
+    "INSERT INTO estudiantes(Persona_Id, Estudiantes_Estado, Adecuacion_Id, Residencia_ID, Enfermedades_Id, Estudiantes_Grado, Encargados_Id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [
+      Persona_Id,
+      Estudiantes_Estado,
+      Adecuacion_Id,
+      Residencia_ID,
+      Enfermedades_Id,
+      Estudiantes_Grado,
+      Encargados_Id,
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Error al crear la matricula");
+      } else {
+        res.send("Matricula creada exitosamente");
+      }
+    }
+  );
+});
+
 
 module.exports = app;

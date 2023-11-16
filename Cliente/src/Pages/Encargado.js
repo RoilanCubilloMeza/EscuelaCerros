@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Swal from "sweetalert2";
-import { useTheme } from "../components/Theme";
+import { useTheme } from "../components/Theme"; 
+import { Link } from "react-router-dom";
 const Encargado = () => {
   const { darkMode } = useTheme();
   useEffect(() => {
@@ -399,6 +400,9 @@ const Encargado = () => {
             Registrar
           </button>
         )}
+          <Link to="/admindashboard" className="btn btn-secondary m-3">
+         Menu Principal 
+        </Link>
       </div>
 
       <div className="form-group">

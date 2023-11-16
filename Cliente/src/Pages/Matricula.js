@@ -400,6 +400,9 @@ function Matricula() {
             Registrar
           </button>
         )}
+          <Link to="/admindashboard" className="btn btn-secondary m-3">
+         Menu Principal 
+        </Link>
       </div>
       
       {/* Table */}

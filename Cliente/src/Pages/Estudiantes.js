@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
+import { Link } from "react-router-dom";
+
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 const Persona = () => {
@@ -83,7 +85,7 @@ const Persona = () => {
       Persona_Nacionalidad: Persona_Nacionalidad,
       Persona_LuNacimiento: Persona_LuNacimiento,
       Persona_Correo: Persona_Correo,
-      Persona_Id:Persona_Id,
+      Persona_Id: Persona_Id,
     }).then(() => {
       getLista();
     });
@@ -198,7 +200,7 @@ const Persona = () => {
           onChange={(e) => setCedula(e.target.value)}
         />
       </div>
-     
+
       <div className="form-group">
         <label htmlFor="Persona_Nombre">Edad:</label>
         <input
@@ -209,7 +211,7 @@ const Persona = () => {
           onChange={(e) => setEdad(e.target.value)}
         />
       </div>
-     
+
       <div className="form-group">
         <label htmlFor="sexo">Sexo:</label>
         <select
@@ -243,7 +245,7 @@ const Persona = () => {
           onChange={(e) => setLugarNacimiento(e.target.value)}
         />
       </div>
-     
+
       <div className="form-group">
         <label htmlFor="Persona_Correo">Correo Electrónico:</label>
         <input
@@ -277,6 +279,9 @@ const Persona = () => {
             Registrar
           </button>
         )}
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+         Menu Principal 
+        </Link>
       </div>
 
       <div className="form-group">

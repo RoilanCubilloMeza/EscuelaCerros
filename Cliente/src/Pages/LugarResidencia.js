@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from '../components/Theme'; 
+import { Link } from 'react-router-dom';
 
-const Lugar = () => {
+const LugarResidencia = () => {
   const { darkMode } = useTheme();
   
   const [direccionExacta, setDireccionExacta] = useState("");
@@ -78,8 +79,11 @@ return(
  <label htmlFor="poseeInternet">¿Posee Internet?</label>
  <input type="checkbox" className="form-check-input" id="poseeInternet" checked={poseeInternet} onChange={(e) => setPoseeInternet(e.target.checked)} />
  </div>
+ <Link to="/admindashboard" className="btn btn-secondary m-3">
+         Menu Principal 
+        </Link>
  </div>
    
 );
 }
-export default Lugar;
+export default LugarResidencia;

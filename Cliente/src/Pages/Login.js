@@ -1,72 +1,55 @@
 import Axios from "axios";
-import React, { useState, useEffect } from "react";
-import { useTheme } from "../components/Theme";
+import React, { useState } from "react";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const [Usuarios_Nombre, setUsuarios_Nombre] = useState("");
   const [Usuarios_contraseña, setUsuarios_contraseña] = useState("");
-  const [Roles_Id, setRol] = useState("");
-  const { darkMode } = useTheme();
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("bg-dark");
-      document.body.classList.add("text-white");
-    } else {
-      document.body.classList.remove("bg-dark", "text-white");
-      document.body.classList.add("bg-light", "text-dark");
-    }
-
-    return () => {
-      document.body.classList.remove(
-        "bg-dark",
-        "text-white",
-        "bg-light",
-        "text-dark"
-      );
-    };
-  }, [darkMode]);
+  const navigate = useNavigate();
 
   const Ingresar = async (e) => {
     e.preventDefault();
 
     try {
       const response = await Axios.post(`http://localhost:3001/login`, {
-        Usuarios_Nombre: Usuarios_Nombre,
-        Usuarios_contraseña: Usuarios_contraseña,
-        Roles_Id: Roles_Id,
+        Usuarios_Nombre,
+        Usuarios_contraseña,
       });
 
-      console.log(response);
-
-      if (Roles_Id === "1") {
-        // Mostrar componente o realizar acción para Rol 1
-        console.log("Usuario con Rol 1");
-      } else if (Roles_Id === "2") {
-        // Mostrar componente o realizar acción para Rol 2
-        console.log("Usuario con Rol 2");
-      } else if (Roles_Id === "3") {
-        // Mostrar componente o realizar acción para Rol 3
-        console.log("Usuario con Rol 3");
-      }
+      const { token, Usuarios_Nombre: usuarioNombre, Roles_Id } = response.data;
 
       Swal.fire({
-        title: response.data,
-        html: "<i>Usuario <strong>" + Usuarios_Nombre + "</strong></i> - Rol <strong>" + Roles_Id + "</strong>",
+        title: "Login exitoso",
+        html: `<i>Usuario <strong>${usuarioNombre}</strong></i> - Rol <strong>${Roles_Id}</strong>`,
         icon: "success",
         timer: 3000,
       });
+
+      switch (Roles_Id) {
+        case 1:
+          navigate("/AdminDashboard");
+          break;
+        case 2:
+          navigate("/ProfesorDashboard");
+          break;
+        default:
+          navigate("/");
+          break;
+      }
     } catch (error) {
       Swal.fire({
         title: "<strong >Login Fallido</strong>",
-        html: "<i>Usuario <strong>" + Usuarios_Nombre + "</strong></i>",
+        html: `<i>Usuario <strong>${Usuarios_Nombre}</strong></i>`,
         icon: "error",
         timer: 3000,
       });
       console.error(error);
     }
   };
+
   return (
-    <div className=" d-flex justify-content-center align-items-center">
+    <div className="d-flex justify-content-center align-items-center">
       <div>
         <h2 className="m-3">Ingreso del Usuario</h2>
         <form className="container" onSubmit={Ingresar}>

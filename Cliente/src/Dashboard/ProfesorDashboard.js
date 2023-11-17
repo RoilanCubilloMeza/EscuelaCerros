@@ -24,7 +24,7 @@ const ProfesorDashboard = () => {
   }, [darkMode]);
 
   const handleButtonClick = (category) => {
-    Swal.fire(`Has hecho clic en ${category}`, '', 'success');
+    Swal.fire(` ${category}`, '', 'success');
   };
 
   return (

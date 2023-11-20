@@ -26,7 +26,8 @@ app.use(require('./services/ValorTareas'));
 app.use(require('./services/Materias'))
 app.use(require('./services/Cotidiano'))
 app.use(require('./services/Asistencia'))
-
+app.use(require('./services/Usuarios'))
+app.use(require('./services/Roles'))
 
 app.listen(process.env.PORT||3001,() => {
     console.log("Servidor corriendo en el puerto 3001");

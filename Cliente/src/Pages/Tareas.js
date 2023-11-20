@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
+import { Link } from "react-router-dom";
 const Tareas = () => {
   const { darkMode } = useTheme();
 
@@ -172,7 +173,11 @@ const Tareas = () => {
           <button type="submit" className="btn btn-primary m-3" onClick={add}>
             Registrar
           </button>
+          
         )}
+        <Link to="/profesordashboard" className="btn btn-secondary m-3">
+         Menu Principal 
+        </Link>
       </div>
 
       <div className="form-group">

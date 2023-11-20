@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 const Cotidiano = () => {
   const { darkMode } = useTheme();
@@ -173,6 +174,9 @@ const Cotidiano = () => {
             Registrar
           </button>
         )}
+         <Link to="/profesordashboard" className="btn btn-secondary m-3">
+         Menu Principal 
+        </Link>
       </div>
 
       <div className="form-group">

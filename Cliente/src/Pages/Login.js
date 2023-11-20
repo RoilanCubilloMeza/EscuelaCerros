@@ -1,13 +1,15 @@
 import Axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-
+import { useTheme } from '../components/Theme';
+import { useUser} from "../components/UserContext";
 const Login = () => {
   const [Usuarios_Nombre, setUsuarios_Nombre] = useState("");
   const [Usuarios_contraseña, setUsuarios_contraseña] = useState("");
   const navigate = useNavigate();
-
+  const { darkMode } = useTheme();
+  const { setUsuario } = useUser();
   const Ingresar = async (e) => {
     e.preventDefault();
 
@@ -17,11 +19,11 @@ const Login = () => {
         Usuarios_contraseña,
       });
 
-      const { token, Usuarios_Nombre: usuarioNombre, Roles_Id } = response.data;
-
+      const { Usuarios_Nombre: usuarioNombre, Roles_Id } = response.data;
+      setUsuario(usuarioNombre); 
       Swal.fire({
         title: "Login exitoso",
-        html: `<i>Usuario <strong>${usuarioNombre}</strong></i> - Rol <strong>${Roles_Id}</strong>`,
+        html: `<i>Hola Usuario <strong>${Usuarios_Nombre}</strong>`,
         icon: "success",
         timer: 3000,
       });
@@ -34,7 +36,7 @@ const Login = () => {
           navigate("/ProfesorDashboard");
           break;
         default:
-          navigate("/");
+          navigate("/EstudianteDashboard");
           break;
       }
     } catch (error) {
@@ -47,6 +49,23 @@ const Login = () => {
       console.error(error);
     }
   };
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('bg-dark');
+      document.body.classList.add('text-white');
+    } else {
+      document.body.classList.remove('bg-dark');
+      document.body.classList.remove('text-white');
+      document.body.classList.add('bg-light');
+      document.body.classList.add('text-dark');
+    }
+
+    return () => {
+      document.body.classList.remove('bg-dark', 'text-white', 'bg-light', 'text-dark');
+    };
+  }, [darkMode]);
+
+ 
 
   return (
     <div className="d-flex justify-content-center align-items-center">

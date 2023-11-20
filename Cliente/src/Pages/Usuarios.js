@@ -1,45 +1,58 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Swal from "sweetalert2";
-import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
-const Materias = () => {
+import { useTheme } from "../components/Theme";
+const Usuarios = () => {
   const { darkMode } = useTheme();
 
   //Estudiantes
-  const [Materias_Nombre, setNombre] = useState("");
-  const [Materias_id, setId] = useState("");
-  const [Materias_Tipo, setTipo] = useState("");
-  const [Materias_List, setMaterias_List] = useState([]);
+  const [Adecuacion_List, setAdecuacion_List] = useState([]);
   const [editar, setEditar] = useState(false);
+  const [Usuarios_Id ,setId]= useState("");
+  const [usuarios_Nombre , setNombre] = useState("");
+  const [Usuarios_contraseña ,setContraseña]= useState("");
+  const [Roles_Id ,setRolId] = useState(3);
+  const [obtenerRol, setRol] = useState([]);
 
   const add = () => {
-    Axios.post("http://localhost:3001/createMaterias", {
-      Materias_Nombre: Materias_Nombre,
-      Materias_Tipo: Materias_Tipo,
-
+    Axios.post("http://localhost:3001/createUsuariosLogin", {
+      usuarios_Nombre: usuarios_Nombre,
+      Usuarios_contraseña:Usuarios_contraseña,
+      Roles_Id:Roles_Id,
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Grado <strong>" + Materias_Nombre + "</strong></i>",
+        html: "<i>el Adecuacion <strong>" + usuarios_Nombre + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
     });
   };
 
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/obtenerRoles")
+      .then((response) => {
+        setRol(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener datos:", error);
+      });
+  }, []);
+
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerMaterias");
+      const response = await fetch("http://localhost:3001/obtenerUsuariosLogin");
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
-      setMaterias_List(data);
+      setAdecuacion_List(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -47,42 +60,44 @@ const Materias = () => {
 
   getLista();
 
-  const editarGrado = (val) => {
+  const editarAdecuacion = (val) => {
     setEditar(true);
-    setTipo(val.Materias_Tipo);
-    setNombre(val.Materias_Nombre);
+    setId(val.Usuarios_Id);
+    setNombre(val.Usuarios_Nombre);
+    setContraseña(val.Usuarios_contraseña);
+    setRolId(val.Roles_Id);
   };
 
-  
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarMaterias", {
-      Materias_Nombre: Materias_Nombre,
-      Materias_Tipo: Materias_Tipo,
-      Materias_id:Materias_id,
+    Axios.put("http://localhost:3001/actualizarUsuariosLogin", {
+        usuarios_Nombre: usuarios_Nombre,
+        Usuarios_contraseña:Usuarios_contraseña,
+        Roles_Id:Roles_Id,
+        Usuarios_Id:Usuarios_Id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
       title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Estudiante <strong>" + Materias_Nombre + "</strong></i>",
+      html: "<i>el Adecuacion <strong>" + usuarios_Nombre + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
   };
-
   const limpiarDatos = () => {
     setId("");
     setNombre("");
-    setTipo("");
+    setContraseña("");
+    setRolId("");
 
     setEditar(false);
   };
-  const eliminar = (Materias_id) => {
+  const eliminar = (Usuarios_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
         "<i>Realmente desea eliminar <strong>" +
-        Materias_Nombre +
+        usuarios_Nombre +
         "</strong></i>",
       icon: "warning",
       showCancelButton: true,
@@ -92,12 +107,12 @@ const Materias = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteMaterias/" + Materias_id
+          "http://localhost:3001/deleteUsuariosLogin/" + Usuarios_Id
         ).then(() => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "la materia ha sido eliminado", "success");
+        Swal.fire("Eliminado", "la Adecuacion ha sido eliminado", "success");
       }
     });
   };
@@ -124,30 +139,52 @@ const Materias = () => {
   }, [darkMode]);
   return (
     <div className="container">
-      <h1>Grado</h1>
+      <h1>Escolaridad de la Persona</h1>
 
       {/* Datos personales del estudiante */}
-      <h3>Datos del Grado</h3>
+      <h3>Datos personales</h3>
       <div className="form-group">
-        <label htmlFor="Materias_Nombre">Nombre dela Materia :</label>
+        <label htmlFor="usuarios_Nombre">Nombre del usuario :</label>
         <input
           type="text"
           className="form-control"
-          id="Materias_Nombre"
-          value={Materias_Nombre}
+          id="usuarios_Nombre"
+          value={usuarios_Nombre}
           onChange={(e) => setNombre(e.target.value)}
         />
       </div>
-
       <div className="form-group">
-        <label htmlFor="Grado_Aula">Tipo del Materia :</label>
+        <label htmlFor="Usuarios_contraseña">Contraseña  :</label>
         <input
           type="text"
           className="form-control"
-          id="Materias_Tipo"
-          value={Materias_Tipo}
-          onChange={(e) => setTipo(e.target.value)}
+          id="Usuarios_contraseña"
+          value={Usuarios_contraseña}
+          onChange={(e) => setContraseña(e.target.value)}
         />
+      </div>
+   
+      <div className="input-group mb-3">
+        <span className="input-group-text" id="basic-addon1">
+          Rol:
+        </span>
+        <select
+          className="form-select"
+          aria-label="Default select example"
+          value={Roles_Id}
+          onChange={(event) => setRolId(event.target.value)}
+        >
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          {obtenerRol.map((option) => (
+            <option key={option.Roles_Id} value={option.Roles_Id}>
+              Rol: {option.Roles_Nombre}{" "}
+              Rol: {option.Roles_Id}{" "}
+             
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
@@ -172,8 +209,9 @@ const Materias = () => {
           <button type="submit" className="btn btn-primary m-3" onClick={add}>
             Registrar
           </button>
+          
         )}
-        <Link to="/profesordashboard" className="btn btn-secondary m-3">
+          <Link to="/admindashboard" className="btn btn-secondary m-3">
          Menu Principal 
         </Link>
       </div>
@@ -184,27 +222,30 @@ const Materias = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
-              <th scope="col">Tipo</th>
+              <th scope="col">Contraseña</th>
+              <th scope="col">ROL</th>
+
             </tr>
           </thead>
           <tbody>
-            {Materias_List.map((val, key) => (
+            {Adecuacion_List.map((val, key) => (
               <tr key={key}>
-                <th>{val.Materias_id}</th>
-                <td>{val.Materias_Nombre}</td>
-                <td>{val.Materias_Tipo}</td>
+                <th>{val.Usuarios_Id}</th>
+                <td>{val.Usuarios_Nombre}</td>
+                <th>{val.Usuarios_contraseña}</th>
+                <td>{val.Roles_Id}</td>
 
                 <td>
                   <div className="btn-group" role="group">
                     <button
                       className="btn btn-info"
-                      onClick={() => editarGrado(val)}
+                      onClick={() => editarAdecuacion(val)}
                     >
                       Editar
                     </button>
                     <button
                       className="btn btn-danger"
-                      onClick={() => eliminar(val.Materias_id)}
+                      onClick={() => eliminar(val.Usuarios_Id)}
                     >
                       Eliminar
                     </button>
@@ -219,4 +260,4 @@ const Materias = () => {
   );
 };
 
-export default Materias;
+export default Usuarios;

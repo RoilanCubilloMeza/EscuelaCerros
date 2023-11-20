@@ -33,6 +33,29 @@ app.post("/login", (req, res) => {
     }
   });
 });
+app.post("/createRegistroUsuario", (req, res) => {
+  const Usuarios_Nombre = req.body.Usuarios_Nombre;
+  const Usuarios_contraseña = req.body.Usuarios_contraseña; 
+  const Roles_Id = req.body.Roles_Id; 
+  connection.query(
+    "INSERT INTO usuarios(Usuarios_Nombre, Usuarios_contraseña,Roles_Id) VALUES (?,?,?)",
+    [
+      Usuarios_Nombre,
+      Usuarios_contraseña,
+      Roles_Id,
+    
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Error al crear la Adecuacion");
+      } else {
+        res.send("Adecuacion creada exitosamente");
+      }
+    }
+  );
+});
+
 
 
 

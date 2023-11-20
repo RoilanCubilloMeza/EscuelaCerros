@@ -1,14 +1,47 @@
+import Axios from "axios";
 import React, { useState, useEffect } from 'react';
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from '../components/Theme';
 
 const Registration = () => {
+  const [Usuarios_Nombre, setUsuarios_Nombre] = useState("");
+  const [Usuarios_contraseña, setUsuarios_contraseña] = useState("");
+  const [Roles_Id, setRolId] = useState(3);
+  const navigate = useNavigate();
   const { darkMode } = useTheme();
-  
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-  });
+
+  const Registrar = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await Axios.post(`http://localhost:3001/createRegistroUsuario`, {
+        Usuarios_Nombre,
+        Usuarios_contraseña,
+        Roles_Id
+      });
+
+      const { Usuarios_Nombre: usuarioNombre } = response.data;
+
+      Swal.fire({
+        title: "Registro exitoso",
+        html: `<i>Usuario  <strong>${Usuarios_Nombre} <i> ingresar en Login</strong>`,
+        icon: "success",
+        timer: 3000,
+      });
+
+      navigate("/login");
+
+    } catch (error) {
+      Swal.fire({
+        title: "<strong >Registro Fallido</strong>",
+        html: `<i>Usuario <strong>${Usuarios_Nombre}</strong></i>`,
+        icon: "error",
+        timer: 3000,
+      });
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     if (darkMode) {
@@ -26,63 +59,44 @@ const Registration = () => {
     };
   }, [darkMode]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your registration logic here if needed
-  };
-
   return (
-    <div className="container mt-5">
-      <h2 className={darkMode ? 'text-white' : 'text-dark'}>Registro de Usuario</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="username" className={`form-label ${darkMode ? 'text-white' : 'text-dark'}`}>Nombre de usuario:</label>
-          <input
-            type="text"
-            className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`}
-            id="username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="email" className={`form-label ${darkMode ? 'text-white' : 'text-dark'}`}>Correo electrónico:</label>
-          <input
-            type="email"
-            className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`}
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="password" className={`form-label ${darkMode ? 'text-white' : 'text-dark'}`}>Contraseña:</label>
-          <input
-            type="password"
-            className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`}
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">Registrarse</button>
-      </form>
+    <div className="d-flex justify-content-center align-items-center">
+      <div>
+        <h2 className="m-3">Registro de Usuario</h2>
+        <form className="container" onSubmit={Registrar}>
+          <div className="form-group">
+            <label>Nombre de Usuario:</label>
+            <input
+              type="text"
+              className="form-control"
+              value={Usuarios_Nombre}
+              onChange={(e) => setUsuarios_Nombre(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Contraseña:</label>
+            <input
+              type="password"
+              className="form-control"
+              value={Usuarios_contraseña}
+              onChange={(e) => setUsuarios_contraseña(e.target.value)}
+              required
+            />
+          </div>
+       
+          <input type="hidden" value={Roles_Id} />
+
+          <div className="">
+            <button type="submit" className="btn btn-primary ml-2 m-3">
+              Registrar
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
 export default Registration;
+

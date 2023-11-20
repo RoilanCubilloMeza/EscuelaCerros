@@ -3,27 +3,28 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
-const Materias = () => {
+
+const Roles = () => {
   const { darkMode } = useTheme();
 
   //Estudiantes
-  const [Materias_Nombre, setNombre] = useState("");
-  const [Materias_id, setId] = useState("");
-  const [Materias_Tipo, setTipo] = useState("");
-  const [Materias_List, setMaterias_List] = useState([]);
+  const [Roles_Id, setId] = useState("");
+  const [Roles_Descripcion, setDescripcion] = useState("");
+  const [Roles_Nombre, setNombre] = useState("");
+
+  const [Adecuacion_List, setAdecuacion_List] = useState([]);
   const [editar, setEditar] = useState(false);
 
   const add = () => {
-    Axios.post("http://localhost:3001/createMaterias", {
-      Materias_Nombre: Materias_Nombre,
-      Materias_Tipo: Materias_Tipo,
-
+    Axios.post("http://localhost:3001/createRoles", {
+      Roles_Descripcion: Roles_Descripcion,
+      Roles_Nombre: Roles_Nombre,
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Grado <strong>" + Materias_Nombre + "</strong></i>",
+        html: "<i>EL ROl es de  <strong>" + Roles_Nombre + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -32,14 +33,14 @@ const Materias = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerMaterias");
+      const response = await fetch("http://localhost:3001/obtenerRoles");
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
-      setMaterias_List(data);
+      setAdecuacion_List(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -47,42 +48,42 @@ const Materias = () => {
 
   getLista();
 
-  const editarGrado = (val) => {
+  const editarAdecuacion = (val) => {
     setEditar(true);
-    setTipo(val.Materias_Tipo);
-    setNombre(val.Materias_Nombre);
+    setId(val.Roles_Id);
+    setDescripcion(val.Roles_Descripcion);
+    setNombre(val.Roles_Nombre)
   };
 
-  
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarMaterias", {
-      Materias_Nombre: Materias_Nombre,
-      Materias_Tipo: Materias_Tipo,
-      Materias_id:Materias_id,
+    Axios.put("http://localhost:3001/actualizarRoles", {
+        Roles_Descripcion: Roles_Descripcion,
+        Roles_Nombre: Roles_Nombre,
+        Roles_Id:Roles_Id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
       title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Estudiante <strong>" + Materias_Nombre + "</strong></i>",
+      html: "<i>EL ROl <strong>" + Roles_Nombre + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
   };
-
   const limpiarDatos = () => {
     setId("");
+    setDescripcion("");
     setNombre("");
-    setTipo("");
+
 
     setEditar(false);
   };
-  const eliminar = (Materias_id) => {
+  const eliminar = (Roles_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
         "<i>Realmente desea eliminar <strong>" +
-        Materias_Nombre +
+        Roles_Nombre +
         "</strong></i>",
       icon: "warning",
       showCancelButton: true,
@@ -92,12 +93,12 @@ const Materias = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteMaterias/" + Materias_id
+          "http://localhost:3001/deleteRoles/" + Roles_Id
         ).then(() => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "la materia ha sido eliminado", "success");
+        Swal.fire("Eliminado", "los puntos ha sido eliminado", "success");
       }
     });
   };
@@ -124,31 +125,30 @@ const Materias = () => {
   }, [darkMode]);
   return (
     <div className="container">
-      <h1>Grado</h1>
+      <h1>Roles de la Persona</h1>
 
-      {/* Datos personales del estudiante */}
-      <h3>Datos del Grado</h3>
       <div className="form-group">
-        <label htmlFor="Materias_Nombre">Nombre dela Materia :</label>
+        <label htmlFor="Roles_Nombre">Puntos de la Tarea  :</label>
         <input
-          type="text"
+          type="number"
           className="form-control"
-          id="Materias_Nombre"
-          value={Materias_Nombre}
+          id="Roles_Nombre"
+          value={Roles_Nombre}
           onChange={(e) => setNombre(e.target.value)}
         />
       </div>
 
       <div className="form-group">
-        <label htmlFor="Grado_Aula">Tipo del Materia :</label>
+        <label htmlFor="Roles_Descripcion">Descripcion:</label>
         <input
-          type="text"
+          type="number"
           className="form-control"
-          id="Materias_Tipo"
-          value={Materias_Tipo}
-          onChange={(e) => setTipo(e.target.value)}
+          id="Roles_Descripcion"
+          value={Roles_Descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
         />
       </div>
+
 
       <div>
         {editar ? (
@@ -173,7 +173,7 @@ const Materias = () => {
             Registrar
           </button>
         )}
-        <Link to="/profesordashboard" className="btn btn-secondary m-3">
+         <Link to="/admindashboard" className="btn btn-secondary m-3">
          Menu Principal 
         </Link>
       </div>
@@ -184,27 +184,28 @@ const Materias = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
-              <th scope="col">Tipo</th>
+              <th scope="col">Descripcion</th>
+
             </tr>
           </thead>
           <tbody>
-            {Materias_List.map((val, key) => (
+            {Adecuacion_List.map((val, key) => (
               <tr key={key}>
-                <th>{val.Materias_id}</th>
-                <td>{val.Materias_Nombre}</td>
-                <td>{val.Materias_Tipo}</td>
+                <th>{val.Roles_Id}</th>
+                <td>{val.Roles_Nombre}</td>
+                <td>{val.Roles_Descripcion}</td>
 
                 <td>
                   <div className="btn-group" role="group">
                     <button
                       className="btn btn-info"
-                      onClick={() => editarGrado(val)}
+                      onClick={() => editarAdecuacion(val)}
                     >
                       Editar
                     </button>
                     <button
                       className="btn btn-danger"
-                      onClick={() => eliminar(val.Materias_id)}
+                      onClick={() => eliminar(val.Roles_Id)}
                     >
                       Eliminar
                     </button>
@@ -219,4 +220,4 @@ const Materias = () => {
   );
 };
 
-export default Materias;
+export default Roles;

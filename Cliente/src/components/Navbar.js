@@ -7,7 +7,7 @@ import { useUser } from "./UserContext";
 
 // Define navigation items
 const navItems = [
-  { path: "/login", label: "Login" },
+  { path: "/login", label: "Ingresar" },
   { path: "/register", label: "Registro" },
 ];
 

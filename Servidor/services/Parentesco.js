@@ -1,3 +1,4 @@
+// Falta
 const express = require("express");
 const app = express.Router();
 
@@ -6,52 +7,29 @@ dotenv.config();
 //conexión con la base de datos
 const { connection } = require("../config");
 
-app.post("/createPersona", (req, res) => {
-  const Persona_Nombre = req.body.Persona_Nombre;
-  const Persona_PApellido = req.body.Persona_PApellido;
-  const Persona_SApellido = req.body.Persona_SApellido;
-  const Persona_Cedula = req.body.Persona_Cedula;
-  const Persona_Edad = req.body.Persona_Edad;
-  const Persona_Sexo = req.body.Persona_Sexo;
-  const Persona_LuNacimiento = req.body.Persona_LuNacimiento;
-  const Persona_Nacionalidad = req.body.Persona_Nacionalidad;
-  const Persona_Correo = req.body.Persona_Correo;
+app.post("/createParentesco", (req, res) => {
+  const Parentesco_Nombre = req.body.Parentesco_Nombre;
+
   connection.query(
-    "INSERT INTO personas(Persona_Nombre,Persona_PApellido,Persona_SApellido,Persona_Cedula,Persona_Edad,Persona_Sexo,Persona_LuNacimiento,Persona_Nacionalidad ,Persona_Correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)",
+    "INSERT INTO parentesco(Parentesco_Nombre) VALUES (?)",
     [
-      Persona_Nombre,
-      Persona_PApellido,
-      Persona_SApellido,
-      Persona_Cedula,
-      Persona_Edad,
-      Persona_Sexo,
-      Persona_Nacionalidad,
-      Persona_LuNacimiento,
-      Persona_Correo,
+      Parentesco_Nombre
     ],
     (err, result) => {
       if (err) {
         console.log(err);
-        res.status(500).send("Error al crear la persona");
+        res.status(500).send("Error al crear el Parentesco");
       } else {
-        res.send("Persona creada exitosamente");
+        res.send("Parentesco creada exitosamente");
       }
     }
   );
 });
 
-//app.get("/obtener", (req, res) => {
-//connection.query("SELECT * FROM pruebas", (err, result) => {
-//if (err) {
-//console.log(err);
-//} else {
-//res.send(result);
-//}
-//});
-//});
 
-app.get("/obtenerPersonas", (req, res) => {
-  connection.query("SELECT * FROM personas", (err, result) => {
+
+app.get("/obtenerParentesco", (req, res) => {
+  connection.query("SELECT * FROM parentesco", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -60,47 +38,31 @@ app.get("/obtenerPersonas", (req, res) => {
   });
 });
 
-app.put("/actualizarPersona", (req, res) => {
-  const Persona_Id = req.body.Persona_Id;
-  const Persona_Nombre = req.body.Persona_Nombre;
-  const Persona_PApellido = req.body.Persona_PApellido;
-  const Persona_SApellido = req.body.Persona_SApellido;
-  const Persona_Cedula = req.body.Persona_Cedula;
-  const Persona_Edad = req.body.Persona_Edad;
-  const Persona_Sexo = req.body.Persona_Sexo;
-  const Persona_LuNacimiento = req.body.Persona_LuNacimiento;
-  const Persona_Nacionalidad = req.body.Persona_Nacionalidad;
-  const Persona_Correo = req.body.Persona_Correo;
+app.put("/actualizarParentesco", (req, res) => {
+  const Parentesco_Id = req.body.Parentesco_Id;
+  Parentesco_Nombre= req.body.Parentesco_Nombre;
   connection.query(
-    "UPDATE personas SET Persona_Nombre=?, Persona_PApellido=?, Persona_SApellido=?, Persona_Cedula=?, Persona_Edad=?, Persona_Sexo=?, Persona_LuNacimiento=?, Persona_Nacionalidad=?, Persona_Correo=? WHERE Persona_Id=?",
+    "UPDATE parentesco SET Parentesco_Nombre=? WHERE Parentesco_Id=?",
     [
-      Persona_Nombre,
-      Persona_PApellido,
-      Persona_SApellido,
-      Persona_Cedula,
-      Persona_Edad,
-      Persona_Sexo,
-      Persona_Nacionalidad,
-      Persona_LuNacimiento,
-      Persona_Correo,
-      Persona_Id,
+      Parentesco_Nombre, 
+      Parentesco_Id,
     ],
     (err, result) => {
       if (err) {
         console.log(err);
-        res.status(500).send("Error al actualizar la persona");
+        res.status(500).send("Error al actualizar el Parentesco");
       } else {
-        res.send("Persona actualizada exitosamente");
+        res.send("Parentesco actualizada exitosamente");
       }
     }
   );
 });
 
-app.delete("/deletePersona/:Persona_Id", (req, res) => {
-  const Persona_Id = req.params.Persona_Id;
+app.delete("/deleteParentesco/:Parentesco_Id", (req, res) => {
+  const Parentesco_Id = req.params.Parentesco_Id;
   connection.query(
-    "DELETE FROM personas WHERE Persona_Id=?",
-    Persona_Id,
+    "DELETE FROM perentesco WHERE Parentesco_Id=?",
+    Parentesco_Id,
     (err, result) => {
       if (err) {
         console.log(err);

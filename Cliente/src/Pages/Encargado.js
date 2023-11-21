@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Swal from "sweetalert2";
-import { useTheme } from "../components/Theme"; 
+import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
 const Encargado = () => {
   const { darkMode } = useTheme();
@@ -25,41 +25,75 @@ const Encargado = () => {
       );
     };
   }, [darkMode]);
-  //Encargado
-  const [telefonoEncargado, setTelefonoEncargado] = useState("");
-  const [viveConEstudiante, setViveConEstudiante] = useState(""); // "Sí" o "No"
-  const [lugarDeTrabajo, setLugarDeTrabajo] = useState("");
-  const [telefonoTrabajo, setTelefonoTrabajo] = useState("");
-  const [estadoCivil, setEstadoCivil] = useState(""); // Soltera, Casada, Unión libre, Viuda, Divorciada
-  const [escolaridad, setEscolaridad] = useState(""); // Ninguna, Primaria incompleta, etc.
-  const [ocupacion, setOcupacion] = useState(""); // Sin ocupación, Trabaja en el hogar, etc.
-  const [parentesco, setParentesco] = useState(""); // Padre, Abuelo, Tío, etc.
-    useState("");
-  //Persona
-  const [Persona_Nombre, setNombre] = useState("");
-  const [Persona_PApellido, setPApellido] = useState("");
-  const [Persona_SApellido, setSApellido] = useState("");
-  const [Persona_Id, setId] = useState();
-  const [estudiantesList, setEstudiantesList] = useState([]);
+
+  const [Encargados_Id, setId] = useState("");
+  const [Persona_Id, setPersonaId] = useState();
+  const [Encargados_LugarTrabajo, setEncargadosLugarTrabajo] = useState("");
+  const [Escolaridad_Id, setEscolaridadId] = useState("");
+  const [Ocupacion_Id, setOcupacionId] = useState("");
+  const [Parentesco_Id, setParentescoId] = useState("");
+  const [Encargado_ViveEstudiante, setEncargadoViveEstudiante] = useState("");
+  const [Encargado_Telefono, setEncargadoTelefono] = useState("");
+  const [Encargado_EstadoCivil, setEncargadoEstadoCivil] = useState("");
+  const [Persona_Nombre, setPersona_Nombre] = useState("");
+
+  const [EncargadoList, setEncargadoList] = useState([]);
   const [editar, setEditar] = useState(false);
-  const [Persona_Cedula, setCedula] = useState("");
-  const [Persona_Edad, setEdad] = useState("");
-  const [Persona_Sexo, setSexo] = useState(""); // Mujer or Hombre
-  const [Persona_Nacionalidad, setNacionalidad] = useState("");
-  const [Persona_LuNacimiento, setLugarNacimiento] = useState("");
-  const [Persona_Correo, setCorreoElectronico] = useState("");
+  const [PersonaList, setPersonaList] = useState([]);
+  const [EscolaridadList, setEscolaridadList] = useState([]);
+const [OcupacionList,setOcupacionList]=useState([]);
+const [ParentescoList,setParentescoList]=useState([]);
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/obtenerPersonas")
+      .then((response) => {
+        setPersonaList(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener datos:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/obtenerEscolaridad")
+      .then((response) => {
+        setEscolaridadList(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener datos:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/obtenerOcupacion")
+      .then((response) => {
+        setOcupacionList(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener datos:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/obtenerParentesco")
+      .then((response) => {
+        setParentescoList(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener datos:", error);
+      });
+  }, []);
 
   const add = () => {
     Axios.post("http://localhost:3001/createEncargado", {
-      Persona_Edad: Persona_Edad,
-      Persona_Nombre: Persona_Nombre,
-      Persona_PApellido: Persona_PApellido,
-      Persona_SApellido: Persona_SApellido,
-      Persona_Sexo: Persona_Sexo,
-      Persona_Cedula: Persona_Cedula,
-      Persona_Nacionalidad: Persona_Nacionalidad,
-      Persona_LuNacimiento: Persona_LuNacimiento,
-      Persona_Correo: Persona_Correo,
+      Persona_Id: Persona_Id,
+      Encargados_LugarTrabajo: Encargados_LugarTrabajo,
+      Ocupacion_Id: Ocupacion_Id,
+      Parentesco_Id: Parentesco_Id,
+      Encargado_ViveEstudiante: Encargado_ViveEstudiante,
+      Encargado_Telefono: Encargado_Telefono,
+      Encargado_EstadoCivil: Encargado_EstadoCivil,
+      Escolaridad_Id: Escolaridad_Id,
     }).then(() => {
       getLista();
       limpiarDatos();
@@ -74,14 +108,14 @@ const Encargado = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerEncargado");
+      const response = await fetch("http://localhost:3001/obtenerEncargados");
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
-      setEstudiantesList(data);
+      setEncargadoList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -91,29 +125,26 @@ const Encargado = () => {
   const editarEstudiante = (val) => {
     setEditar(true);
     setId(val.Persona_Id);
-    setNombre(val.Persona_Nombre);
-    setPApellido(val.Persona_PApellido);
-    setSApellido(val.Persona_SApellido);
-    setEdad(val.Persona_Edad);
-    setSexo(val.Persona_Sexo);
-    setCedula(val.Persona_Cedula);
-    setNacionalidad(val.Persona_Nacionalidad);
-    setLugarNacimiento(val.Persona_LuNacimiento);
-    setCorreoElectronico(val.Persona_Correo);
+    setPersonaId(val.Persona_Id);
+    setEncargadosLugarTrabajo(val.Encargados_LugarTrabajo);
+    setEscolaridadId(val.Escolaridad_Id);
+    setOcupacionId(val.Ocupacion_Id);
+    setParentescoId(val.Parentesco_Id);
+    setEncargadoViveEstudiante(val.Encargado_ViveEstudiante);
+    setEncargadoTelefono(val.Encargado_Telefono);
+    setEncargadoEstadoCivil(val.Encargado_EstadoCivil);
   };
 
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarEncargado", {
-      Persona_Edad: Persona_Edad,
-      Persona_Nombre: Persona_Nombre,
-      Persona_PApellido: Persona_PApellido,
-      Persona_SApellido: Persona_SApellido,
-      Persona_Sexo: Persona_Sexo,
-      Persona_Cedula: Persona_Cedula,
-      Persona_Nacionalidad: Persona_Nacionalidad,
-      Persona_LuNacimiento: Persona_LuNacimiento,
-      Persona_Correo: Persona_Correo,
+    Axios.put("http://localhost:3001/actualizarEncargados", {
       Persona_Id: Persona_Id,
+      Encargados_LugarTrabajo: Encargados_LugarTrabajo,
+      Ocupacion_Id: Ocupacion_Id,
+      Parentesco_Id: Parentesco_Id,
+      Encargado_ViveEstudiante: Encargado_ViveEstudiante,
+      Encargado_Telefono: Encargado_Telefono,
+      Encargado_EstadoCivil: Encargado_EstadoCivil,
+      Encargados_Id: Encargados_Id,
     }).then(() => {
       getLista();
     });
@@ -126,19 +157,19 @@ const Encargado = () => {
   };
   const limpiarDatos = () => {
     setId("");
-    setNombre("");
-    setPApellido("");
-    setSApellido("");
-    setEdad("");
-    setSexo("");
-    setCedula("");
-    setNacionalidad("");
-    setLugarNacimiento("");
-    setCorreoElectronico("");
+    setId("");
+    setPersonaId("");
+    setEncargadosLugarTrabajo("");
+    setEscolaridadId("");
+    setOcupacionId("");
+    setParentescoId("");
+    setEncargadoViveEstudiante("");
+    setEncargadoTelefono("");
+    setEncargadoEstadoCivil("");
 
     setEditar(false);
   };
-  const eliminar = (Persona_Id) => {
+  const eliminar = (Encargados_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
@@ -152,12 +183,12 @@ const Encargado = () => {
       confirmButtonText: "Si, Eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteEncargado/" + Persona_Id).then(
-          () => {
-            getLista();
-            limpiarDatos();
-          }
-        );
+        Axios.delete(
+          "http://localhost:3001/deleteEncargados/" + Encargados_Id
+        ).then(() => {
+          getLista();
+          limpiarDatos();
+        });
         Swal.fire("Eliminado", "el usuario ha sido eliminado", "success");
       }
     });
@@ -165,219 +196,140 @@ const Encargado = () => {
 
   return (
     <div className="container">
-      {/*Encargado */}
       <h3>Encargado del Niño</h3>
-
-     
-
       <div className="form-group">
-        <label htmlFor="nPersona_Nombre">Nombre :</label>
+        <label htmlFor="Encargados_LugarTrabajo">
+          Lugar de Trabajo del Encargado:
+        </label>
         <input
           type="text"
           className="form-control"
-          id="Persona_Nombre"
-          value={Persona_Nombre}
-          onChange={(e) => setNombre(e.target.value)}
+          id="Encargados_LugarTrabajo"
+          value={Encargados_LugarTrabajo}
+          onChange={(e) => setEncargadosLugarTrabajo(e.target.value)}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Persona_PApellido">Primer Apellido:</label>
+        <label htmlFor="Encargado_ViveEstudiante">
+          ¿El Estudiante vive con el Estudiante?:
+        </label>
         <input
           type="text"
           className="form-control"
-          id="Persona_PApellido"
-          value={Persona_PApellido}
-          onChange={(e) => setPApellido(e.target.value)}
+          id="Encargado_ViveEstudiante"
+          value={Encargado_ViveEstudiante}
+          onChange={(e) => setEncargadoViveEstudiante(e.target.value)}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Persona_SApellido">Segundo Apellido:</label>
+        <label htmlFor="Encargado_Telefono">
+          Numero telefonico del Encargado:
+        </label>
         <input
           type="text"
           className="form-control"
-          id="Persona_SApellido"
-          value={Persona_SApellido}
-          onChange={(e) => setSApellido(e.target.value)}
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="cedula">Cédula:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="cedula"
-          value={Persona_Cedula}
-          onChange={(e) => setCedula(e.target.value)}
+          id="Encargado_Telefono"
+          value={Encargado_Telefono}
+          onChange={(e) => setEncargadoTelefono(e.target.value)}
         />
       </div>
 
       <div className="form-group">
-        <label htmlFor="Persona_Nombre">Edad:</label>
+        <label htmlFor="Encargado_EstadoCivil">Estado Civil:</label>
         <input
-          type="number"
+          type="text"
           className="form-control"
-          id="Persona_Edad"
-          value={Persona_Edad}
-          onChange={(e) => setEdad(e.target.value)}
+          id="Encargado_EstadoCivil"
+          value={Encargado_EstadoCivil}
+          onChange={(e) => setEncargadoEstadoCivil(e.target.value)}
         />
       </div>
-
-      <div className="form-group">
-        <label htmlFor="sexo">Sexo:</label>
+      <div className="input-group mb-3">
+        <span className="input-group-text" id="basic-addon1">
+          Nombre de la Persona:
+        </span>
         <select
-          className="form-control"
-          id="sexo"
-          value={Persona_Sexo}
-          onChange={(e) => setSexo(e.target.value)}
+          className="form-select"
+          aria-label="Default select example"
+          value={Persona_Id}
+          onChange={(event) => setPersonaId(event.target.value)}
         >
-          <option value="">Seleccione</option>
-          <option value="Hombre">Hombre</option>
-          <option value="Mujer">Mujer</option>
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          {PersonaList.map((option) => (
+            <option key={option.Persona_Id} value={option.Persona_Id}>
+              {option.Persona_Nombre} {option.Persona_PApellido}{" "}
+              {option.Persona_SApellido}
+            </option>
+          ))}
         </select>
       </div>
-      <div className="form-group">
-        <label htmlFor="nacionalidad">Nacionalidad:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="nacionalidad"
-          value={Persona_Nacionalidad}
-          onChange={(e) => setNacionalidad(e.target.value)}
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="lugarNacimiento">Lugar de Nacimiento:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="lugarNacimiento"
-          value={Persona_LuNacimiento}
-          onChange={(e) => setLugarNacimiento(e.target.value)}
-        />
+      <div className="input-group mb-3">
+        <span className="input-group-text" id="basic-addon1">
+          Escolaridad de la Persona:
+        </span>
+        <select
+          className="form-select"
+          aria-label="Default select example"
+          value={Escolaridad_Id}
+          onChange={(event) => setEscolaridadId(event.target.value)}
+        >
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          {EscolaridadList.map((option) => (
+            <option key={option.Escolaridad_Id} value={option.Escolaridad_Id}>
+              {option.Escolaridad_Nombre}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="Persona_Correo">Correo Electrónico:</label>
-        <input
-          type="email"
-          className="form-control"
-          id="Persona_Correo"
-          value={Persona_Correo}
-          onChange={(e) => setCorreoElectronico(e.target.value)}
-        />
+      <div className="input-group mb-3">
+        <span className="input-group-text" id="basic-addon1">
+          Ocupacion de la Persona:
+        </span>
+        <select
+          className="form-select"
+          aria-label="Default select example"
+          value={Ocupacion_Id}
+          onChange={(event) => setOcupacionId(event.target.value)}
+        >
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          {OcupacionList.map((option) => (
+            <option key={option.Ocupacion_Id} value={option.Ocupacion_Id}>
+              {option.Ocupacion_Nombre}
+            </option>
+          ))}
+        </select>
       </div>
+
+      
+      <div className="input-group mb-3">
+        <span className="input-group-text" id="basic-addon1">
+          Parentesco  de con el estudiante:
+        </span>
+        <select
+          className="form-select"
+          aria-label="Default select example"
+          value={Parentesco_Id}
+          onChange={(event) => setParentescoId(event.target.value)}
+        >
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          {ParentescoList.map((option) => (
+            <option key={option.Parentesco_Id} value={option.Parentesco_Id}>
+              {option.Parentesco_Nombre}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div>
-      <div className="form-group">
-        <label htmlFor="telefonoEncargado">Teléfono:</label>
-        <input
-          type="tel"
-          className="form-control"
-          id="telefonoEncargado"
-          value={telefonoEncargado}
-          onChange={(e) => setTelefonoEncargado(e.target.value)}
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="viveConEstudiante">Vive con el estudiante:</label>
-        <select
-          className="form-control"
-          id="viveConEstudiante"
-          value={viveConEstudiante}
-          onChange={(e) => setViveConEstudiante(e.target.value)}
-        >
-          <option value="">Seleccione</option>
-          <option value="Sí">Sí</option>
-          <option value="No">No</option>
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="lugarDeTrabajo">Lugar de trabajo:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="lugarDeTrabajo"
-          value={lugarDeTrabajo}
-          onChange={(e) => setLugarDeTrabajo(e.target.value)}
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="telefonoTrabajo">Teléfono de Trabajo:</label>
-        <input
-          type="tel"
-          className="form-control"
-          id="telefonoTrabajo"
-          value={telefonoTrabajo}
-          onChange={(e) => setTelefonoTrabajo(e.target.value)}
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="estadoCivil">Estado Civil:</label>
-        <select
-          className="form-control"
-          id="estadoCivil"
-          value={estadoCivil}
-          onChange={(e) => setEstadoCivil(e.target.value)}
-        >
-          <option value="">Seleccione</option>
-          <option value="Soltera">Soltera</option>
-          <option value="Casada">Casada</option>
-          <option value="Unión libre">Unión libre</option>
-          <option value="Viuda">Viuda</option>
-          <option value="Divorciada">Divorciada</option>
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="escolaridad">Escolaridad:</label>
-        <select
-          className="form-control"
-          id="escolaridad"
-          value={escolaridad}
-          onChange={(e) => setEscolaridad(e.target.value)}
-        >
-          <option value="">Seleccione</option>
-          <option value="Ninguna">Ninguna</option>
-          <option value="Primaria incompleta">Primaria incompleta</option>
-          {/* ... añadir las demás opciones ... */}
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="ocupacion">Ocupación:</label>
-        <select
-          className="form-control"
-          id="ocupacion"
-          value={ocupacion}
-          onChange={(e) => setOcupacion(e.target.value)}
-        >
-          <option value="">Seleccione</option>
-          <option value="Sin ocupación">Sin ocupación</option>
-          <option value="Trabaja en el hogar">Trabaja en el hogar</option>
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="parentesco">Parentesco:</label>
-        <select
-          className="form-control"
-          id="parentesco"
-          value={parentesco}
-          onChange={(e) => setParentesco(e.target.value)}
-        >
-          <option value="">Seleccione</option>
-          <option value="Padre">Padre</option>
-          <option value="Abuelo">Abuelo</option>
-          <option value="Madre">Madre</option>
-          <option value="Abuela">Abuela</option>
-          <option value="Tio">Tío</option>
-          <option value="Tia">Tía</option>
-          <option value="Hermano">Hermano</option>
-          <option value="Hermana">Hermana</option>
-        </select>
-      </div>
         {editar ? (
           <div>
             <button
@@ -400,8 +352,8 @@ const Encargado = () => {
             Registrar
           </button>
         )}
-          <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menu Principal
         </Link>
       </div>
 
@@ -416,10 +368,10 @@ const Encargado = () => {
             </tr>
           </thead>
           <tbody>
-            {estudiantesList.map((val, key) => (
+            {EncargadoList.map((val, key) => (
               <tr key={key}>
-                <th>{val.Persona_Id}</th>
-                <td>{val.Persona_Nombre}</td>
+                <th>{val.Encargados_Id}</th>
+                <td>{val.Persona_Id.Persona_Nombre}</td>
                 <td>{val.Persona_PApellido}</td>
                 <td>{val.Persona_SApellido}</td>
                 <td>
@@ -432,7 +384,7 @@ const Encargado = () => {
                     </button>
                     <button
                       className="btn btn-danger"
-                      onClick={() => eliminar(val.Persona_Id)}
+                      onClick={() => eliminar(val.Encargados_Id)}
                     >
                       Eliminar
                     </button>

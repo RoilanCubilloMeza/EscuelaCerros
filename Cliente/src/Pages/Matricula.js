@@ -422,7 +422,7 @@ function Matricula() {
                 <th>{val.Estudiantes_id}</th>
                 <th>{val.Estudiantes_Grado}</th>
                 <td>{val.Estudiantes_Estado}</td> 
-                <td>{Persona?.Persona_Nombre}</td>
+                <td>{val.Persona_Nombre}</td>
                 <td>
                   <div className="btn-group" role="group">
                     <button

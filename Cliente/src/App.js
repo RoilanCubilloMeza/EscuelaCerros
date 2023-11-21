@@ -21,7 +21,9 @@ import AdminDashboard from "./Dashboard/AdminDashboard";
 import ProfesorDashboard from "./Dashboard/ProfesorDashboard";
 import EstudianteDashboard from "./Dashboard/EstudianteDashboard";
 import Usuarios from "./Pages/Usuarios";
+import Noticias from "./Pages/Noticias";
 import Roles from "./Pages/Roles";
+import Parentesco from "./Pages/Perentesco";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "./components/Theme";
@@ -54,6 +56,9 @@ function App() {
             <Route path="/EstudianteDashboard" element={<EstudianteDashboard />} /> 
             <Route path="/Usuarios" element={<Usuarios/>}/>
             <Route path="/Roles" element={<Roles/>}/>
+            <Route path="/Noticias" element={<Noticias/>}/>
+            <Route path="/Parentesco" element={<Parentesco/>}/>
+
           </Routes>
         </ThemeProvider>
       </UserProvider>

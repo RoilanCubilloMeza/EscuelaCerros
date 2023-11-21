@@ -33,6 +33,7 @@ const AdminDashboard = () => {
       <h1 className="text-center mb-4">Administración</h1>
       <div className="row justify-content-center">
         {[
+             { category: 'Parentesco', icon: <FaUser size={40} />, path: '/Parentesco' },
           { category: 'Roles', icon: <FaUsers size={40} />, path: '/Roles' },
           { category: 'Usuarios', icon: <FaUserCircle size={40} />, path: '/Usuarios' },
           { category: 'Encargado', icon: <FaUser size={40} />, path: '/Encargado' },

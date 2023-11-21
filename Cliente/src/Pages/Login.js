@@ -100,6 +100,18 @@ const Login = () => {
               Olvidó su contraseña
             </button>
           </div>
+          <div>
+          <p className="mt-3 form ">
+              ¿No tienes un usuario? 
+              <br></br>
+              <span 
+                className="btn btn-outline-primary cursor-pointer"
+                onClick={() => navigate("/register")}
+              >
+                Regístrate aquí
+              </span>
+            </p>
+          </div>
         </form>
       </div>
     </div>

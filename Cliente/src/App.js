@@ -33,11 +33,11 @@ function App() {
     <BrowserRouter>
       <UserProvider>
         <ThemeProvider>
-          <Navbar />
+          <Navbar/>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Registration />} />
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home/>} />
             <Route path="/Estudiantes" element={<Persona />} />
             <Route path="/Encargado" element={<Encargado />} />
             <Route path="/Enfermedades" element={<Enfermedades />} />
@@ -58,7 +58,6 @@ function App() {
             <Route path="/Roles" element={<Roles/>}/>
             <Route path="/Noticias" element={<Noticias/>}/>
             <Route path="/Parentesco" element={<Parentesco/>}/>
-
           </Routes>
         </ThemeProvider>
       </UserProvider>

@@ -7,7 +7,7 @@ import { useTheme } from '../components/Theme';
 const Registration = () => {
   const [Usuarios_Nombre, setUsuarios_Nombre] = useState("");
   const [Usuarios_contraseña, setUsuarios_contraseña] = useState("");
-  const [Roles_Id, setRolId] = useState(3);
+  const [Roles_Id,] = useState(3);
   const navigate = useNavigate();
   const { darkMode } = useTheme();
 

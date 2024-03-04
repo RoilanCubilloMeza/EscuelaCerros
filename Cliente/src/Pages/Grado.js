@@ -57,7 +57,6 @@ const Grado = () => {
       Grado_Nombre: Grado_Nombre,
       Grado_Aula: Grado_Aula,
       Grado_Id: Grado_Id,
-
     }).then(() => {
       getLista();
     });
@@ -68,7 +67,7 @@ const Grado = () => {
       timer: 3000,
     });
   };
-  
+
   const limpiarDatos = () => {
     setId("");
     setNombre("");
@@ -170,8 +169,11 @@ const Grado = () => {
             Registrar
           </button>
         )}
-          <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menu Principal
+        </Link>
+        <Link to="/Matricula" className="btn btn-warning m-3">
+        Matricula
         </Link>
       </div>
 

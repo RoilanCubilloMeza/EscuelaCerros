@@ -82,6 +82,9 @@ return(
  <Link to="/admindashboard" className="btn btn-secondary m-3">
          Menu Principal 
         </Link>
+        <Link to="/Enfermedades" className="btn btn-warning m-3">
+        Enfermedades 
+        </Link>
  </div>
    
 );

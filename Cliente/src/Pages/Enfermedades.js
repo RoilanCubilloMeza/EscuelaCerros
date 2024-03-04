@@ -209,6 +209,9 @@ const Enfermedades = () => {
           <Link to="/admindashboard" className="btn btn-secondary m-3">
          Menu Principal 
         </Link>
+        <Link to="/Encargado" className="btn btn-warning m-3">
+        Encargado 
+        </Link>
       </div>
 
       <div className="form-group">

@@ -355,6 +355,9 @@ const [ParentescoList,setParentescoList]=useState([]);
         <Link to="/admindashboard" className="btn btn-secondary m-3">
           Menu Principal
         </Link>
+        <Link to="/Parentesco" className="btn btn-warning m-3">
+        Parentesco 
+        </Link>
       </div>
 
       <div className="form-group">

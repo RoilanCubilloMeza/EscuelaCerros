@@ -73,19 +73,30 @@ const AdminDashboard = () => {
 
   const otherItems = [
     {
-      category: "Parentesco",
-      icon: <FaUser size={40} />,
-      path: "/Parentesco",
+      category: "Estudiantes",
+      icon: <FaUsers size={40} />,
+      path: "/Estudiantes",
     },
+    {
+      category: "Lugar Residencia",
+      icon: <FaMapMarkerAlt size={40} />,
+      path: "/LugarResidencia",
+    },
+    {
+      category: "Enfermedad",
+      icon: <FaStethoscope size={40} />,
+      path: "/Enfermedades",
+    },
+   
     {
       category: "Encargado",
       icon: <FaUser size={40} />,
       path: "/Encargado",
     },
     {
-      category: "Enfermedad",
-      icon: <FaStethoscope size={40} />,
-      path: "/Enfermedades",
+      category: "Parentesco",
+      icon: <FaUser size={40} />,
+      path: "/Parentesco",
     },
     {
       category: "Escolaridad",
@@ -93,19 +104,9 @@ const AdminDashboard = () => {
       path: "/Escolaridad",
     },
     {
-      category: "Estudiantes",
-      icon: <FaUsers size={40} />,
-      path: "/Estudiantes",
-    },
-    {
       category: "Grado",
       icon: <FaGraduationCap size={40} />,
       path: "/Grado",
-    },
-    {
-      category: "Lugar Residencia",
-      icon: <FaMapMarkerAlt size={40} />,
-      path: "/LugarResidencia",
     },
     {
       category: "Matricula",

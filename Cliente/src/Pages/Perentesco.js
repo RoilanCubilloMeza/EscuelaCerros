@@ -159,6 +159,10 @@ const Parentesco = () => {
           <Link to="/admindashboard" className="btn btn-secondary m-3">
          Menu Principal 
         </Link>
+        <Link to="/Escolaridad" className="btn btn-warning m-3">
+        Escolaridad
+        </Link>
+        
       </div>
 
       <div className="form-group">

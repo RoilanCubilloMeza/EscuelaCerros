@@ -282,6 +282,11 @@ const Persona = () => {
         <Link to="/admindashboard" className="btn btn-secondary m-3">
          Menu Principal 
         </Link>
+
+        <Link to="/LugarResidencia" className="btn btn-warning m-3">
+        Lugar Residencia 
+        </Link>
+
       </div>
 
       <div className="form-group">

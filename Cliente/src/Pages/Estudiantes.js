@@ -283,8 +283,8 @@ const Persona = () => {
          Menu Principal 
         </Link>
 
-        <Link to="/LugarResidencia" className="btn btn-warning m-3">
-        Lugar Residencia 
+        <Link to="/Adecuacion" className="btn btn-warning m-3">
+        Adecuacion 
         </Link>
 
       </div>

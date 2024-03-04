@@ -13,6 +13,7 @@ import {
   FaNewspaper,
   FaUserCircle,
 } from "react-icons/fa";
+import { HiAdjustments } from "react-icons/hi";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -76,6 +77,11 @@ const AdminDashboard = () => {
       category: "Estudiantes",
       icon: <FaUsers size={40} />,
       path: "/Estudiantes",
+    },
+    {
+      category: "Adecuacion",
+      icon: <HiAdjustments size={40} />,
+      path: "/Adecuacion",
     },
     {
       category: "Lugar Residencia",

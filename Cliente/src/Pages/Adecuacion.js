@@ -154,10 +154,9 @@ const Adecuacion = () => {
           <button type="submit" className="btn btn-primary m-3" onClick={add}>
             Registrar
           </button>
-          
         )}
-          <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menu Principal
         </Link>
       </div>
 

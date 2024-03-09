@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 import { useTheme } from "./Theme";
 import { FaSun, FaMoon, FaUser } from "react-icons/fa"; // Import FaUser icon
 import { useUser } from "./UserContext";
+import { Container, Nav, Navbar } from 'react-bootstrap';
 
 const navItems = [
   { path: "/login", label: "Ingresar" },
   { path: "/register", label: "Registro" },
 ];
 
-const Navbar = () => {
+const CustomNavbar = () => {
   const { darkMode, setDarkMode } = useTheme();
   const { Usuarios_Nombre } = useUser();
 
@@ -18,13 +19,9 @@ const Navbar = () => {
   };
 
   return (
-    <nav
-      className={`navbar navbar-expand-lg ${
-        darkMode ? "navbar-dark bg-secondary" : "navbar-light bg-success"
-      } transition`}
-    >
-      <div className="container d-flex justify-content-between">
-        <Link to="/" className="navbar-brand">
+    <Navbar expand="lg" className={`bg-${darkMode ? "secondary" : "success"}`}>
+      <Container>
+        <Navbar.Brand as={Link} to="/">
           <img
             src="/EscudoEscuelaCerros-removebg-preview.png"
             alt="Escuela Cerros Logo"
@@ -32,55 +29,41 @@ const Navbar = () => {
             className="d-inline-block align-text-center m-1"
           />
           Inicio
-        </Link>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+  <Nav className="mr-auto">
+    {Usuarios_Nombre && (
+      <Nav.Item>
+        <Nav.Link disabled>
+          <FaUser className="mr-2" />
+          ¡Hola, {Usuarios_Nombre}!
+        </Nav.Link>
+      </Nav.Item>
+    )}
+  </Nav>
+  <Nav className="ml-auto">
+    {navItems.map((item) => (
+      <Nav.Link as={Link} to={item.path} key={item.path}>
+        {item.label}
+      </Nav.Link>
+    ))}
+  </Nav>
+</Navbar.Collapse>
 
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ml-auto">
-            {navItems.map((item) => (
-              <li className="nav-item" key={item.path}>
-                <Link to={item.path} className="nav-link align-text-center m-1">
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-            {Usuarios_Nombre && (
-              <li className="nav-item">
-                <span className="nav-link align-text-center m-1">
-                  <FaUser className="mr-2" />
-                  ¡Hola, {Usuarios_Nombre}!
-                </span>
-              </li>
-            )}
-          </ul>
-        </div>
-
+        </Navbar.Collapse>
         <div>
           <button
             onClick={toggleDarkMode}
             className="btn btn-primary transition mr-4"
           >
-            {darkMode ? (
-              <FaSun className="mr-2" />
-            ) : (
-              <FaMoon className="mr-2" />
-            )}
-            {darkMode ? "Modo Claro" : "Modo Oscuro"}
-          </button>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
+            {darkMode ? <FaSun className="mr-2" /> : <FaMoon className="mr-2" />}
           </button>
         </div>
-      </div>
-    </nav>
+      </Container>
+    </Navbar>
   );
 };
 
-export default Navbar;
+export default CustomNavbar;

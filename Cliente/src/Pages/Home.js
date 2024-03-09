@@ -5,6 +5,7 @@ import { MDBCarousel, MDBCarouselItem } from "mdb-react-ui-kit";
 import { FaFacebook, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTheme } from "../components/Theme";
 
+
 const Home = () => {
   const { darkMode } = useTheme();
 
@@ -130,6 +131,7 @@ const Home = () => {
         </div>
       </div>
     </div>
+    
   );
 };
 

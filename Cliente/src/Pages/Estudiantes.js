@@ -280,13 +280,12 @@ const Persona = () => {
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+          Menu Principal
         </Link>
 
         <Link to="/Adecuacion" className="btn btn-warning m-3">
-        Adecuacion 
+          Adecuacion
         </Link>
-
       </div>
 
       <div className="form-group">

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { Link } from "react-router-dom";
-
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
+
 const Persona = () => {
   const { darkMode } = useTheme();
 
-  //Estudiantes
   const [Persona_Nombre, setNombre] = useState("");
   const [Persona_PApellido, setPApellido] = useState("");
   const [Persona_SApellido, setSApellido] = useState("");
@@ -16,12 +15,25 @@ const Persona = () => {
   const [editar, setEditar] = useState(false);
   const [Persona_Cedula, setCedula] = useState("");
   const [Persona_Edad, setEdad] = useState("");
-  const [Persona_Sexo, setSexo] = useState(""); // Mujer or Hombre
+  const [Persona_Sexo, setSexo] = useState("");
   const [Persona_Nacionalidad, setNacionalidad] = useState("");
   const [Persona_LuNacimiento, setLugarNacimiento] = useState("");
   const [Persona_Correo, setCorreoElectronico] = useState("");
 
   const add = () => {
+    if (
+      !Persona_Nombre.trim() ||
+      !Persona_Cedula.trim() ||
+      !Persona_Sexo.trim()
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Vacíos",
+        text: "Por favor completa todos los campos obligatorios",
+      });
+      return;
+    }
+
     Axios.post("http://localhost:3001/createPersona", {
       Persona_Edad: Persona_Edad,
       Persona_Nombre: Persona_Nombre,
@@ -36,7 +48,7 @@ const Persona = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
+        title: "<strong >Guardado exitoso</strong>",
         html: "<i>el Estudiante <strong>" + Persona_Nombre + "</strong></i>",
         icon: "success",
         timer: 3000,
@@ -75,6 +87,21 @@ const Persona = () => {
   };
 
   const actualizar = () => {
+    if (
+      !Persona_Nombre.trim() ||
+      !Persona_Cedula.trim() ||
+      !Persona_Sexo.trim() ||
+      !Persona_PApellido.trim() ||
+      !Persona_SApellido.trim()
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Vacíos",
+        text: "Por favor completa todos los campos obligatorios",
+      });
+      return;
+    }
+
     Axios.put("http://localhost:3001/actualizarPersona", {
       Persona_Edad: Persona_Edad,
       Persona_Nombre: Persona_Nombre,
@@ -90,12 +117,13 @@ const Persona = () => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
+      title: "<strong >Editado exitoso</strong>",
       html: "<i>el Estudiante <strong>" + Persona_Nombre + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
   };
+
   const limpiarDatos = () => {
     setId("");
     setNombre("");
@@ -109,6 +137,7 @@ const Persona = () => {
     setCorreoElectronico("");
     setEditar(false);
   };
+
   const eliminar = (Persona_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -154,6 +183,7 @@ const Persona = () => {
       );
     };
   }, [darkMode]);
+
   return (
     <div className="container">
       <h1>Formulario de Estudiante</h1>
@@ -168,6 +198,7 @@ const Persona = () => {
           id="Persona_Nombre"
           value={Persona_Nombre}
           onChange={(e) => setNombre(e.target.value)}
+          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
         />
       </div>
       <div className="form-group">
@@ -178,6 +209,7 @@ const Persona = () => {
           id="Persona_PApellido"
           value={Persona_PApellido}
           onChange={(e) => setPApellido(e.target.value)}
+          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
         />
       </div>
       <div className="form-group">
@@ -188,6 +220,7 @@ const Persona = () => {
           id="Persona_SApellido"
           value={Persona_SApellido}
           onChange={(e) => setSApellido(e.target.value)}
+          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
         />
       </div>
       <div className="form-group">
@@ -198,19 +231,22 @@ const Persona = () => {
           id="cedula"
           value={Persona_Cedula}
           onChange={(e) => setCedula(e.target.value)}
+          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
         />
       </div>
-
       <div className="form-group">
-        <label htmlFor="Persona_Nombre">Edad:</label>
-        <input
-          type="number"
-          className="form-control"
-          id="Persona_Edad"
-          value={Persona_Edad}
-          onChange={(e) => setEdad(e.target.value)}
-        />
-      </div>
+  <label htmlFor="Persona_Edad">Edad:</label>
+  <input
+    type="text"
+    className="form-control"
+    id="Persona_Edad"
+    value={Persona_Edad}
+    onChange={(e) => setEdad(e.target.value)}
+    style={{ border: `${String(Persona_Edad).trim() === "" ? "1px solid red" : ""}` }}
+  />
+</div>
+
+
 
       <div className="form-group">
         <label htmlFor="sexo">Sexo:</label>
@@ -219,6 +255,7 @@ const Persona = () => {
           id="sexo"
           value={Persona_Sexo}
           onChange={(e) => setSexo(e.target.value)}
+          style={{ borderColor: Persona_Sexo.trim() === "" ? "red" : "" }}
         >
           <option value="">Seleccione</option>
           <option value="Hombre">Hombre</option>
@@ -233,6 +270,7 @@ const Persona = () => {
           id="nacionalidad"
           value={Persona_Nacionalidad}
           onChange={(e) => setNacionalidad(e.target.value)}
+          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
         />
       </div>
       <div className="form-group">
@@ -243,6 +281,7 @@ const Persona = () => {
           id="lugarNacimiento"
           value={Persona_LuNacimiento}
           onChange={(e) => setLugarNacimiento(e.target.value)}
+          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
         />
       </div>
 
@@ -254,6 +293,7 @@ const Persona = () => {
           id="Persona_Correo"
           value={Persona_Correo}
           onChange={(e) => setCorreoElectronico(e.target.value)}
+          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
         />
       </div>
       <div>
@@ -295,7 +335,8 @@ const Persona = () => {
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Edad</th>
-              <th scope="col">cedula</th>
+              <th scope="col">Cédula</th>
+              <th scope="col">Funcionalidad</th>
             </tr>
           </thead>
           <tbody>

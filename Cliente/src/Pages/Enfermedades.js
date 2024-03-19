@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
-
 import { useTheme } from "../components/Theme";
+
 const Enfermedades = () => {
   const { darkMode } = useTheme();
 
-  // ENFERMEDADES Y MEDICAMENTOS
   const [Enfermedades_PresentaEnfermedad, setPresentaEnfermedad] =
     useState("");
   const [Enfermedades_Nombre, setNombreEnfermedades] = useState("");
@@ -18,6 +17,15 @@ const Enfermedades = () => {
   const [Enfermedades_Id, setId] = useState("");
 
   const add = () => {
+    if (!Enfermedades_Nombre.trim() || !Enfermedades_Medicamento.trim() || !Enfermedades_Alergia.trim() || !Enfermedades_PresentaEnfermedad.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Vacíos",
+        text: "Por favor completa todos los campos",
+      });
+      return;
+    }
+
     Axios.post("http://localhost:3001/createEnfermedades", {
       Enfermedades_Nombre,
       Enfermedades_PresentaEnfermedad,
@@ -50,7 +58,6 @@ const Enfermedades = () => {
       console.error("Error fetching data:", error);
     }
   };
-  getLista();
 
   const editarEnfermedad = (val) => {
     setEditar(true);
@@ -62,12 +69,21 @@ const Enfermedades = () => {
   };
 
   const actualizar = () => {
+    if (!Enfermedades_Nombre.trim() || !Enfermedades_Medicamento.trim() || !Enfermedades_Alergia.trim() || !Enfermedades_PresentaEnfermedad.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Vacíos",
+        text: "Por favor completa todos los campos",
+      });
+      return;
+    }
+
     Axios.put("http://localhost:3001/actualizarEnfermedades", {
-    Enfermedades_Nombre:Enfermedades_Nombre,
-    Enfermedades_Alergia:Enfermedades_Alergia,
-    Enfermedades_PresentaEnfermedad:Enfermedades_PresentaEnfermedad,
-    Enfermedades_Medicamento:Enfermedades_Medicamento,
-      Enfermedades_Id: Enfermedades_Id,
+      Enfermedades_Nombre,
+      Enfermedades_Alergia,
+      Enfermedades_PresentaEnfermedad,
+      Enfermedades_Medicamento,
+      Enfermedades_Id,
     }).then(() => {
       getLista();
     });
@@ -78,6 +94,7 @@ const Enfermedades = () => {
       timer: 3000,
     });
   };
+
   const limpiarDatos = () => {
     setId("");
     setNombreEnfermedades("");
@@ -87,6 +104,7 @@ const Enfermedades = () => {
 
     setEditar(false);
   };
+
   const eliminar = (Enfermedades_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -122,6 +140,7 @@ const Enfermedades = () => {
       document.body.classList.add("bg-light");
       document.body.classList.add("text-dark");
     }
+    getLista();
 
     return () => {
       document.body.classList.remove(
@@ -132,9 +151,19 @@ const Enfermedades = () => {
       );
     };
   }, [darkMode]);
+
+  const inputStyle = {
+    borderColor:
+      Enfermedades_Nombre.trim() === "" ||
+      Enfermedades_Medicamento.trim() === "" ||
+      Enfermedades_Alergia.trim() === "" ||
+      Enfermedades_PresentaEnfermedad.trim() === ""
+        ? "red"
+        : "",
+  };
+
   return (
     <div className="container">
-      {/* ENFERMEDADES Y MEDICAMENTOS */}
       <h3 className="justify-content-center text-center">
         ENFERMEDADES Y MEDICAMENTOS
       </h3>
@@ -148,17 +177,21 @@ const Enfermedades = () => {
           className="form-control"
           id="Enfermedades_Nombre"
           value={Enfermedades_Nombre}
+          style={inputStyle}
           onChange={(e) => setNombreEnfermedades(e.target.value)}
         />
       </div>
 
       <div className="form-group">
-        <label htmlFor="Enfermedades_Medicamento">Nombre del medicamento:</label>
+        <label htmlFor="Enfermedades_Medicamento">
+          Nombre del medicamento:
+        </label>
         <input
           type="text"
           className="form-control"
           id="Enfermedades_Medicamento"
           value={Enfermedades_Medicamento}
+          style={inputStyle}
           onChange={(e) => setNombreMedicamento(e.target.value)}
         />
       </div>
@@ -169,17 +202,21 @@ const Enfermedades = () => {
           className="form-control"
           id="Enfermedades_Alergia"
           value={Enfermedades_Alergia}
+          style={inputStyle}
           onChange={(e) => setAlergiaMedicamento(e.target.value)}
         />
       </div>
 
       <div className="form-group">
-        <label htmlFor="Enfermedades_PresentaEnfermedad">Presenta Enfermedad:</label>
+        <label htmlFor="Enfermedades_PresentaEnfermedad">
+          Presenta Enfermedad:
+        </label>
         <input
           type="text"
           className="form-control"
           id="Enfermedades_PresentaEnfermedad"
           value={Enfermedades_PresentaEnfermedad}
+          style={inputStyle}
           onChange={(e) => setPresentaEnfermedad(e.target.value)}
         />
       </div>
@@ -206,11 +243,11 @@ const Enfermedades = () => {
             Registrar
           </button>
         )}
-          <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menu Principal
         </Link>
         <Link to="/Encargado" className="btn btn-warning m-3">
-        Encargado 
+          Encargado
         </Link>
       </div>
 
@@ -223,11 +260,10 @@ const Enfermedades = () => {
             </tr>
           </thead>
           <tbody>
-           {EnfermedadList.map((val, key) => (
+            {EnfermedadList.map((val, key) => (
               <tr key={key}>
                 <th>{val.Enfermedades_Id}</th>
                 <td>{val.Enfermedades_Nombre}</td>
-               
                 <td>
                   <div className="btn-group" role="group">
                     <button
@@ -249,8 +285,9 @@ const Enfermedades = () => {
           </tbody>
         </table>
       </div>
-
     </div>
   );
 };
+
 export default Enfermedades;
+

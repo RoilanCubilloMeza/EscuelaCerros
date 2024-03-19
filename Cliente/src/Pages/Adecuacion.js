@@ -3,24 +3,36 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+
 const Adecuacion = () => {
   const { darkMode } = useTheme();
 
-  //Estudiantes
   const [Adecuacion_Nombre, setNombre] = useState("");
   const [Adecuacion_Id, setId] = useState("");
   const [Adecuacion_List, setAdecuacion_List] = useState([]);
   const [editar, setEditar] = useState(false);
 
   const add = () => {
+    if (!Adecuacion_Nombre.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campo Vacío",
+        text: "Por favor completa el campo Nombre de la Adecuación",
+      });
+      return;
+    }
+
     Axios.post("http://localhost:3001/createAdecuacion", {
       Adecuacion_Nombre: Adecuacion_Nombre,
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Adecuacion <strong>" + Adecuacion_Nombre + "</strong></i>",
+        title: "<strong >Guardado exitoso</strong>",
+        html:
+          "<i>La Adecuación <strong>" +
+          Adecuacion_Nombre +
+          "</strong> ha sido registrada</i>",
         icon: "success",
         timer: 3000,
       });
@@ -42,15 +54,24 @@ const Adecuacion = () => {
     }
   };
 
-  getLista();
-
   const editarAdecuacion = (val) => {
     setEditar(true);
     setId(val.Adecuacion_Id);
     setNombre(val.Adecuacion_Nombre);
   };
 
+  getLista();
+
   const actualizar = () => {
+    if (!Adecuacion_Nombre.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campo Vacío",
+        text: "Por favor completa el campo Nombre de la Adecuación",
+      });
+      return;
+    }
+
     Axios.put("http://localhost:3001/actualizarAdecuacion", {
       Adecuacion_Nombre: Adecuacion_Nombre,
       Adecuacion_Id: Adecuacion_Id,
@@ -58,30 +79,34 @@ const Adecuacion = () => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Adecuacion <strong>" + Adecuacion_Nombre + "</strong></i>",
+      title: "<strong >Editado exitoso</strong>",
+      html:
+        "<i>La Adecuación <strong>" +
+        Adecuacion_Nombre +
+        "</strong> ha sido actualizada</i>",
       icon: "success",
       timer: 3000,
     });
   };
+
   const limpiarDatos = () => {
     setId("");
     setNombre("");
-
     setEditar(false);
   };
+
   const eliminar = (Adecuacion_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Adecuacion_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, Eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
@@ -90,7 +115,11 @@ const Adecuacion = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "la Adecuacion ha sido eliminado", "success");
+        Swal.fire(
+          "Eliminado",
+          "La Adecuación ha sido eliminada exitosamente",
+          "success"
+        );
       }
     });
   };
@@ -115,6 +144,7 @@ const Adecuacion = () => {
       );
     };
   }, [darkMode]);
+
   return (
     <div className="container">
       <h1>Escolaridad de la Persona</h1>
@@ -122,13 +152,16 @@ const Adecuacion = () => {
       {/* Datos personales del estudiante */}
       <h3>Datos personales</h3>
       <div className="form-group">
-        <label htmlFor="Adecuacion_Nombre">Nombre de la Adecuacion :</label>
+        <label htmlFor="Adecuacion_Nombre">Nombre de la Adecuación:</label>
         <input
           type="text"
           className="form-control"
           id="Adecuacion_Nombre"
           value={Adecuacion_Nombre}
           onChange={(e) => setNombre(e.target.value)}
+          style={{
+            borderColor: Adecuacion_Nombre.trim() === "" ? "red" : "",
+          }}
         />
       </div>
 
@@ -159,7 +192,7 @@ const Adecuacion = () => {
           Menu Principal
         </Link>
         <Link to="/LugarResidencia" className="btn btn-warning m-3">
-        Lugar Residencia 
+          Lugar Residencia
         </Link>
       </div>
 
@@ -203,3 +236,4 @@ const Adecuacion = () => {
 };
 
 export default Adecuacion;
+

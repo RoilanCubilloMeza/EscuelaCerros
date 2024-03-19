@@ -40,7 +40,7 @@ app.get("/obtenerParentesco", (req, res) => {
 
 app.put("/actualizarParentesco", (req, res) => {
   const Parentesco_Id = req.body.Parentesco_Id;
-  Parentesco_Nombre= req.body.Parentesco_Nombre;
+  const Parentesco_Nombre = req.body.Parentesco_Nombre; // Added 'const' here
   connection.query(
     "UPDATE parentesco SET Parentesco_Nombre=? WHERE Parentesco_Id=?",
     [
@@ -58,10 +58,11 @@ app.put("/actualizarParentesco", (req, res) => {
   );
 });
 
+
 app.delete("/deleteParentesco/:Parentesco_Id", (req, res) => {
   const Parentesco_Id = req.params.Parentesco_Id;
   connection.query(
-    "DELETE FROM perentesco WHERE Parentesco_Id=?",
+    "DELETE FROM parentesco WHERE Parentesco_Id=?",
     Parentesco_Id,
     (err, result) => {
       if (err) {

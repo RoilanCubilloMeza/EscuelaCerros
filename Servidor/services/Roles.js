@@ -8,15 +8,15 @@ const { connection } = require("../config");
 
 app.post("/createRoles", (req, res) => {
   const Roles_Descripcion = req.body.Roles_Descripcion;
-  const Rol_Nombre = req.body.Rol_Nombre;
+  const Roles_Nombre = req.body.Roles_Nombre;
  
  
  
   connection.query(
-    "INSERT INTO roles(Roles_Descripcion,Usuarios_contraseña) VALUES (?,?)",
+    "INSERT INTO roles(Roles_Descripcion,Roles_Nombre) VALUES (?,?)",
     [
         Roles_Descripcion,
-        Rol_Nombre,
+        Roles_Nombre,
       
     ],
     (err, result) => {
@@ -52,14 +52,14 @@ app.get("/obtenerRoles", (req, res) => {
 
 app.put("/actualizarRoles", (req, res) => {
     const Roles_Descripcion = req.body.Roles_Descripcion;
-    const Rol_Nombre = req.body.Rol_Nombre;
+    const Roles_Nombre = req.body.Roles_Nombre;
     const Roles_Id= req.body.Roles_Id;
   
   connection.query(
-    "UPDATE roles SET Roles_Descripcion=?,Rol_Nombre=? WHERE Roles_Id=?",
+    "UPDATE roles SET Roles_Descripcion=?,Roles_Nombre=? WHERE Roles_Id=?",
     [
         Roles_Descripcion,
-        Rol_Nombre,
+        Roles_Nombre,
         Roles_Id,
     ],
     (err, result) => {
@@ -77,7 +77,7 @@ app.delete("/deleteRoles/:Roles_Id", (req, res) => {
   const Roles_Id = req.params.Roles_Id;
   connection.query(
     "DELETE FROM roles WHERE Roles_Id=?",
-    Usuarios_Id,
+    Roles_Id,
     (err, result) => {
       if (err) {
         console.log(err);

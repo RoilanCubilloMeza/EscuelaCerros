@@ -16,8 +16,9 @@ app.post("/createPersona", (req, res) => {
   const Persona_LuNacimiento = req.body.Persona_LuNacimiento;
   const Persona_Nacionalidad = req.body.Persona_Nacionalidad;
   const Persona_Correo = req.body.Persona_Correo;
+  const Persona_FNAciomiento = req.body.Persona_FNAciomiento;
   connection.query(
-    "INSERT INTO personas(Persona_Nombre,Persona_PApellido,Persona_SApellido,Persona_Cedula,Persona_Edad,Persona_Sexo,Persona_LuNacimiento,Persona_Nacionalidad ,Persona_Correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)",
+    "INSERT INTO personas(Persona_Nombre,Persona_FNAciomiento,Persona_PApellido,Persona_SApellido,Persona_Cedula,Persona_Edad,Persona_Sexo,Persona_LuNacimiento,Persona_Nacionalidad ,Persona_Correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)",
     [
       Persona_Nombre,
       Persona_PApellido,
@@ -28,6 +29,7 @@ app.post("/createPersona", (req, res) => {
       Persona_Nacionalidad,
       Persona_LuNacimiento,
       Persona_Correo,
+      Persona_FNAciomiento,
     ],
     (err, result) => {
       if (err) {
@@ -39,16 +41,6 @@ app.post("/createPersona", (req, res) => {
     }
   );
 });
-
-//app.get("/obtener", (req, res) => {
-//connection.query("SELECT * FROM pruebas", (err, result) => {
-//if (err) {
-//console.log(err);
-//} else {
-//res.send(result);
-//}
-//});
-//});
 
 app.get("/obtenerPersonas", (req, res) => {
   connection.query("SELECT * FROM personas", (err, result) => {
@@ -71,8 +63,9 @@ app.put("/actualizarPersona", (req, res) => {
   const Persona_LuNacimiento = req.body.Persona_LuNacimiento;
   const Persona_Nacionalidad = req.body.Persona_Nacionalidad;
   const Persona_Correo = req.body.Persona_Correo;
+  const Persona_FNAciomiento = req.body.Persona_FNAciomiento;
   connection.query(
-    "UPDATE personas SET Persona_Nombre=?, Persona_PApellido=?, Persona_SApellido=?, Persona_Cedula=?, Persona_Edad=?, Persona_Sexo=?, Persona_LuNacimiento=?, Persona_Nacionalidad=?, Persona_Correo=? WHERE Persona_Id=?",
+    "UPDATE personas SET Persona_Nombre=?,Persona_FNAciomiento=?, Persona_PApellido=?, Persona_SApellido=?, Persona_Cedula=?, Persona_Edad=?, Persona_Sexo=?, Persona_LuNacimiento=?, Persona_Nacionalidad=?, Persona_Correo=? WHERE Persona_Id=?",
     [
       Persona_Nombre,
       Persona_PApellido,
@@ -83,6 +76,7 @@ app.put("/actualizarPersona", (req, res) => {
       Persona_Nacionalidad,
       Persona_LuNacimiento,
       Persona_Correo,
+      Persona_FNAciomiento,
       Persona_Id,
     ],
     (err, result) => {

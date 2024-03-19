@@ -3,25 +3,34 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+
 const Escolaridad = () => {
   const { darkMode } = useTheme();
 
-  //Estudiantes
   const [Escolaridad_Nombre, setNombre] = useState("");
- const [Escolaridad_Id,setId]=useState("");
-  const [ EscolaridadList, setEscolaridadList] = useState([]);
+  const [Escolaridad_Id, setId] = useState("");
+  const [EscolaridadList, setEscolaridadList] = useState([]);
   const [editar, setEditar] = useState(false);
 
   const add = () => {
+    if (!Escolaridad_Nombre.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campo Vacío",
+        text: "Por favor completa el nombre de la escolaridad",
+      });
+      return;
+    }
+
     Axios.post("http://localhost:3001/createEscolaridad", {
-        Escolaridad_Nombre: Escolaridad_Nombre,
-     
+      Escolaridad_Nombre: Escolaridad_Nombre,
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Escolaridad <strong>" + Escolaridad_Nombre + "</strong></i>",
+        html:
+          "<i>el Escolaridad <strong>" + Escolaridad_Nombre + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -42,37 +51,46 @@ const Escolaridad = () => {
       console.error("Error fetching data:", error);
     }
   };
-
   getLista();
 
   const editarEscolaridad = (val) => {
     setEditar(true);
     setId(val.Escolaridad_Id);
     setNombre(val.Escolaridad_Nombre);
-  
   };
 
   const actualizar = () => {
+    if (!Escolaridad_Nombre.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campo Vacío",
+        text: "Por favor completa el nombre de la escolaridad",
+      });
+      return;
+    }
+
+    getLista();
     Axios.put("http://localhost:3001/actualizarEscolaridad", {
-      Escolaridad_Nombre:Escolaridad_Nombre,
-      Escolaridad_Id:Escolaridad_Id
+      Escolaridad_Nombre: Escolaridad_Nombre,
+      Escolaridad_Id: Escolaridad_Id,
     }).then(() => {
-      getLista();
+    
     });
     Swal.fire({
       title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Estudiante <strong>" + Escolaridad_Nombre + "</strong></i>",
+      html:
+        "<i>el Estudiante <strong>" + Escolaridad_Nombre + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
   };
+
   const limpiarDatos = () => {
     setId("");
     setNombre("");
-    
-    
     setEditar(false);
   };
+
   const eliminar = (Escolaridad_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -87,12 +105,12 @@ const Escolaridad = () => {
       confirmButtonText: "Si, Eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteEscolaridad/" + Escolaridad_Id).then(
-          () => {
-            getLista();
-            limpiarDatos();
-          }
-        );
+        Axios.delete(
+          "http://localhost:3001/deleteEscolaridad/" + Escolaridad_Id
+        ).then(() => {
+          getLista();
+          limpiarDatos();
+        });
         Swal.fire("Eliminado", "el usuario ha sido eliminado", "success");
       }
     });
@@ -118,6 +136,7 @@ const Escolaridad = () => {
       );
     };
   }, [darkMode]);
+
   return (
     <div className="container">
       <h1>Escolaridad de la Persona</h1>
@@ -132,9 +151,12 @@ const Escolaridad = () => {
           id="Escolaridad_Nombre"
           value={Escolaridad_Nombre}
           onChange={(e) => setNombre(e.target.value)}
+          style={{
+            borderColor: Escolaridad_Nombre.trim() === "" ? "red" : "",
+          }}
         />
       </div>
-      
+
       <div>
         {editar ? (
           <div>
@@ -158,11 +180,11 @@ const Escolaridad = () => {
             Registrar
           </button>
         )}
-          <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menu Principal
         </Link>
         <Link to="/Grado" className="btn btn-warning m-3">
-         Grado del Estudiante
+          Grado del Estudiante
         </Link>
       </div>
 
@@ -172,6 +194,8 @@ const Escolaridad = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
+              <th scope="col">Funcionalidad</th>
+
             </tr>
           </thead>
           <tbody>
@@ -179,7 +203,6 @@ const Escolaridad = () => {
               <tr key={key}>
                 <th>{val.Escolaridad_Id}</th>
                 <td>{val.Escolaridad_Nombre}</td>
-               
                 <td>
                   <div className="btn-group" role="group">
                     <button
@@ -206,3 +229,4 @@ const Escolaridad = () => {
 };
 
 export default Escolaridad;
+

@@ -3,24 +3,33 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+
 const Parentesco = () => {
   const { darkMode } = useTheme();
 
-  //Estudiantes
   const [Parentesco_Nombre, setNombre] = useState("");
   const [Parentesco_Id, setId] = useState("");
   const [Parentesco_List, setParentesco_List] = useState([]);
   const [editar, setEditar] = useState(false);
 
   const add = () => {
+    if (!Parentesco_Nombre.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campo Vacío",
+        text: "Por favor completa el campo Nombre del Parentesco",
+      });
+      return;
+    }
+
     Axios.post("http://localhost:3001/createParentesco", {
       Parentesco_Nombre: Parentesco_Nombre,
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Adecuacion <strong>" + Parentesco_Nombre + "</strong></i>",
+        title: "<strong >Guardado exitoso</strong>",
+        html: "<i>el Parentesco <strong>" + Parentesco_Nombre + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -42,8 +51,6 @@ const Parentesco = () => {
     }
   };
 
-  getLista();
-
   const editarAdecuacion = (val) => {
     setEditar(true);
     setId(val.Parentesco_Id);
@@ -51,25 +58,36 @@ const Parentesco = () => {
   };
 
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarAdecuacion", {
+    if (!Parentesco_Nombre.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campo Vacío",
+        text: "Por favor completa el campo Nombre del Parentesco",
+      });
+      return;
+    }
+
+    Axios.put("http://localhost:3001/actualizarParentesco", {
       Parentesco_Nombre: Parentesco_Nombre,
       Parentesco_Id: Parentesco_Id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
+      title: "<strong >Editado exitoso</strong>",
       html: "<i>el Parentesco <strong>" + Parentesco_Nombre + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
   };
+
+  getLista();
   const limpiarDatos = () => {
     setId("");
     setNombre("");
-
     setEditar(false);
   };
+
   const eliminar = (Parentesco_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -90,7 +108,11 @@ const Parentesco = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "la Adecuacion ha sido eliminado", "success");
+        Swal.fire(
+          "Eliminado",
+          "la Adecuacion ha sido eliminado",
+          "success"
+        );
       }
     });
   };
@@ -115,6 +137,7 @@ const Parentesco = () => {
       );
     };
   }, [darkMode]);
+
   return (
     <div className="container">
       <h1>Parentesco</h1>
@@ -129,6 +152,9 @@ const Parentesco = () => {
           id="Parentesco_Nombre"
           value={Parentesco_Nombre}
           onChange={(e) => setNombre(e.target.value)}
+          style={{
+            borderColor: Parentesco_Nombre.trim() === "" ? "red" : "",
+          }}
         />
       </div>
 
@@ -154,15 +180,13 @@ const Parentesco = () => {
           <button type="submit" className="btn btn-primary m-3" onClick={add}>
             Registrar
           </button>
-          
         )}
-          <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menu Principal
         </Link>
         <Link to="/Escolaridad" className="btn btn-warning m-3">
-        Escolaridad
+          Escolaridad
         </Link>
-        
       </div>
 
       <div className="form-group">
@@ -200,8 +224,9 @@ const Parentesco = () => {
           </tbody>
         </table>
       </div>
-    </div>
+      </div>
   );
 };
 
 export default Parentesco;
+

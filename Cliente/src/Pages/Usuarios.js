@@ -3,23 +3,32 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+
 const Usuarios = () => {
   const { darkMode } = useTheme();
 
-  //Estudiantes
   const [Adecuacion_List, setAdecuacion_List] = useState([]);
   const [editar, setEditar] = useState(false);
-  const [Usuarios_Id ,setId]= useState("");
-  const [usuarios_Nombre , setNombre] = useState("");
-  const [Usuarios_contraseña ,setContraseña]= useState("");
-  const [Roles_Id ,setRolId] = useState(3);
+  const [Usuarios_Id, setId] = useState("");
+  const [usuarios_Nombre, setNombre] = useState("");
+  const [Usuarios_contraseña, setContraseña] = useState("");
+  const [Roles_Id, setRolId] = useState(3);
   const [obtenerRol, setRol] = useState([]);
 
   const add = () => {
+    if (!usuarios_Nombre.trim() || !Usuarios_contraseña.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Vacíos",
+        text: "Por favor completa todos los campos",
+      });
+      return;
+    }
+
     Axios.post("http://localhost:3001/createUsuariosLogin", {
       usuarios_Nombre: usuarios_Nombre,
-      Usuarios_contraseña:Usuarios_contraseña,
-      Roles_Id:Roles_Id,
+      Usuarios_contraseña: Usuarios_contraseña,
+      Roles_Id: Roles_Id,
     }).then(() => {
       getLista();
       limpiarDatos();
@@ -31,7 +40,6 @@ const Usuarios = () => {
       });
     });
   };
-
 
   useEffect(() => {
     Axios.get("http://localhost:3001/obtenerRoles")
@@ -57,9 +65,7 @@ const Usuarios = () => {
       console.error("Error fetching data:", error);
     }
   };
-
-  getLista();
-
+getLista();
   const editarAdecuacion = (val) => {
     setEditar(true);
     setId(val.Usuarios_Id);
@@ -69,11 +75,20 @@ const Usuarios = () => {
   };
 
   const actualizar = () => {
+    if (!usuarios_Nombre.trim() || !Usuarios_contraseña.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Vacíos",
+        text: "Por favor completa todos los campos",
+      });
+      return;
+    }
+
     Axios.put("http://localhost:3001/actualizarUsuariosLogin", {
-        usuarios_Nombre: usuarios_Nombre,
-        Usuarios_contraseña:Usuarios_contraseña,
-        Roles_Id:Roles_Id,
-        Usuarios_Id:Usuarios_Id,
+      usuarios_Nombre: usuarios_Nombre,
+      Usuarios_contraseña: Usuarios_contraseña,
+      Roles_Id: Roles_Id,
+      Usuarios_Id: Usuarios_Id,
     }).then(() => {
       getLista();
     });
@@ -84,14 +99,15 @@ const Usuarios = () => {
       timer: 3000,
     });
   };
+
   const limpiarDatos = () => {
     setId("");
     setNombre("");
     setContraseña("");
     setRolId("");
-
     setEditar(false);
   };
+
   const eliminar = (Usuarios_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -112,7 +128,11 @@ const Usuarios = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "la Adecuacion ha sido eliminado", "success");
+        Swal.fire(
+          "Eliminado",
+          "la Adecuacion ha sido eliminado",
+          "success"
+        );
       }
     });
   };
@@ -137,6 +157,7 @@ const Usuarios = () => {
       );
     };
   }, [darkMode]);
+
   return (
     <div className="container">
       <h1>Escolaridad de la Persona</h1>
@@ -144,26 +165,32 @@ const Usuarios = () => {
       {/* Datos personales del estudiante */}
       <h3>Datos personales</h3>
       <div className="form-group">
-        <label htmlFor="usuarios_Nombre">Nombre del usuario :</label>
+        <label htmlFor="usuarios_Nombre">Nombre del usuario:</label>
         <input
           type="text"
           className="form-control"
           id="usuarios_Nombre"
           value={usuarios_Nombre}
           onChange={(e) => setNombre(e.target.value)}
+          style={{
+            borderColor: usuarios_Nombre.trim() === "" ? "red" : "",
+          }}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Usuarios_contraseña">Contraseña  :</label>
+        <label htmlFor="Usuarios_contraseña">Contraseña:</label>
         <input
           type="text"
           className="form-control"
           id="Usuarios_contraseña"
           value={Usuarios_contraseña}
           onChange={(e) => setContraseña(e.target.value)}
+          style={{
+            borderColor: Usuarios_contraseña.trim() === "" ? "red" : "",
+          }}
         />
       </div>
-   
+      <br></br>
       <div className="input-group mb-3">
         <span className="input-group-text" id="basic-addon1">
           Rol:
@@ -179,9 +206,7 @@ const Usuarios = () => {
           </option>
           {obtenerRol.map((option) => (
             <option key={option.Roles_Id} value={option.Roles_Id}>
-              Rol: {option.Roles_Nombre}{" "}
-              Rol: {option.Roles_Id}{" "}
-             
+               {option.Roles_Nombre} ID: {option.Roles_Id}
             </option>
           ))}
         </select>
@@ -209,10 +234,9 @@ const Usuarios = () => {
           <button type="submit" className="btn btn-primary m-3" onClick={add}>
             Registrar
           </button>
-          
         )}
-          <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menu Principal
         </Link>
       </div>
 
@@ -224,6 +248,7 @@ const Usuarios = () => {
               <th scope="col">Nombre</th>
               <th scope="col">Contraseña</th>
               <th scope="col">ROL</th>
+              <th scope="col">Funcionalidad</th>
 
             </tr>
           </thead>

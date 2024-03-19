@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Swal from "sweetalert2";
-import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import { useTheme } from "../components/Theme";
+
 const Grado = () => {
   const { darkMode } = useTheme();
 
-  //Estudiantes
   const [Grado_Nombre, setNombre] = useState("");
   const [Grado_Id, setId] = useState("");
   const [Grado_Aula, setAula] = useState("");
@@ -14,6 +14,15 @@ const Grado = () => {
   const [editar, setEditar] = useState(false);
 
   const add = () => {
+    if (!Grado_Nombre.trim() || !Grado_Aula.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Vacíos",
+        text: "Por favor completa todos los campos",
+      });
+      return;
+    }
+
     Axios.post("http://localhost:3001/createGrado", {
       Grado_Nombre: Grado_Nombre,
       Grado_Aula: Grado_Aula,
@@ -44,8 +53,6 @@ const Grado = () => {
     }
   };
 
-  getLista();
-
   const editarGrado = (val) => {
     setEditar(true);
     setAula(val.Grado_Aula);
@@ -75,6 +82,7 @@ const Grado = () => {
 
     setEditar(false);
   };
+
   const eliminar = (Grado_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -118,11 +126,11 @@ const Grado = () => {
       );
     };
   }, [darkMode]);
+getLista();
   return (
     <div className="container">
       <h1>Grado</h1>
 
-      {/* Datos personales del estudiante */}
       <h3>Datos del Grado</h3>
       <div className="form-group">
         <label htmlFor="Grado_Nombre">Nombre del Grado :</label>
@@ -132,6 +140,9 @@ const Grado = () => {
           id="Grado_Nombre"
           value={Grado_Nombre}
           onChange={(e) => setNombre(e.target.value)}
+          style={{
+            borderColor: Grado_Nombre.trim() === "" ? "red" : "",
+          }}
         />
       </div>
 
@@ -143,6 +154,9 @@ const Grado = () => {
           id="Grado_Aula"
           value={Grado_Aula}
           onChange={(e) => setAula(e.target.value)}
+          style={{
+            borderColor: Grado_Aula.trim() === "" ? "red" : "",
+          }}
         />
       </div>
 
@@ -173,7 +187,7 @@ const Grado = () => {
           Menu Principal
         </Link>
         <Link to="/Matricula" className="btn btn-warning m-3">
-        Matricula
+          Matricula
         </Link>
       </div>
 
@@ -184,6 +198,9 @@ const Grado = () => {
               <th scope="col">ID</th>
               <th scope="col">Aula</th>
               <th scope="col">Nombre</th>
+              <th scope="col">Funcionalidad</th>
+
+
             </tr>
           </thead>
           <tbody>
@@ -219,3 +236,4 @@ const Grado = () => {
 };
 
 export default Grado;
+

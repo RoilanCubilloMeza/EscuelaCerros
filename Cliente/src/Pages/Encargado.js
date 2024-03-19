@@ -3,8 +3,28 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+
 const Encargado = () => {
   const { darkMode } = useTheme();
+
+  const [Encargados_Id, setId] = useState("");
+  const [Persona_Id, setPersonaId] = useState("");
+  const [Encargados_LugarTrabajo, setEncargadosLugarTrabajo] = useState("");
+  const [Escolaridad_Id, setEscolaridadId] = useState("");
+  const [Ocupacion_Id, setOcupacionId] = useState("");
+  const [Parentesco_Id, setParentescoId] = useState("");
+  const [Encargado_ViveEstudiante, setEncargadoViveEstudiante] = useState("");
+  const [Encargado_Telefono, setEncargadoTelefono] = useState("");
+  const [Encargado_EstadoCivil, setEncargadoEstadoCivil] = useState("");
+  const [Persona_Nombre] = useState("");
+
+  const [EncargadoList, setEncargadoList] = useState([]);
+  const [editar, setEditar] = useState(false);
+  const [PersonaList, setPersonaList] = useState([]);
+  const [EscolaridadList, setEscolaridadList] = useState([]);
+  const [OcupacionList, setOcupacionList] = useState([]);
+  const [ParentescoList, setParentescoList] = useState([]);
+
   useEffect(() => {
     if (darkMode) {
       document.body.classList.add("bg-dark");
@@ -25,24 +45,6 @@ const Encargado = () => {
       );
     };
   }, [darkMode]);
-
-  const [Encargados_Id, setId] = useState("");
-  const [Persona_Id, setPersonaId] = useState();
-  const [Encargados_LugarTrabajo, setEncargadosLugarTrabajo] = useState("");
-  const [Escolaridad_Id, setEscolaridadId] = useState("");
-  const [Ocupacion_Id, setOcupacionId] = useState("");
-  const [Parentesco_Id, setParentescoId] = useState("");
-  const [Encargado_ViveEstudiante, setEncargadoViveEstudiante] = useState("");
-  const [Encargado_Telefono, setEncargadoTelefono] = useState("");
-  const [Encargado_EstadoCivil, setEncargadoEstadoCivil] = useState("");
-  const [Persona_Nombre, setPersona_Nombre] = useState("");
-
-  const [EncargadoList, setEncargadoList] = useState([]);
-  const [editar, setEditar] = useState(false);
-  const [PersonaList, setPersonaList] = useState([]);
-  const [EscolaridadList, setEscolaridadList] = useState([]);
-const [OcupacionList,setOcupacionList]=useState([]);
-const [ParentescoList,setParentescoList]=useState([]);
 
   useEffect(() => {
     Axios.get("http://localhost:3001/obtenerPersonas")
@@ -85,6 +87,24 @@ const [ParentescoList,setParentescoList]=useState([]);
   }, []);
 
   const add = () => {
+    if (
+      !Persona_Id.trim() ||
+      !Encargados_LugarTrabajo.trim() ||
+      !Encargado_ViveEstudiante.trim() ||
+      !Encargado_Telefono.trim() ||
+      !Encargado_EstadoCivil.trim() ||
+      !Escolaridad_Id.trim() ||
+      !Ocupacion_Id.trim() ||
+      !Parentesco_Id.trim()
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Vacíos",
+        text: "Por favor completa todos los campos",
+      });
+      return;
+    }
+
     Axios.post("http://localhost:3001/createEncargado", {
       Persona_Id: Persona_Id,
       Encargados_LugarTrabajo: Encargados_LugarTrabajo,
@@ -120,7 +140,6 @@ const [ParentescoList,setParentescoList]=useState([]);
       console.error("Error fetching data:", error);
     }
   };
-  getLista();
 
   const editarEstudiante = (val) => {
     setEditar(true);
@@ -136,6 +155,24 @@ const [ParentescoList,setParentescoList]=useState([]);
   };
 
   const actualizar = () => {
+    if (
+      !Persona_Id.trim() ||
+      !Encargados_LugarTrabajo.trim() ||
+      !Encargado_ViveEstudiante.trim() ||
+      !Encargado_Telefono.trim() ||
+      !Encargado_EstadoCivil.trim() ||
+      !Escolaridad_Id.trim() ||
+      !Ocupacion_Id.trim() ||
+      !Parentesco_Id.trim()
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos Vacíos",
+        text: "Por favor completa todos los campos",
+      });
+      return;
+    }
+
     Axios.put("http://localhost:3001/actualizarEncargados", {
       Persona_Id: Persona_Id,
       Encargados_LugarTrabajo: Encargados_LugarTrabajo,
@@ -155,6 +192,7 @@ const [ParentescoList,setParentescoList]=useState([]);
       timer: 3000,
     });
   };
+
   const limpiarDatos = () => {
     setId("");
     setId("");
@@ -169,6 +207,7 @@ const [ParentescoList,setParentescoList]=useState([]);
 
     setEditar(false);
   };
+
   const eliminar = (Encargados_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -194,6 +233,14 @@ const [ParentescoList,setParentescoList]=useState([]);
     });
   };
 
+  const obtenerNombrePersonaPorId = (personaId) => {
+    const persona = PersonaList.find((p) => p.Persona_Id === personaId);
+    return persona
+      ? `${persona.Persona_Nombre} ${persona.Persona_PApellido} ${persona.Persona_SApellido}`
+      : "Nombre no encontrado";
+  };
+
+  getLista();
   return (
     <div className="container">
       <h3>Encargado del Niño</h3>
@@ -203,53 +250,57 @@ const [ParentescoList,setParentescoList]=useState([]);
         </label>
         <input
           type="text"
-          className="form-control"
+          className={`form-control ${!Encargados_LugarTrabajo.trim() && "is-invalid"}`}
           id="Encargados_LugarTrabajo"
           value={Encargados_LugarTrabajo}
           onChange={(e) => setEncargadosLugarTrabajo(e.target.value)}
         />
+        {!Encargados_LugarTrabajo.trim() && <div className="invalid-feedback">Campo requerido</div>}
       </div>
       <div className="form-group">
         <label htmlFor="Encargado_ViveEstudiante">
-          ¿El Estudiante vive con el Estudiante?:
+          ¿El Estudiante vive con el Encargado?:
         </label>
         <input
           type="text"
-          className="form-control"
+          className={`form-control ${!Encargado_ViveEstudiante.trim() && "is-invalid"}`}
           id="Encargado_ViveEstudiante"
           value={Encargado_ViveEstudiante}
           onChange={(e) => setEncargadoViveEstudiante(e.target.value)}
         />
+        {!Encargado_ViveEstudiante.trim() && <div className="invalid-feedback">Campo requerido</div>}
       </div>
       <div className="form-group">
         <label htmlFor="Encargado_Telefono">
-          Numero telefonico del Encargado:
+          Numero telefónico del Encargado:
         </label>
         <input
           type="text"
-          className="form-control"
+          className={`form-control ${!Encargado_Telefono.trim() && "is-invalid"}`}
           id="Encargado_Telefono"
           value={Encargado_Telefono}
           onChange={(e) => setEncargadoTelefono(e.target.value)}
         />
+        {!Encargado_Telefono.trim() && <div className="invalid-feedback">Campo requerido</div>}
       </div>
 
       <div className="form-group">
         <label htmlFor="Encargado_EstadoCivil">Estado Civil:</label>
         <input
           type="text"
-          className="form-control"
+          className={`form-control ${!Encargado_EstadoCivil.trim() && "is-invalid"}`}
           id="Encargado_EstadoCivil"
           value={Encargado_EstadoCivil}
           onChange={(e) => setEncargadoEstadoCivil(e.target.value)}
         />
+        {!Encargado_EstadoCivil.trim() && <div className="invalid-feedback">Campo requerido</div>}
       </div>
       <div className="input-group mb-3">
         <span className="input-group-text" id="basic-addon1">
           Nombre de la Persona:
         </span>
         <select
-          className="form-select"
+          className={`form-select ${!Persona_Id && "is-invalid"}`}
           aria-label="Default select example"
           value={Persona_Id}
           onChange={(event) => setPersonaId(event.target.value)}
@@ -264,13 +315,14 @@ const [ParentescoList,setParentescoList]=useState([]);
             </option>
           ))}
         </select>
+        {!Persona_Id && <div className="invalid-feedback">Campo requerido</div>}
       </div>
       <div className="input-group mb-3">
         <span className="input-group-text" id="basic-addon1">
           Escolaridad de la Persona:
         </span>
         <select
-          className="form-select"
+          className={`form-select ${!Escolaridad_Id && "is-invalid"}`}
           aria-label="Default select example"
           value={Escolaridad_Id}
           onChange={(event) => setEscolaridadId(event.target.value)}
@@ -280,126 +332,127 @@ const [ParentescoList,setParentescoList]=useState([]);
           </option>
           {EscolaridadList.map((option) => (
             <option key={option.Escolaridad_Id} value={option.Escolaridad_Id}>
-              {option.Escolaridad_Nombre}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="input-group mb-3">
-        <span className="input-group-text" id="basic-addon1">
-          Ocupacion de la Persona:
-        </span>
-        <select
-          className="form-select"
-          aria-label="Default select example"
-          value={Ocupacion_Id}
-          onChange={(event) => setOcupacionId(event.target.value)}
-        >
-          <option value="" disabled>
-            Seleccione una opción
+            {option.Escolaridad_Nombre}
           </option>
-          {OcupacionList.map((option) => (
-            <option key={option.Ocupacion_Id} value={option.Ocupacion_Id}>
-              {option.Ocupacion_Nombre}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      
-      <div className="input-group mb-3">
-        <span className="input-group-text" id="basic-addon1">
-          Parentesco  de con el estudiante:
-        </span>
-        <select
-          className="form-select"
-          aria-label="Default select example"
-          value={Parentesco_Id}
-          onChange={(event) => setParentescoId(event.target.value)}
-        >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-          {ParentescoList.map((option) => (
-            <option key={option.Parentesco_Id} value={option.Parentesco_Id}>
-              {option.Parentesco_Nombre}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        {editar ? (
-          <div>
-            <button
-              type="submit"
-              className="btn btn-warning m-3"
-              onClick={actualizar}
-            >
-              Actualizar
-            </button>
-            <button
-              type="submit"
-              className="btn btn-danger m-3"
-              onClick={limpiarDatos}
-            >
-              Cancelar
-            </button>
-          </div>
-        ) : (
-          <button type="submit" className="btn btn-primary m-3" onClick={add}>
-            Registrar
-          </button>
-        )}
-        <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
-        </Link>
-        <Link to="/Parentesco" className="btn btn-warning m-3">
-        Parentesco 
-        </Link>
-      </div>
-
-      <div className="form-group">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Primer Apellido</th>
-              <th scope="col">Segundo Apellido</th>
-            </tr>
-          </thead>
-          <tbody>
-            {EncargadoList.map((val, key) => (
-              <tr key={key}>
-                <th>{val.Encargados_Id}</th>
-                <td>{val.Persona_Id.Persona_Nombre}</td>
-                <td>{val.Persona_PApellido}</td>
-                <td>{val.Persona_SApellido}</td>
-                <td>
-                  <div className="btn-group" role="group">
-                    <button
-                      className="btn btn-info"
-                      onClick={() => editarEstudiante(val)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => eliminar(val.Encargados_Id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+        ))}
+      </select>
+      {!Escolaridad_Id && <div className="invalid-feedback">Campo requerido</div>}
     </div>
-  );
+
+    <div className="input-group mb-3">
+      <span className="input-group-text" id="basic-addon1">
+        Ocupacion de la Persona:
+      </span>
+      <select
+        className={`form-select ${!Ocupacion_Id && "is-invalid"}`}
+        aria-label="Default select example"
+        value={Ocupacion_Id}
+        onChange={(event) => setOcupacionId(event.target.value)}
+      >
+        <option value="" disabled>
+          Seleccione una opción
+        </option>
+        {OcupacionList.map((option) => (
+          <option key={option.Ocupacion_Id} value={option.Ocupacion_Id}>
+            {option.Ocupacion_Nombre}
+          </option>
+        ))}
+      </select>
+      {!Ocupacion_Id && <div className="invalid-feedback">Campo requerido</div>}
+    </div>
+
+    <div className="input-group mb-3">
+      <span className="input-group-text" id="basic-addon1">
+        Parentesco con el estudiante:
+      </span>
+      <select
+        className={`form-select ${!Parentesco_Id && "is-invalid"}`}
+        aria-label="Default select example"
+        value={Parentesco_Id}
+        onChange={(event) => setParentescoId(event.target.value)}
+      >
+        <option value="" disabled>
+          Seleccione una opción
+        </option>
+        {ParentescoList.map((option) => (
+          <option key={option.Parentesco_Id} value={option.Parentesco_Id}>
+            {option.Parentesco_Nombre}
+          </option>
+        ))}
+      </select>
+      {!Parentesco_Id && <div className="invalid-feedback">Campo requerido</div>}
+    </div>
+
+    <div>
+      {editar ? (
+        <div>
+          <button
+            type="submit"
+            className="btn btn-warning m-3"
+            onClick={actualizar}
+          >
+            Actualizar
+          </button>
+          <button
+            type="submit"
+            className="btn btn-danger m-3"
+            onClick={limpiarDatos}
+          >
+            Cancelar
+          </button>
+        </div>
+      ) : (
+        <button type="submit" className="btn btn-primary m-3" onClick={add}>
+          Registrar
+        </button>
+      )}
+      <Link to="/admindashboard" className="btn btn-secondary m-3">
+        Menu Principal
+      </Link>
+      <Link to="/Parentesco" className="btn btn-warning m-3">
+        Parentesco
+      </Link>
+    </div>
+
+    <div className="form-group">
+      <table className="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Nombres y Apellidos </th>
+          </tr>
+        </thead>
+        <tbody>
+          {EncargadoList.map((val, key) => (
+            <tr key={key}>
+              <th>{val.Encargados_Id}</th>
+              <td>{obtenerNombrePersonaPorId(val.Persona_Id)}</td>
+
+              <td>
+                <div className="btn-group" role="group">
+                  <button
+                    className="btn btn-info"
+                    onClick={() => editarEstudiante(val)}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => eliminar(val.Encargados_Id)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
 };
 
 export default Encargado;
+
+

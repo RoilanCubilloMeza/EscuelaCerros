@@ -16,6 +16,16 @@ const Roles = () => {
   const [editar, setEditar] = useState(false);
 
   const add = () => {
+    // Validación de campos vacíos
+    if (Roles_Nombre.trim() === '' || Roles_Descripcion.trim() === '') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos Vacíos',
+        text: 'Por favor completa todos los campos',
+      });
+      return; // Salir de la función si hay campos vacíos
+    }
+
     Axios.post("http://localhost:3001/createRoles", {
       Roles_Descripcion: Roles_Descripcion,
       Roles_Nombre: Roles_Nombre,
@@ -74,8 +84,6 @@ const Roles = () => {
     setId("");
     setDescripcion("");
     setNombre("");
-
-
     setEditar(false);
   };
   const eliminar = (Roles_Id) => {
@@ -123,16 +131,27 @@ const Roles = () => {
       );
     };
   }, [darkMode]);
+  
+  const inputNombreStyle = {
+    borderColor: Roles_Nombre.trim() === '' ? 'red' : '',
+  };
+  
+  const inputDescripcionStyle = {
+    borderColor: Roles_Descripcion.trim() === '' ? 'red' : '',
+  };
+  
+
   return (
     <div className="container">
       <h1>Roles de la Persona</h1>
 
       <div className="form-group">
-        <label htmlFor="Roles_Nombre">Puntos de la Tarea  :</label>
+        <label htmlFor="Roles_Nombre">Nombre:</label>
         <input
-          type="number"
+          type="text"
           className="form-control"
           id="Roles_Nombre"
+          style={inputNombreStyle}
           value={Roles_Nombre}
           onChange={(e) => setNombre(e.target.value)}
         />
@@ -141,14 +160,14 @@ const Roles = () => {
       <div className="form-group">
         <label htmlFor="Roles_Descripcion">Descripcion:</label>
         <input
-          type="number"
+          type="text"
           className="form-control"
           id="Roles_Descripcion"
+          style={inputDescripcionStyle}
           value={Roles_Descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
         />
       </div>
-
 
       <div>
         {editar ? (
@@ -173,8 +192,8 @@ const Roles = () => {
             Registrar
           </button>
         )}
-         <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menu Principal
         </Link>
       </div>
 
@@ -185,7 +204,6 @@ const Roles = () => {
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Descripcion</th>
-
             </tr>
           </thead>
           <tbody>

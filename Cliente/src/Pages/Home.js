@@ -76,7 +76,7 @@ const Home = () => {
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                style={{ width: "100%", height: "500px" }} // Ajusta el ancho y la altura aquí
+                style={{ width: "100%", height: "500px" }}
               ></iframe>
             </div>
           </div>

@@ -95,8 +95,6 @@ app.put("/actualizarEncargados", (req, res) => {
   );
 });
 
-
-
 app.delete("/deleteEncargados/:Encargados_Id", (req, res) => {
   const Encargados_Id = req.params.Encargados_Id;
   connection.query(
@@ -111,5 +109,7 @@ app.delete("/deleteEncargados/:Encargados_Id", (req, res) => {
     }
   );
 });
+
+
 
 module.exports = app;

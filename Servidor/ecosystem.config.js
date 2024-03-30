@@ -1,6 +1,6 @@
 module.exports = {
     apps : [{
-      name: 'Escuela Cerros',
+      name: 'EscuelaCerros',
       script: './index.js',
       watch: true,
       env: { 
@@ -9,7 +9,7 @@ module.exports = {
        DBHOST: 'localhost',
        DBUSER: 'root',
        DBPASS: '12345',
-       DBNAME: 'prueba'
+       DBNAME: 'escuelacerros'
       }
     }] 
   };

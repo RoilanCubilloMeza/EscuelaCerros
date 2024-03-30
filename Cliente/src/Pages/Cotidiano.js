@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+
 const Cotidiano = () => {
   const { darkMode } = useTheme();
 
@@ -10,19 +11,29 @@ const Cotidiano = () => {
   const [Cotidiano_Porcentaje, setPorcentaje] = useState("");
   const [Cotidiano_Id, setId] = useState("");
   const [Cotidiano_Puntos, setPuntos] = useState("");
-
-  const [Adecuacion_List, setAdecuacion_List] = useState([]);
+  const [Cotidiano_List, setCotidiano_List] = useState([]);
   const [editar, setEditar] = useState(false);
+  const [campoValidoPuntos, setCampoValidoPuntos] = useState(true); // Estado para el campo de puntos válido
+  const [campoValidoPorcentaje, setCampoValidoPorcentaje] = useState(true); // Estado para el campo de porcentaje válido
 
   const add = () => {
+    if (Cotidiano_Puntos.trim() === "") {
+      setCampoValidoPuntos(false); // Establece el estado de campo de puntos válido a falso si el campo está vacío
+      return;
+    }
+    if (Cotidiano_Porcentaje.trim() === "") {
+      setCampoValidoPorcentaje(false); // Establece el estado de campo de porcentaje válido a falso si el campo está vacío
+      return;
+    }
+
     Axios.post("http://localhost:3001/createCotidiano", {
-        Cotidiano_Puntos: Cotidiano_Puntos,
-        Cotidiano_Porcentaje: Cotidiano_Porcentaje,
+      Cotidiano_Puntos: Cotidiano_Puntos,
+      Cotidiano_Porcentaje: Cotidiano_Porcentaje,
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
+        title: "<strong >Guardado exitoso</strong>",
         html: "<i>la tarea es de  <strong>" + Cotidiano_Puntos + "</strong></i>",
         icon: "success",
         timer: 3000,
@@ -39,13 +50,11 @@ const Cotidiano = () => {
       }
 
       const data = await response.json();
-      setAdecuacion_List(data);
+      setCotidiano_List(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
-  getLista();
 
   const editarAdecuacion = (val) => {
     setEditar(true);
@@ -54,16 +63,17 @@ const Cotidiano = () => {
     setPuntos(val.Cotidiano_Puntos)
   };
 
+  getLista();
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizarCotidiano", {
-        Cotidiano_Puntos: Cotidiano_Puntos,
-        Cotidiano_Porcentaje: Cotidiano_Porcentaje,
-        Cotidiano_Id:Cotidiano_Id,
+      Cotidiano_Puntos: Cotidiano_Puntos,
+      Cotidiano_Porcentaje: Cotidiano_Porcentaje,
+      Cotidiano_Id:Cotidiano_Id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
+      title: "<strong >Editado exitoso</strong>",
       html: "<i>la puntuacion <strong>" + Cotidiano_Puntos + "</strong></i>",
       icon: "success",
       timer: 3000,
@@ -73,8 +83,8 @@ const Cotidiano = () => {
     setId("");
     setPuntos("");
     setPorcentaje("");
-
-
+    setCampoValidoPuntos(true);
+    setCampoValidoPorcentaje(true);
     setEditar(false);
   };
   const eliminar = (Cotidiano_Id) => {
@@ -124,32 +134,39 @@ const Cotidiano = () => {
   }, [darkMode]);
   return (
     <div className="container">
-      <h1>Escolaridad de la Persona</h1>
+      <h1>Cotidiano</h1>
 
       {/* Datos personales del estudiante */}
-      <h3>Datos de la Tarea</h3>
+      <h3>Datos del Cotidiano</h3>
       <div className="form-group">
         <label htmlFor="Cotidiano_Puntos">Puntos del Cotidiano  :</label>
         <input
           type="number"
-          className="form-control"
+          className={`form-control ${!campoValidoPuntos ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Cotidiano_Puntos"
           value={Cotidiano_Puntos}
-          onChange={(e) => setPuntos(e.target.value)}
+          onChange={(e) => {
+            setPuntos(e.target.value);
+            setCampoValidoPuntos(true); // Restaura el estado de campo de puntos válido a verdadero cuando se realiza un cambio en el campo
+          }}
         />
+        {!campoValidoPuntos && <div className="invalid-feedback">Campo obligatorio</div>} {/* Muestra un mensaje de error si el campo de puntos no es válido */}
       </div>
 
       <div className="form-group">
         <label htmlFor="Cotidiano_Porcentaje">Porcentaje del Cotidiano :</label>
         <input
           type="number"
-          className="form-control"
+          className={`form-control ${!campoValidoPorcentaje ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Cotidiano_Porcentaje"
           value={Cotidiano_Porcentaje}
-          onChange={(e) => setPorcentaje(e.target.value)}
+          onChange={(e) => {
+            setPorcentaje(e.target.value);
+            setCampoValidoPorcentaje(true); // Restaura el estado de campo de porcentaje válido a verdadero cuando se realiza un cambio en el campo
+          }}
         />
+        {!campoValidoPorcentaje && <div className="invalid-feedback">Campo obligatorio</div>} {/* Muestra un mensaje de error si el campo de porcentaje no es válido */}
       </div>
-
 
       <div>
         {editar ? (
@@ -186,11 +203,12 @@ const Cotidiano = () => {
               <th scope="col">ID</th>
               <th scope="col">Puntos</th>
               <th scope="col">Porcentaje</th>
+              <th scope="col">Funcionalidad</th>
 
             </tr>
           </thead>
           <tbody>
-            {Adecuacion_List.map((val, key) => (
+            {Cotidiano_List.map((val, key) => (
               <tr key={key}>
                 <th>{val.Cotidiano_Id}</th>
                 <td>{val.Cotidiano_Puntos}</td>

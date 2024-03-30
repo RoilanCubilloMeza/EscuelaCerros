@@ -2,17 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "./Theme";
 import { FaSun, FaMoon, FaUser } from "react-icons/fa"; // Import FaUser icon
-import { useUser } from "./UserContext";
 import { Container, Nav, Navbar } from 'react-bootstrap';
 
 const navItems = [
   { path: "/login", label: "Ingresar" },
   { path: "/register", label: "Registro" },
+  { path: "/horarios", label: "Horarios" },
+
 ];
 
 const CustomNavbar = () => {
   const { darkMode, setDarkMode } = useTheme();
-  const { Usuarios_Nombre } = useUser();
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -30,19 +30,12 @@ const CustomNavbar = () => {
           />
           Inicio
         </Navbar.Brand>
+        <div>
+         
+        </div>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-  <Nav className="mr-auto">
-    {Usuarios_Nombre && (
-      <Nav.Item>
-        <Nav.Link disabled>
-          <FaUser className="mr-2" />
-          ¡Hola, {Usuarios_Nombre}!
-        </Nav.Link>
-      </Nav.Item>
-    )}
-  </Nav>
   <Nav className="ml-auto">
     {navItems.map((item) => (
       <Nav.Link as={Link} to={item.path} key={item.path}>
@@ -50,18 +43,15 @@ const CustomNavbar = () => {
       </Nav.Link>
     ))}
   </Nav>
+  
 </Navbar.Collapse>
 
         </Navbar.Collapse>
-        <div>
-          <button
-            onClick={toggleDarkMode}
-            className="btn btn-primary transition mr-4"
-          >
-            {darkMode ? <FaSun className="mr-2" /> : <FaMoon className="mr-2" />}
-          </button>
-        </div>
+       
       </Container>
+      <button onClick={toggleDarkMode} className="btn btn-primary m-3">
+  {darkMode ? <FaSun /> : <FaMoon />}
+</button>
     </Navbar>
   );
 };

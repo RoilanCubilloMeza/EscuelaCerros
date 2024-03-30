@@ -3,25 +3,30 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+
 const Asistencia = () => {
   const { darkMode } = useTheme();
 
   //Estudiantes
   const [VA_Id, setId] = useState("");
   const [VA_Valor, setValor] = useState("");
-
-  const [Adecuacion_List, setAdecuacion_List] = useState([]);
+  const [Asistencia_List, setAsistencia_List] = useState([]);
   const [editar, setEditar] = useState(false);
+  const [campoValido, setCampoValido] = useState(true); // Estado para el campo válido
 
   const add = () => {
+    if (VA_Valor.trim() === "") {
+      setCampoValido(false); // Establece el estado de campo válido a falso si el campo está vacío
+      return;
+    }
+
     Axios.post("http://localhost:3001/createAsistencia", {
-        VA_Valor: VA_Valor,
-       
+      VA_Valor: VA_Valor,
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
+        title: "<strong >Guardado exitoso</strong>",
         html: "<i>la tarea es de  <strong>" + VA_Valor + "</strong></i>",
         icon: "success",
         timer: 3000,
@@ -38,12 +43,11 @@ const Asistencia = () => {
       }
 
       const data = await response.json();
-      setAdecuacion_List(data);
+      setAsistencia_List(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
   getLista();
 
   const editarAdecuacion = (val) => {
@@ -54,25 +58,25 @@ const Asistencia = () => {
 
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizarAsistencia", {
-        VA_Valor: VA_Valor,
-        VA_Id:VA_Id,
+      VA_Valor: VA_Valor,
+      VA_Id: VA_Id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
+      title: "<strong >Editado exitoso</strong>",
       html: "<i>la puntuacion <strong>" + VA_Valor + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
   };
+
   const limpiarDatos = () => {
     setId("");
     setValor("");
-
-
     setEditar(false);
   };
+
   const eliminar = (VA_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -118,25 +122,27 @@ const Asistencia = () => {
       );
     };
   }, [darkMode]);
+
   return (
     <div className="container">
-      <h1>Escolaridad de la Persona</h1>
+      <h1>Asistencia</h1>
 
       {/* Datos personales del estudiante */}
-      <h3>Datos de la Tarea</h3>
+      <h3>Valor Asistencia</h3>
       <div className="form-group">
-        <label htmlFor="VA_Valor">Puntos del Cotidiano  :</label>
+        <label htmlFor="VA_Valor">Puntos de Asistencia  :</label>
         <input
           type="number"
-          className="form-control"
+          className={`form-control ${!campoValido ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="VA_Valor"
           value={VA_Valor}
-          onChange={(e) => setValor(e.target.value)}
+          onChange={(e) => {
+            setValor(e.target.value);
+            setCampoValido(true); // Restaura el estado de campo válido a verdadero cuando se realiza un cambio en el campo
+          }}
         />
+        {!campoValido && <div className="invalid-feedback">Campo obligatorio</div>} {/* Muestra un mensaje de error si el campo no es válido */}
       </div>
-
-    
-
 
       <div>
         {editar ? (
@@ -161,8 +167,8 @@ const Asistencia = () => {
             Registrar
           </button>
         )}
-         <Link to="/profesordashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/profesordashboard" className="btn btn-secondary m-3">
+          Menu Principal
         </Link>
       </div>
 
@@ -172,11 +178,12 @@ const Asistencia = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Valor</th>
+              <th scope="col">Funcionalidad</th>
 
             </tr>
           </thead>
           <tbody>
-            {Adecuacion_List.map((val, key) => (
+            {Asistencia_List.map((val, key) => (
               <tr key={key}>
                 <th>{val.VA_Id}</th>
                 <td>{val.VA_Valor}</td>

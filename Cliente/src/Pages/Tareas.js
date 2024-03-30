@@ -11,7 +11,7 @@ const Tareas = () => {
   const [Tareas_Id, setId] = useState("");
   const [Tareas_Puntos, setPuntos] = useState("");
 
-  const [Adecuacion_List, setAdecuacion_List] = useState([]);
+  const [Tareas_List, setTareas_List] = useState([]);
   const [editar, setEditar] = useState(false);
 
   const add = () => {
@@ -39,7 +39,7 @@ const Tareas = () => {
       }
 
       const data = await response.json();
-      setAdecuacion_List(data);
+      setTareas_List(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -64,7 +64,7 @@ const Tareas = () => {
     });
     Swal.fire({
       title: "<strong >Editado exitosa</strong>",
-      html: "<i>la puntuacion <strong>" + Tareas_Puntos + "</strong></i>",
+      html: "<i>la puntuacion de la tarea <strong>" + Tareas_Puntos + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
@@ -187,11 +187,13 @@ const Tareas = () => {
               <th scope="col">ID</th>
               <th scope="col">Puntos</th>
               <th scope="col">Porcentaje</th>
+              <th scope="col">Funcionalidad</th>
+
 
             </tr>
           </thead>
           <tbody>
-            {Adecuacion_List.map((val, key) => (
+            {Tareas_List.map((val, key) => (
               <tr key={key}>
                 <th>{val.Tareas_Id}</th>
                 <td>{val.Tareas_Puntos}</td>

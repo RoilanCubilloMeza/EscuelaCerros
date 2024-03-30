@@ -1,29 +1,39 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Swal from "sweetalert2";
-import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import { useTheme } from "../components/Theme";
+
 const Materias = () => {
   const { darkMode } = useTheme();
 
-  //Estudiantes
   const [Materias_Nombre, setNombre] = useState("");
   const [Materias_id, setId] = useState("");
   const [Materias_Tipo, setTipo] = useState("");
   const [Materias_List, setMaterias_List] = useState([]);
   const [editar, setEditar] = useState(false);
+  const [campoValidoNombre, setCampoValidoNombre] = useState(true); // Estado para el campo de nombre válido
+  const [campoValidoTipo, setCampoValidoTipo] = useState(true); // Estado para el campo de tipo válido
 
   const add = () => {
+    if (Materias_Nombre.trim() === "") {
+      setCampoValidoNombre(false); // Establece el estado de campo de nombre válido a falso si el campo está vacío
+      return;
+    }
+    if (Materias_Tipo.trim() === "") {
+      setCampoValidoTipo(false); // Establece el estado de campo de tipo válido a falso si el campo está vacío
+      return;
+    }
+
     Axios.post("http://localhost:3001/createMaterias", {
       Materias_Nombre: Materias_Nombre,
       Materias_Tipo: Materias_Tipo,
-
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Grado <strong>" + Materias_Nombre + "</strong></i>",
+        title: "<strong >Guardado exitoso</strong>",
+        html: "<i>La materia <strong>" + Materias_Nombre + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -45,15 +55,13 @@ const Materias = () => {
     }
   };
 
-  getLista();
-
   const editarGrado = (val) => {
     setEditar(true);
+    setId(val.Materias_id);
     setTipo(val.Materias_Tipo);
     setNombre(val.Materias_Nombre);
   };
 
-  
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizarMaterias", {
       Materias_Nombre: Materias_Nombre,
@@ -63,8 +71,8 @@ const Materias = () => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Estudiante <strong>" + Materias_Nombre + "</strong></i>",
+      title: "<strong >Editado exitoso</strong>",
+      html: "<i>la materia <strong>" + Materias_Nombre + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
@@ -74,9 +82,11 @@ const Materias = () => {
     setId("");
     setNombre("");
     setTipo("");
-
+    setCampoValidoNombre(true);
+    setCampoValidoTipo(true);
     setEditar(false);
   };
+
   const eliminar = (Materias_id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -97,10 +107,11 @@ const Materias = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "la materia ha sido eliminado", "success");
+        Swal.fire("Eliminado", "la materia ha sido eliminada", "success");
       }
     });
   };
+  getLista();
 
   useEffect(() => {
     if (darkMode) {
@@ -122,32 +133,41 @@ const Materias = () => {
       );
     };
   }, [darkMode]);
+
   return (
     <div className="container">
-      <h1>Grado</h1>
+      <h1>Registrar Materias</h1>
 
       {/* Datos personales del estudiante */}
-      <h3>Datos del Grado</h3>
+      <h3>Datos de la materia</h3>
       <div className="form-group">
-        <label htmlFor="Materias_Nombre">Nombre dela Materia :</label>
+        <label htmlFor="Materias_Nombre">Nombre de la Materia :</label>
         <input
           type="text"
-          className="form-control"
+          className={`form-control ${!campoValidoNombre ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Materias_Nombre"
           value={Materias_Nombre}
-          onChange={(e) => setNombre(e.target.value)}
+          onChange={(e) => {
+            setNombre(e.target.value);
+            setCampoValidoNombre(true); // Restaura el estado de campo de nombre válido a verdadero cuando se realiza un cambio en el campo
+          }}
         />
+        {!campoValidoNombre && <div className="invalid-feedback">Este campo es obligatorio</div>} {/* Muestra un mensaje de error si el campo no es válido */}
       </div>
 
       <div className="form-group">
-        <label htmlFor="Grado_Aula">Tipo del Materia :</label>
+        <label htmlFor="Grado_Aula">Tipo de la Materia :</label>
         <input
           type="text"
-          className="form-control"
+          className={`form-control ${!campoValidoTipo ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Materias_Tipo"
           value={Materias_Tipo}
-          onChange={(e) => setTipo(e.target.value)}
+          onChange={(e) => {
+            setTipo(e.target.value);
+            setCampoValidoTipo(true); // Restaura el estado de campo de tipo válido a verdadero cuando se realiza un cambio en el campo
+          }}
         />
+        {!campoValidoTipo && <div className="invalid-feedback">Este campo es obligatorio</div>} {/* Muestra un mensaje de error si el campo no es válido */}
       </div>
 
       <div>
@@ -174,7 +194,7 @@ const Materias = () => {
           </button>
         )}
         <Link to="/profesordashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+          Menu Principal 
         </Link>
       </div>
 
@@ -185,6 +205,8 @@ const Materias = () => {
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Tipo</th>
+              <th scope="col">Funcionalidad</th>
+
             </tr>
           </thead>
           <tbody>

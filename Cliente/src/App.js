@@ -30,6 +30,7 @@ import { ThemeProvider } from "./components/Theme";
 import Horarios from "./Pages/Horarios";
 import PrivateRoute from "./components/ProtectedRoute";
 import Examen from "./Pages/Examen";
+import Justificacion from "./Pages/Justificacion";
 function App() {
   return (
     <BrowserRouter>
@@ -62,6 +63,8 @@ function App() {
             <Route path="/Noticias" roles={[1, 2, 3]} element={<Noticias/>}/>
             <Route path="/Parentesco" roles={[1, 2, 3]} element={<Parentesco/>}/>
             <Route path="/Horarios" element={<Horarios/>}/>
+            <Route path="/Justificacion" element={<Justificacion/>}/>
+
           </Routes>
         </ThemeProvider>
       </UserProvider>

@@ -30,6 +30,8 @@ app.use(require('./services/Usuarios'))
 app.use(require('./services/Roles'))
 app.use(require('./services/Parentesco'))
 app.use(require('./services/Examen'))
+app.use(require('./services/Justificacion'))
+
 
 
 app.listen(process.env.PORT||3001,() => {

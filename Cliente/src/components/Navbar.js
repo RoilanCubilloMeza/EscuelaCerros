@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "./Theme";
-import { FaSun, FaMoon, FaUser } from "react-icons/fa"; // Import FaUser icon
+import { FaSun, FaMoon } from "react-icons/fa"; // Import FaUser icon
 import { Container, Nav, Navbar } from 'react-bootstrap';
 
 const navItems = [

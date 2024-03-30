@@ -6,7 +6,6 @@ import { useTheme } from "../components/Theme";
 
 const Persona = () => {
   const { darkMode } = useTheme();
-
   const [Persona_Nombre, setNombre] = useState("");
   const [Persona_PApellido, setPApellido] = useState("");
   const [Persona_SApellido, setSApellido] = useState("");
@@ -19,6 +18,7 @@ const Persona = () => {
   const [Persona_Nacionalidad, setNacionalidad] = useState("");
   const [Persona_LuNacimiento, setLugarNacimiento] = useState("");
   const [Persona_Correo, setCorreoElectronico] = useState("");
+  const [Persona_FNAciomiento, setFNAciomiento] = useState("");
 
   const add = () => {
     if (
@@ -44,6 +44,7 @@ const Persona = () => {
       Persona_Nacionalidad: Persona_Nacionalidad,
       Persona_LuNacimiento: Persona_LuNacimiento,
       Persona_Correo: Persona_Correo,
+      Persona_FNAciomiento: Persona_FNAciomiento,
     }).then(() => {
       getLista();
       limpiarDatos();
@@ -84,6 +85,7 @@ const Persona = () => {
     setNacionalidad(val.Persona_Nacionalidad);
     setLugarNacimiento(val.Persona_LuNacimiento);
     setCorreoElectronico(val.Persona_Correo);
+    setFNAciomiento(val.Persona_FNAciomiento);
   };
 
   const actualizar = () => {
@@ -112,6 +114,7 @@ const Persona = () => {
       Persona_Nacionalidad: Persona_Nacionalidad,
       Persona_LuNacimiento: Persona_LuNacimiento,
       Persona_Correo: Persona_Correo,
+      Persona_FNAciomiento: Persona_FNAciomiento,
       Persona_Id: Persona_Id,
     }).then(() => {
       getLista();
@@ -135,6 +138,7 @@ const Persona = () => {
     setNacionalidad("");
     setLugarNacimiento("");
     setCorreoElectronico("");
+    setFNAciomiento("");
     setEditar(false);
   };
 
@@ -235,18 +239,20 @@ const Persona = () => {
         />
       </div>
       <div className="form-group">
-  <label htmlFor="Persona_Edad">Edad:</label>
-  <input
-    type="text"
-    className="form-control"
-    id="Persona_Edad"
-    value={Persona_Edad}
-    onChange={(e) => setEdad(e.target.value)}
-    style={{ border: `${String(Persona_Edad).trim() === "" ? "1px solid red" : ""}` }}
-  />
-</div>
-
-
+        <label htmlFor="Persona_Edad">Edad:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="Persona_Edad"
+          value={Persona_Edad}
+          onChange={(e) => setEdad(e.target.value)}
+          style={{
+            border: `${
+              String(Persona_Edad).trim() === "" ? "1px solid red" : ""
+            }`,
+          }}
+        />
+      </div>
 
       <div className="form-group">
         <label htmlFor="sexo">Sexo:</label>
@@ -282,6 +288,19 @@ const Persona = () => {
           value={Persona_LuNacimiento}
           onChange={(e) => setLugarNacimiento(e.target.value)}
           style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="Persona_FNAciomiento">Fecha de Nacimiento:</label>
+        <input
+          type="date"
+          className="form-control"
+          id="Persona_FNAciomiento"
+          value={Persona_FNAciomiento}
+          onChange={(e) => setFNAciomiento(e.target.value)}
+          style={{
+            borderColor: Persona_FNAciomiento.trim() === "" ? "red" : "",
+          }}
         />
       </div>
 

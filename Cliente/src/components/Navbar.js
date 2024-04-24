@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "./Theme";
-import { FaSun, FaMoon } from "react-icons/fa"; 
-import { Container, Nav, Navbar } from 'react-bootstrap';
+import { FaSun, FaMoon } from "react-icons/fa";
+import { Container, Nav, Navbar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+
+const LogoutButton = ({ onLogout }) => (
+  <Nav.Link onClick={onLogout}>Cerrar sesión</Nav.Link>
+);
 
 const CustomNavbar = () => {
   const { darkMode, setDarkMode } = useTheme();
   const navigate = useNavigate();
-
+  const token = localStorage.getItem("token");
   const [username, setUsername] = useState("");
 
   useEffect(() => {
     setUsername(localStorage.getItem("username"));
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setUsername(localStorage.getItem("username"));
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const toggleDarkMode = () => {
@@ -25,8 +37,6 @@ const CustomNavbar = () => {
     setUsername("");
     navigate("/login");
   };
-
-  const token = localStorage.getItem("token");
 
   return (
     <Navbar expand="lg" className={`bg-${darkMode ? "secondary" : "success"}`}>
@@ -45,15 +55,11 @@ const CustomNavbar = () => {
           <Nav className="ml-auto">
             {token ? (
               <>
-                <Nav.Link disabled>
-                  Bienvenido, {username}
-                </Nav.Link>
+                <Nav.Link disabled>Bienvenido, {username}</Nav.Link>
                 <Nav.Link as={Link} to="/horarios">
                   Horarios
                 </Nav.Link>
-                <Nav.Link onClick={handleLogout}>
-                  Cerrar sesión
-                </Nav.Link>
+                <LogoutButton onLogout={handleLogout} />
               </>
             ) : (
               <>
@@ -71,11 +77,15 @@ const CustomNavbar = () => {
           </Nav>
         </Navbar.Collapse>
       </Container>
-      <button onClick={toggleDarkMode} className="btn btn-primary m-3">
-        {darkMode ? <FaSun /> : <FaMoon />}
-      </button>
+      <DarkModeButton darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
     </Navbar>
   );
 };
+
+const DarkModeButton = ({ darkMode, toggleDarkMode }) => (
+  <button onClick={toggleDarkMode} className="btn btn-primary m-3">
+    {darkMode ? <FaSun /> : <FaMoon />}
+  </button>
+);
 
 export default CustomNavbar;

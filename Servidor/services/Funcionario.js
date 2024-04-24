@@ -31,7 +31,7 @@ app.post("/login", (req, res) => {
           res.json({
             message: "Login exitoso",
             token: token,
-            username: Usuarios_Nombre,
+            username: Usuarios_Nombre, // Añade el nombre del usuario a la respuesta
             Roles_Id: Roles_Id,
           });
         } else {

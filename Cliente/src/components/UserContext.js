@@ -1,26 +1,20 @@
-// UserContext.js
 import { createContext, useContext, useState } from "react";
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [Usuarios_Nombre, setUsuarioNombre] = useState(null);
-  const [Roles_Id, setRolesId] = useState(null);
+  const [user, setUser] = useState(null);
 
-  const signIn = (nombre, rol) => {
-    setUsuarioNombre(nombre);
-    setRolesId(rol);
+  const signIn = (userInfo) => {
+    setUser(userInfo);
   };
 
   const signOut = () => {
-    setUsuarioNombre(null);
-    setRolesId(null);
+    setUser(null);
   };
 
   return (
-    <UserContext.Provider
-      value={{ Usuarios_Nombre, Roles_Id, signIn, signOut }}
-    >
+    <UserContext.Provider value={{ user, signIn, signOut }}>
       {children}
     </UserContext.Provider>
   );

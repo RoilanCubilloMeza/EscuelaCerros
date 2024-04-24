@@ -28,7 +28,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "./components/Theme";
 import Horarios from "./Pages/Horarios";
-import PrivateRoute from "./components/ProtectedRoute";
 import Examen from "./Pages/Examen";
 import Justificacion from "./Pages/Justificacion";
 function App() {

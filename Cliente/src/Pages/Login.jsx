@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useNavigate, Link, Outlet, useLocation } from "react-router-dom";
-import { useTheme } from '../components/Theme';
+import { useTheme } from "../components/Theme";
 import Axios from "axios";
 
 const Login = () => {
@@ -24,7 +24,12 @@ const Login = () => {
         Usuarios_contraseña,
       });
 
-      const {  Roles_Id } = response.data;
+      const { token, Roles_Id } = response.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("username", response.data.username); // Guarda el nombre del usuario en el localStorage
+
+
       switch (Roles_Id) {
         case 1:
           navigate("/AdminDashboard");
@@ -56,17 +61,22 @@ const Login = () => {
 
   useEffect(() => {
     if (darkMode) {
-      document.body.classList.add('bg-dark');
-      document.body.classList.add('text-white');
+      document.body.classList.add("bg-dark");
+      document.body.classList.add("text-white");
     } else {
-      document.body.classList.remove('bg-dark');
-      document.body.classList.remove('text-white');
-      document.body.classList.add('bg-light');
-      document.body.classList.add('text-dark');
+      document.body.classList.remove("bg-dark");
+      document.body.classList.remove("text-white");
+      document.body.classList.add("bg-light");
+      document.body.classList.add("text-dark");
     }
 
     return () => {
-      document.body.classList.remove('bg-dark', 'text-white', 'bg-light', 'text-dark');
+      document.body.classList.remove(
+        "bg-dark",
+        "text-white",
+        "bg-light",
+        "text-dark"
+      );
     };
   }, [darkMode]);
 
@@ -106,9 +116,12 @@ const Login = () => {
             </div>
             <div>
               <p className="mt-3 form ">
-                ¿No tienes un usuario? 
+                ¿No tienes un usuario?
                 <br></br>
-                <Link to="/register" className="btn btn-outline-primary cursor-pointer">
+                <Link
+                  to="/register"
+                  className="btn btn-outline-primary cursor-pointer"
+                >
                   Regístrate aquí
                 </Link>
               </p>

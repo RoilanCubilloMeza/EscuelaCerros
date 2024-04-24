@@ -9,18 +9,21 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const EstudianteDashboard = () => {
   const { darkMode } = useTheme();
 
-  useEffect(() => {
-    const appContainer = document.getElementById('app-container-EstudianteDashboard');
 
-    if (appContainer) {
-      if (darkMode) {
-        appContainer.classList.add("dark-mode");
-        appContainer.classList.remove("light-mode");
-      } else {
-        appContainer.classList.remove("dark-mode");
-        appContainer.classList.add("light-mode");
-      }
-    }
+  useEffect(() => {
+    document.body.classList.toggle("bg-dark", darkMode);
+    document.body.classList.toggle("text-white", darkMode);
+    document.body.classList.toggle("bg-light", !darkMode);
+    document.body.classList.toggle("text-dark", !darkMode);
+
+    return () => {
+      document.body.classList.remove(
+        "bg-dark",
+        "text-white",
+        "bg-light",
+        "text-dark"
+      );
+    };
   }, [darkMode]);
 
   const handleButtonClick = (category) => {
@@ -28,7 +31,7 @@ const EstudianteDashboard = () => {
   };
 
   return (
-    <div id="app-container-profesor" className={`container mt-5 ${darkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div className={`container mt-5 ${darkMode ? "dark-mode" : "light-mode"}`}>
       <h1 className={`text-center mb-4 ${darkMode ? 'text-white' : 'text-dark'}`}>Panel del Estudiante</h1>
       <div className={`row justify-content-center ${darkMode ? 'text-white' : 'text-dark'}`}>
         {[

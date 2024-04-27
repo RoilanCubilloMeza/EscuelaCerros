@@ -77,7 +77,6 @@ function Matricula() {
   }, []);
 
   const add = () => {
-    // Verificar si los campos requeridos están vacíos
     if (
       Persona_Id === "" ||
       Enfermedades_Id === "" ||

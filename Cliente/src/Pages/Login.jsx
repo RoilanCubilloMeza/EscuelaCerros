@@ -29,7 +29,6 @@ const Login = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("username", response.data.username); // Guarda el nombre del usuario en el localStorage
 
-
       switch (Roles_Id) {
         case 1:
           navigate("/AdminDashboard");
@@ -44,14 +43,14 @@ const Login = () => {
 
       Swal.fire({
         title: "Login exitoso",
-        html: `<i>Hola Usuario <strong>${Usuarios_Nombre}</strong>`,
+        html: `<i>¡Hola, <strong>${Usuarios_Nombre}!</strong> Bienvenido(a)`,
         icon: "success",
         timer: 3000,
       });
     } catch (error) {
       Swal.fire({
-        title: "<strong >Login Fallido</strong>",
-        html: `<i>Usuario <strong>${Usuarios_Nombre}</strong></i>`,
+        title: "<strong >Login fallido</strong>",
+        html: `<i>El usuario <strong>${Usuarios_Nombre}</strong> no existe. Verifique sus datos.</i>`,
         icon: "error",
         timer: 3000,
       });
@@ -84,10 +83,10 @@ const Login = () => {
     <>
       <div className="d-flex justify-content-center align-items-center">
         <div>
-          <h2 className="m-3">Ingreso del Usuario</h2>
+          <h2 className="m-3">Ingreso del usuario</h2>
           <form className="container" onSubmit={Ingresar}>
             <div className="form-group">
-              <label>Nombre de Usuario:</label>
+              <label>Nombre del usuario:</label>
               <input
                 type="text"
                 className="form-control"
@@ -108,7 +107,7 @@ const Login = () => {
             </div>
             <div className="">
               <button type="submit" className="btn btn-primary ml-2 m-3">
-                Iniciar Sesión
+                Iniciar sesión
               </button>
               <button type="button" className="btn btn-success ml-2">
                 Olvidó su contraseña
@@ -116,13 +115,13 @@ const Login = () => {
             </div>
             <div>
               <p className="mt-3 form ">
-                ¿No tienes un usuario?
+                ¿No tiene un usuario?
                 <br></br>
                 <Link
                   to="/register"
                   className="btn btn-outline-primary cursor-pointer"
                 >
-                  Regístrate aquí
+                  Regístrese aquí
                 </Link>
               </p>
             </div>

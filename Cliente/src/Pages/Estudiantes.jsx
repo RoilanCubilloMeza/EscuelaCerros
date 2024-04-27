@@ -28,8 +28,8 @@ const Persona = () => {
     ) {
       Swal.fire({
         icon: "warning",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos obligatorios",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos obligatorios.",
       });
       return;
     }
@@ -50,7 +50,10 @@ const Persona = () => {
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitoso</strong>",
-        html: "<i>el Estudiante <strong>" + Persona_Nombre + "</strong></i>",
+        html:
+          "<i>El estudiante <strong>" +
+          Persona_Nombre +
+          "</strong> ha sido registrado.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -98,8 +101,8 @@ const Persona = () => {
     ) {
       Swal.fire({
         icon: "warning",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos obligatorios",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos obligatorios.",
       });
       return;
     }
@@ -121,7 +124,10 @@ const Persona = () => {
     });
     Swal.fire({
       title: "<strong >Editado exitoso</strong>",
-      html: "<i>el Estudiante <strong>" + Persona_Nombre + "</strong></i>",
+      html:
+        "<i>El estudiante <strong>" +
+        Persona_Nombre +
+        "</strong> ha sido actualizado.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -146,14 +152,14 @@ const Persona = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Persona_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete("http://localhost:3001/deletePersona/" + Persona_Id).then(
@@ -162,7 +168,7 @@ const Persona = () => {
             limpiarDatos();
           }
         );
-        Swal.fire("Eliminado", "el usuario ha sido eliminado", "success");
+        Swal.fire("Eliminado", "El estudiante ha sido eliminado.", "success");
       }
     });
   };
@@ -190,12 +196,10 @@ const Persona = () => {
 
   return (
     <div className="container">
-      <h1>Formulario de Estudiante</h1>
-
-      {/* Datos personales del estudiante */}
-      <h3>Datos personales del estudiante</h3>
+      <h1>Formulario del estudiante</h1>
+      <h2>Datos personales del estudiante</h2>
       <div className="form-group">
-        <label htmlFor="nPersona_Nombre">Nombre :</label>
+        <label htmlFor="nPersona_Nombre">Nombre:</label>
         <input
           type="text"
           className="form-control"
@@ -206,7 +210,7 @@ const Persona = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Persona_PApellido">Primer Apellido:</label>
+        <label htmlFor="Persona_PApellido">Primer apellido:</label>
         <input
           type="text"
           className="form-control"
@@ -217,7 +221,7 @@ const Persona = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Persona_SApellido">Segundo Apellido:</label>
+        <label htmlFor="Persona_SApellido">Segundo apellido:</label>
         <input
           type="text"
           className="form-control"
@@ -280,7 +284,7 @@ const Persona = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="lugarNacimiento">Lugar de Nacimiento:</label>
+        <label htmlFor="lugarNacimiento">Lugar de nacimiento:</label>
         <input
           type="text"
           className="form-control"
@@ -291,7 +295,7 @@ const Persona = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Persona_FNAciomiento">Fecha de Nacimiento:</label>
+        <label htmlFor="Persona_FNAciomiento">Fecha de nacimiento:</label>
         <input
           type="date"
           className="form-control"
@@ -305,7 +309,7 @@ const Persona = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="Persona_Correo">Correo Electrónico:</label>
+        <label htmlFor="Persona_Correo">Correo electrónico:</label>
         <input
           type="email"
           className="form-control"
@@ -339,11 +343,11 @@ const Persona = () => {
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
 
         <Link to="/Adecuacion" className="btn btn-warning m-3">
-          Adecuacion
+          Adecuación
         </Link>
       </div>
 

@@ -34,7 +34,8 @@ const Cotidiano = () => {
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitoso</strong>",
-        html: "<i>La tarea es de  <strong>" + Cotidiano_Puntos + "</strong></i>",
+        html:
+          "<i>La tarea es de  <strong>" + Cotidiano_Puntos + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -60,7 +61,7 @@ const Cotidiano = () => {
     setEditar(true);
     setId(val.Cotidiano_Id);
     setPorcentaje(val.Cotidiano_Porcentaje);
-    setPuntos(val.Cotidiano_Puntos)
+    setPuntos(val.Cotidiano_Puntos);
   };
 
   getLista();
@@ -68,7 +69,7 @@ const Cotidiano = () => {
     Axios.put("http://localhost:3001/actualizarCotidiano", {
       Cotidiano_Puntos: Cotidiano_Puntos,
       Cotidiano_Porcentaje: Cotidiano_Porcentaje,
-      Cotidiano_Id:Cotidiano_Id,
+      Cotidiano_Id: Cotidiano_Id,
     }).then(() => {
       getLista();
     });
@@ -140,7 +141,7 @@ const Cotidiano = () => {
         <label htmlFor="Cotidiano_Puntos">Puntos del cotidiano:</label>
         <input
           type="number"
-          className={`form-control ${!campoValidoPuntos ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
+          className={`form-control ${!campoValidoPuntos ? "is-invalid" : ""}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Cotidiano_Puntos"
           value={Cotidiano_Puntos}
           onChange={(e) => {
@@ -148,14 +149,19 @@ const Cotidiano = () => {
             setCampoValidoPuntos(true); // Restaura el estado de campo de puntos válido a verdadero cuando se realiza un cambio en el campo
           }}
         />
-        {!campoValidoPuntos && <div className="invalid-feedback">Campo obligatorio</div>} {/* Muestra un mensaje de error si el campo de puntos no es válido */}
+        {!campoValidoPuntos && (
+          <div className="invalid-feedback">Campo obligatorio</div>
+        )}{" "}
+        {/* Muestra un mensaje de error si el campo de puntos no es válido */}
       </div>
 
       <div className="form-group">
         <label htmlFor="Cotidiano_Porcentaje">Porcentaje del cotidiano :</label>
         <input
           type="number"
-          className={`form-control ${!campoValidoPorcentaje ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
+          className={`form-control ${
+            !campoValidoPorcentaje ? "is-invalid" : ""
+          }`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Cotidiano_Porcentaje"
           value={Cotidiano_Porcentaje}
           onChange={(e) => {
@@ -163,7 +169,10 @@ const Cotidiano = () => {
             setCampoValidoPorcentaje(true); // Restaura el estado de campo de porcentaje válido a verdadero cuando se realiza un cambio en el campo
           }}
         />
-        {!campoValidoPorcentaje && <div className="invalid-feedback">Campo obligatorio</div>} {/* Muestra un mensaje de error si el campo de porcentaje no es válido */}
+        {!campoValidoPorcentaje && (
+          <div className="invalid-feedback">Campo obligatorio</div>
+        )}{" "}
+        {/* Muestra un mensaje de error si el campo de porcentaje no es válido */}
       </div>
 
       <div>
@@ -189,8 +198,8 @@ const Cotidiano = () => {
             Registrar
           </button>
         )}
-         <Link to="/profesordashboard" className="btn btn-secondary m-3">
-         Menú Principal 
+        <Link to="/profesordashboard" className="btn btn-secondary m-3">
+          Menú Principal
         </Link>
       </div>
 
@@ -202,7 +211,6 @@ const Cotidiano = () => {
               <th scope="col">Puntos</th>
               <th scope="col">Porcentaje</th>
               <th scope="col">Funcionalidad</th>
-
             </tr>
           </thead>
           <tbody>

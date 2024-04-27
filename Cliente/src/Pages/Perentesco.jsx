@@ -16,8 +16,8 @@ const Parentesco = () => {
     if (!Parentesco_Nombre.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Campo Vacío",
-        text: "Por favor completa el campo Nombre del Parentesco",
+        title: "Campo vacío",
+        text: "Por favor, complete el campo Nombre del parentesco.",
       });
       return;
     }
@@ -29,7 +29,10 @@ const Parentesco = () => {
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitoso</strong>",
-        html: "<i>el Parentesco <strong>" + Parentesco_Nombre + "</strong></i>",
+        html:
+          "<i>El parentesco <strong>" +
+          Parentesco_Nombre +
+          "</strong> ha sido registrado.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -61,8 +64,8 @@ const Parentesco = () => {
     if (!Parentesco_Nombre.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Campo Vacío",
-        text: "Por favor completa el campo Nombre del Parentesco",
+        title: "Campo vacío",
+        text: "Por favor, complete el campo Nombre del parentesco.",
       });
       return;
     }
@@ -75,7 +78,10 @@ const Parentesco = () => {
     });
     Swal.fire({
       title: "<strong >Editado exitoso</strong>",
-      html: "<i>el Parentesco <strong>" + Parentesco_Nombre + "</strong></i>",
+      html:
+        "<i>El parentesco <strong>" +
+        Parentesco_Nombre +
+        "</strong> ha sido actualizado.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -92,14 +98,14 @@ const Parentesco = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Parentesco_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
@@ -108,11 +114,7 @@ const Parentesco = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire(
-          "Eliminado",
-          "la Adecuacion ha sido eliminado",
-          "success"
-        );
+        Swal.fire("Eliminado", "El parentesco ha sido eliminado.", "success");
       }
     });
   };
@@ -140,12 +142,12 @@ const Parentesco = () => {
 
   return (
     <div className="container">
-      <h1>Parentesco</h1>
+      <h1>Formulario sobre el parentesco</h1>
 
       {/* Datos personales del estudiante */}
-      <h3>Datos personales</h3>
+      <h2>Datos personales</h2>
       <div className="form-group">
-        <label htmlFor="Parentesco_Nombre">Nombre del Parentesco :</label>
+        <label htmlFor="Parentesco_Nombre">Nombre del parentesco:</label>
         <input
           type="text"
           className="form-control"
@@ -182,7 +184,7 @@ const Parentesco = () => {
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
         <Link to="/Escolaridad" className="btn btn-warning m-3">
           Escolaridad
@@ -224,9 +226,8 @@ const Parentesco = () => {
           </tbody>
         </table>
       </div>
-      </div>
+    </div>
   );
 };
 
 export default Parentesco;
-

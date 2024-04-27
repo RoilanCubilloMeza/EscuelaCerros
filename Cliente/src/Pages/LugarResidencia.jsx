@@ -50,8 +50,8 @@ const LugarResidencia = () => {
     ) {
       Swal.fire({
         icon: "error",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
       });
       return;
     }
@@ -82,7 +82,7 @@ const LugarResidencia = () => {
         Swal.fire({
           icon: "success",
           title: "Guardado exitoso",
-          text: "La residencia se ha agregado correctamente",
+          text: "La residencia se ha agregado correctamente.",
         });
       })
       .catch((error) => {
@@ -90,8 +90,7 @@ const LugarResidencia = () => {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text:
-            "Ha ocurrido un error al agregar la residencia. Por favor, inténtalo de nuevo más tarde.",
+          text: "Ha ocurrido un error al agregar la residencia. Por favor, inténtelo de nuevo más tarde.",
         });
       });
   };
@@ -122,8 +121,11 @@ const LugarResidencia = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Editado exitosa</strong>",
-        html: "<i>el Grado <strong>" + Residencia_Direccion + "</strong></i>",
+        title: "<strong >Editado exitoso</strong>",
+        html:
+          "<i>La residencia <strong>" +
+          Residencia_Direccion +
+          "</strong> ha sido registrada.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -146,14 +148,14 @@ const LugarResidencia = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Residencia_Direccion +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete("http://localhost:3001/deleteResidente/" + Residencia_Id)
@@ -162,7 +164,7 @@ const LugarResidencia = () => {
             limpiarDatos();
             Swal.fire(
               "Eliminado",
-              "la Residencia ha sido eliminado",
+              "La residencia ha sido eliminada.",
               "success"
             );
           })
@@ -171,8 +173,7 @@ const LugarResidencia = () => {
             Swal.fire({
               icon: "error",
               title: "Error",
-              text:
-                "Ha ocurrido un error al eliminar la residencia. Por favor, inténtalo de nuevo más tarde.",
+              text: "Ha ocurrido un error al eliminar la residencia. Por favor, inténtelo de nuevo más tarde.",
             });
           });
       }
@@ -199,27 +200,30 @@ const LugarResidencia = () => {
 
   return (
     <div className="container">
-      <h1>Lugar de Residencia</h1>
-
+      <h1>Formulario sobre el lugar de residencia</h1>
+      <h2>Lugar de residencia</h2>
       <div className="form-group">
         <label htmlFor="Residencia_Direccion">Dirección:</label>
         <textarea
-  className={`form-control ${Residencia_Direccion.trim() === '' ? 'border-danger' : ''}`}
-  id="Residencia_Direccion"
-  value={Residencia_Direccion}
-  onChange={(e) => setResidencia_Direccion(e.target.value)}
-  rows="4"
-/>
-{Residencia_Direccion.trim() === '' && (
-  <small className="text-danger">Este campo es requerido</small>
-)}
-
+          className={`form-control ${
+            Residencia_Direccion.trim() === "" ? "border-danger" : ""
+          }`}
+          id="Residencia_Direccion"
+          value={Residencia_Direccion}
+          onChange={(e) => setResidencia_Direccion(e.target.value)}
+          rows="4"
+        />
+        {Residencia_Direccion.trim() === "" && (
+          <small className="text-danger">Este campo es requerido</small>
+        )}
       </div>
 
       <div className="form-group">
-        <label htmlFor="Residencia_EstadoCasa">Estado de la Casa:</label>
+        <label htmlFor="Residencia_EstadoCasa">Estado de la casa:</label>
         <select
-          className={`form-control ${Residencia_EstadoCasa.trim() === '' ? 'border-danger' : ''}`}
+          className={`form-control ${
+            Residencia_EstadoCasa.trim() === "" ? "border-danger" : ""
+          }`}
           id="Residencia_EstadoCasa"
           value={Residencia_EstadoCasa}
           onChange={(e) => setResidencia_EstadoCasa(e.target.value)}
@@ -229,15 +233,19 @@ const LugarResidencia = () => {
           <option value="Propia">Propia</option>
           <option value="Alquilada">Alquilada</option>
         </select>
-        {Residencia_EstadoCasa.trim() === '' && (
+        {Residencia_EstadoCasa.trim() === "" && (
           <small className="text-danger">Este campo es requerido</small>
         )}
       </div>
 
       <div className="form-group">
-        <label htmlFor="Residencia_Internet">Internet:</label>
+        <label htmlFor="Residencia_Internet">
+          Cuenta con internet en la casa:
+        </label>
         <select
-          className={`form-control ${Residencia_Internet.trim() === '' ? 'border-danger' : ''}`}
+          className={`form-control ${
+            Residencia_Internet.trim() === "" ? "border-danger" : ""
+          }`}
           id="Residencia_Internet"
           value={Residencia_Internet}
           onChange={(e) => setResidencia_Internet(e.target.value)}
@@ -246,7 +254,7 @@ const LugarResidencia = () => {
           <option value="Sí">Sí</option>
           <option value="No">No</option>
         </select>
-        {Residencia_Internet.trim() === '' && (
+        {Residencia_Internet.trim() === "" && (
           <small className="text-danger">Este campo es requerido</small>
         )}
       </div>
@@ -255,12 +263,14 @@ const LugarResidencia = () => {
         <label htmlFor="Residencia_Provincia">Provincia:</label>
         <input
           type="text"
-          className={`form-control ${Residencia_Provincia.trim() === '' ? 'border-danger' : ''}`}
+          className={`form-control ${
+            Residencia_Provincia.trim() === "" ? "border-danger" : ""
+          }`}
           id="Residencia_Provincia"
           value={Residencia_Provincia}
           onChange={(e) => setResidencia_Provincia(e.target.value)}
         />
-        {Residencia_Provincia.trim() === '' && (
+        {Residencia_Provincia.trim() === "" && (
           <small className="text-danger">Este campo es requerido</small>
         )}
       </div>
@@ -269,12 +279,14 @@ const LugarResidencia = () => {
         <label htmlFor="Residencia_Canton">Cantón:</label>
         <input
           type="text"
-          className={`form-control ${Residencia_Canton.trim() === '' ? 'border-danger' : ''}`}
+          className={`form-control ${
+            Residencia_Canton.trim() === "" ? "border-danger" : ""
+          }`}
           id="Residencia_Canton"
           value={Residencia_Canton}
           onChange={(e) => setResidencia_Canton(e.target.value)}
         />
-        {Residencia_Canton.trim() === '' && (
+        {Residencia_Canton.trim() === "" && (
           <small className="text-danger">Este campo es requerido</small>
         )}
       </div>
@@ -283,12 +295,14 @@ const LugarResidencia = () => {
         <label htmlFor="Residencia_Distrito">Distrito:</label>
         <input
           type="text"
-          className={`form-control ${Residencia_Distrito.trim() === '' ? 'border-danger' : ''}`}
+          className={`form-control ${
+            Residencia_Distrito.trim() === "" ? "border-danger" : ""
+          }`}
           id="Residencia_Distrito"
           value={Residencia_Distrito}
           onChange={(e) => setResidencia_Distrito(e.target.value)}
         />
-        {Residencia_Distrito.trim() === '' && (
+        {Residencia_Distrito.trim() === "" && (
           <small className="text-danger">Este campo es requerido</small>
         )}
       </div>
@@ -297,12 +311,14 @@ const LugarResidencia = () => {
         <label htmlFor="Residencia_Comunidad">Comunidad:</label>
         <input
           type="text"
-          className={`form-control ${Residencia_Comunidad.trim() === '' ? 'border-danger' : ''}`}
+          className={`form-control ${
+            Residencia_Comunidad.trim() === "" ? "border-danger" : ""
+          }`}
           id="Residencia_Comunidad"
           value={Residencia_Comunidad}
           onChange={(e) => setResidencia_Comunidad(e.target.value)}
         />
-        {Residencia_Comunidad.trim() === '' && (
+        {Residencia_Comunidad.trim() === "" && (
           <small className="text-danger">Este campo es requerido</small>
         )}
       </div>
@@ -335,10 +351,10 @@ const LugarResidencia = () => {
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
         <Link to="/Ocupacion" className="btn btn-warning m-3">
-        Ocupacion
+          Ocupación
         </Link>
       </div>
 
@@ -347,8 +363,8 @@ const LugarResidencia = () => {
           <thead>
             <tr>
               <th scope="col">ID</th>
-              <th scope="col">Aula</th>
-              <th scope="col">Nombre</th>
+              <th scope="col">Comunidad</th>
+              <th scope="col">Dirección exacta</th>
               <th scope="col">Funcionalidad</th>
             </tr>
           </thead>
@@ -384,5 +400,3 @@ const LugarResidencia = () => {
 };
 
 export default LugarResidencia;
-
-

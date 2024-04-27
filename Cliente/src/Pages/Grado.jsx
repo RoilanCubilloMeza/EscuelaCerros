@@ -17,8 +17,8 @@ const Grado = () => {
     if (!Grado_Nombre.trim() || !Grado_Aula.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
       });
       return;
     }
@@ -30,8 +30,11 @@ const Grado = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Grado <strong>" + Grado_Nombre + "</strong></i>",
+        title: "<strong >Guardado exitoso</strong>",
+        html:
+          "<i>El grado <strong>" +
+          Grado_Nombre +
+          "</strong> ha sido registrado.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -68,8 +71,11 @@ const Grado = () => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Grado <strong>" + Grado_Nombre + "</strong></i>",
+      title: "<strong >Editado exitoso</strong>",
+      html:
+        "<i>El grado <strong>" +
+        Grado_Nombre +
+        "</strong> ha sido actualizado.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -87,12 +93,14 @@ const Grado = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" + Grado_Nombre + "</strong></i>",
+        "<i>¿Realmente desea eliminar <strong>" +
+        Grado_Nombre +
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete("http://localhost:3001/deleteGrado/" + Grado_Id).then(
@@ -101,7 +109,7 @@ const Grado = () => {
             limpiarDatos();
           }
         );
-        Swal.fire("Eliminado", "la Adecuacion ha sido eliminado", "success");
+        Swal.fire("Eliminado", "El grado ha sido eliminado.", "success");
       }
     });
   };
@@ -126,14 +134,14 @@ const Grado = () => {
       );
     };
   }, [darkMode]);
-getLista();
+  getLista();
   return (
     <div className="container">
-      <h1>Grado</h1>
+      <h1>Formulario sobre el grado</h1>
 
-      <h3>Datos del Grado</h3>
+      <h2>Datos del grado</h2>
       <div className="form-group">
-        <label htmlFor="Grado_Nombre">Nombre del Grado :</label>
+        <label htmlFor="Grado_Nombre">Nombre del grado:</label>
         <input
           type="text"
           className="form-control"
@@ -147,7 +155,7 @@ getLista();
       </div>
 
       <div className="form-group">
-        <label htmlFor="Grado_Aula">Aula del Grado :</label>
+        <label htmlFor="Grado_Aula">Aula del grado:</label>
         <input
           type="text"
           className="form-control"
@@ -184,10 +192,10 @@ getLista();
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
         <Link to="/Matricula" className="btn btn-warning m-3">
-          Matricula
+          Matrícula
         </Link>
       </div>
 
@@ -199,8 +207,6 @@ getLista();
               <th scope="col">Aula</th>
               <th scope="col">Nombre</th>
               <th scope="col">Funcionalidad</th>
-
-
             </tr>
           </thead>
           <tbody>
@@ -236,4 +242,3 @@ getLista();
 };
 
 export default Grado;
-

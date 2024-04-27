@@ -90,7 +90,7 @@ const AdminDashboard = () => {
       color: "btn-success",
     },
     {
-      category: "Adecuacion",
+      category: "Adecuación",
       icon: <HiAdjustments size={40} />,
       path: "/Adecuacion",
       color: "btn-danger",
@@ -102,7 +102,7 @@ const AdminDashboard = () => {
       color: "btn-warning",
     },
     {
-      category: "Ocupacion",
+      category: "Ocupación",
       icon: <FaBriefcase size={40} />,
       path: "/Ocupacion",
       color: "btn-success",
@@ -116,7 +116,7 @@ const AdminDashboard = () => {
     },
 
     {
-      category: "Encargado",
+      category: "Encargado(a)",
       icon: <FaUser size={40} />,
       path: "/Encargado",
       color: "btn-secondary",
@@ -140,7 +140,7 @@ const AdminDashboard = () => {
       color: "btn-danger",
     },
     {
-      category: "Matricula",
+      category: "Matrícula",
       icon: <FaAddressCard size={40} />,
       path: "/Matricula",
       color: "btn-warning",
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
 
   return (
     <div className={`container mt-5 ${darkMode ? "dark-mode" : "light-mode"}`}>
-      <h1 className="text-center mb-4">Administración</h1>
+      <h1 className="text-center mb-4">Panel de administración</h1>
       <div className="row">
         <div className="col-md-6">
           <h2 className="text-center mb-3">Roles y Noticias</h2>
@@ -165,7 +165,7 @@ const AdminDashboard = () => {
           ))}
         </div>
         <div className="col-md-6">
-          <h2 className="text-center mb-3">Matricula</h2>
+          <h2 className="text-center mb-3">Matrícula</h2>
           {otherItems.map((item) => (
             <CategoryButton
               key={item.category}

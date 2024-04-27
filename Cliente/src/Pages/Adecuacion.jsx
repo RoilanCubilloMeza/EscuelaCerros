@@ -148,7 +148,7 @@ const Adecuacion = () => {
   return (
     <div className="container">
       <h1>Formulario de adecuación</h1>
-      <h3>Datos sobre la adecuación</h3>
+      <h2>Datos sobre la adecuación</h2>
       <div className="form-group">
         <label htmlFor="Adecuacion_Nombre">Nombre de la adecuación:</label>
         <input
@@ -234,4 +234,3 @@ const Adecuacion = () => {
 };
 
 export default Adecuacion;
-

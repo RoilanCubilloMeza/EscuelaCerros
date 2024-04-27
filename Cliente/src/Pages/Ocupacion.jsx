@@ -7,20 +7,22 @@ const Ocupacion = () => {
   const { darkMode } = useTheme();
 
   const [Ocupacion_Nombre, setNombre] = useState("");
- const [Ocupacion_Id,setId]=useState("");
-  const [ Ocupacion_List, setOcupacion_List] = useState([]);
+  const [Ocupacion_Id, setId] = useState("");
+  const [Ocupacion_List, setOcupacion_List] = useState([]);
   const [editar, setEditar] = useState(false);
 
   const add = () => {
     Axios.post("http://localhost:3001/createOcupacion", {
-        Ocupacion_Nombre: Ocupacion_Nombre,
-     
+      Ocupacion_Nombre: Ocupacion_Nombre,
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Ocupacion <strong>" + Ocupacion_Nombre + "</strong></i>",
+        title: "<strong >Guardado exitoso</strong>",
+        html:
+          "<i>La ocupación <strong>" +
+          Ocupacion_Nombre +
+          "</strong> ha sido registrada.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -48,20 +50,21 @@ const Ocupacion = () => {
     setEditar(true);
     setId(val.Ocupacion_Id);
     setNombre(val.Ocupacion_Nombre);
-    
-  
   };
 
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizarOcupacion", {
-      Ocupacion_Nombre:Ocupacion_Nombre,
-      Ocupacion_Id:Ocupacion_Id,
+      Ocupacion_Nombre: Ocupacion_Nombre,
+      Ocupacion_Id: Ocupacion_Id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Ocupacion <strong>" + Ocupacion_Nombre + "</strong></i>",
+      title: "<strong >Editado exitoso</strong>",
+      html:
+        "<i>La ocupación <strong>" +
+        Ocupacion_Nombre +
+        "</strong> ha sido actualizada.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -69,31 +72,30 @@ const Ocupacion = () => {
   const limpiarDatos = () => {
     setId("");
     setNombre("");
-    
-    
+
     setEditar(false);
   };
   const eliminar = (Ocupacion_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Ocupacion_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteOcupacion/" + Ocupacion_Id).then(
-          () => {
-            getLista();
-            limpiarDatos();
-          }
-        );
-        Swal.fire("Eliminado", "el usuario ha sido eliminado", "success");
+        Axios.delete(
+          "http://localhost:3001/deleteOcupacion/" + Ocupacion_Id
+        ).then(() => {
+          getLista();
+          limpiarDatos();
+        });
+        Swal.fire("Eliminado", "La ocupación ha sido eliminada.", "success");
       }
     });
   };
@@ -120,10 +122,10 @@ const Ocupacion = () => {
   }, [darkMode]);
   return (
     <div className="container">
-      <h1>Ocupacion del Encargado</h1>
-
+      <h1>Formulario sobre ocupacion del encargado (a) del estudiante</h1>
+      <h2>Datos del trabajo</h2>
       <div className="form-group">
-        <label htmlFor="Ocupacion_Nombre">Nombre del Trabajo :</label>
+        <label htmlFor="Ocupacion_Nombre">Nombre del trabajo:</label>
         <input
           type="text"
           className="form-control"
@@ -132,7 +134,7 @@ const Ocupacion = () => {
           onChange={(e) => setNombre(e.target.value)}
         />
       </div>
-      
+
       <div>
         {editar ? (
           <div>
@@ -156,11 +158,12 @@ const Ocupacion = () => {
             Registrar
           </button>
         )}
-          <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menú Principal
         </Link>
         <Link to="/Enfermedades" className="btn btn-warning m-3">
-Enfermedades        </Link>
+          Enfermedades{" "}
+        </Link>
       </div>
 
       <div className="form-group">
@@ -176,7 +179,7 @@ Enfermedades        </Link>
               <tr key={key}>
                 <th>{val.Ocupacion_Id}</th>
                 <td>{val.Ocupacion_Nombre}</td>
-               
+
                 <td>
                   <div className="btn-group" role="group">
                     <button

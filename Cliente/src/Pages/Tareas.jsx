@@ -22,8 +22,8 @@ const Tareas = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
-        html: "<i>la tarea es de  <strong>" + Tareas_Puntos + "</strong></i>",
+        title: "<strong >Guardado exitoso</strong>",
+        html: "<i>La tarea es de  <strong>" + Tareas_Puntos + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -51,20 +51,23 @@ const Tareas = () => {
     setEditar(true);
     setId(val.tareas_Id);
     setPorcentaje(val.Tareas_Porcentaje);
-    setPuntos(val.Tareas_Puntos)
+    setPuntos(val.Tareas_Puntos);
   };
 
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizarTarea", {
-        Tareas_Puntos: Tareas_Puntos,
-        Tareas_Porcentaje:Tareas_Porcentaje,
-        Tareas_Id:Tareas_Id,
+      Tareas_Puntos: Tareas_Puntos,
+      Tareas_Porcentaje: Tareas_Porcentaje,
+      Tareas_Id: Tareas_Id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
-      html: "<i>la puntuacion de la tarea <strong>" + Tareas_Puntos + "</strong></i>",
+      title: "<strong >Editado exitoso</strong>",
+      html:
+        "<i>La puntuación de la tarea es <strong>" +
+        Tareas_Puntos +
+        "</strong></i>",
       icon: "success",
       timer: 3000,
     });
@@ -74,30 +77,29 @@ const Tareas = () => {
     setPuntos("");
     setPorcentaje("");
 
-
     setEditar(false);
   };
   const eliminar = (tareas_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Tareas_Puntos +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(
-          "http://localhost:3001/deleteTarea/" + tareas_Id
-        ).then(() => {
-          getLista();
-          limpiarDatos();
-        });
-        Swal.fire("Eliminado", "los puntos ha sido eliminado", "success");
+        Axios.delete("http://localhost:3001/deleteTarea/" + tareas_Id).then(
+          () => {
+            getLista();
+            limpiarDatos();
+          }
+        );
+        Swal.fire("Eliminado", "Los puntos han sido eliminados.", "success");
       }
     });
   };
@@ -124,12 +126,12 @@ const Tareas = () => {
   }, [darkMode]);
   return (
     <div className="container">
-      <h1>Escolaridad de la Persona</h1>
+      <h1>Tareas</h1>
 
       {/* Datos personales del estudiante */}
-      <h3>Datos de la Tarea</h3>
+      <h2>Valor de la tarea</h2>
       <div className="form-group">
-        <label htmlFor="Tareas_Puntos">Puntos de la Tarea  :</label>
+        <label htmlFor="Tareas_Puntos">Puntos de la tarea:</label>
         <input
           type="number"
           className="form-control"
@@ -140,7 +142,7 @@ const Tareas = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="Tareas_Porcentaje">Porcentaje de la tarea :</label>
+        <label htmlFor="Tareas_Porcentaje">Porcentaje de la tarea:</label>
         <input
           type="number"
           className="form-control"
@@ -149,7 +151,6 @@ const Tareas = () => {
           onChange={(e) => setPorcentaje(e.target.value)}
         />
       </div>
-
 
       <div>
         {editar ? (
@@ -173,10 +174,9 @@ const Tareas = () => {
           <button type="submit" className="btn btn-primary m-3" onClick={add}>
             Registrar
           </button>
-          
         )}
         <Link to="/profesordashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+          Menú Principal
         </Link>
       </div>
 
@@ -188,8 +188,6 @@ const Tareas = () => {
               <th scope="col">Puntos</th>
               <th scope="col">Porcentaje</th>
               <th scope="col">Funcionalidad</th>
-
-
             </tr>
           </thead>
           <tbody>

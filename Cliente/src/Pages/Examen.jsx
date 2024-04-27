@@ -73,7 +73,10 @@ const Examen = () => {
     });
     Swal.fire({
       title: "<strong >Editado exitoso</strong>",
-      html: "<i>la puntuación de la tarea <strong>" + Examen_Puntos + "</strong></i>",
+      html:
+        "<i>La puntuación de la tarea es <strong>" +
+        Examen_Puntos +
+        "</strong></i>",
       icon: "success",
       timer: 3000,
     });
@@ -92,23 +95,23 @@ const Examen = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Examen_Puntos +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(
-          "http://localhost:3001/deleteExamen/" + Examen_Id
-        ).then(() => {
-          getLista();
-          limpiarDatos();
-        });
-        Swal.fire("Eliminado", "los puntos han sido eliminados", "success");
+        Axios.delete("http://localhost:3001/deleteExamen/" + Examen_Id).then(
+          () => {
+            getLista();
+            limpiarDatos();
+          }
+        );
+        Swal.fire("Eliminado", "Los puntos han sido eliminados.", "success");
       }
     });
   };
@@ -138,14 +141,12 @@ const Examen = () => {
   return (
     <div className="container">
       <h1>Examen</h1>
-
-      {/* Datos personales del estudiante */}
-      <h3>Datos del examen</h3>
+      <h2>Valor del examen</h2>
       <div className="form-group">
-        <label htmlFor="Examen_Puntos">Puntos del examen :</label>
+        <label htmlFor="Examen_Puntos">Puntos del examen:</label>
         <input
           type="number"
-          className={`form-control ${!campoValidoPuntos ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
+          className={`form-control ${!campoValidoPuntos ? "is-invalid" : ""}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Examen_Puntos"
           value={Examen_Puntos}
           onChange={(e) => {
@@ -153,14 +154,19 @@ const Examen = () => {
             setCampoValidoPuntos(true); // Restaura el estado de campo de puntos válido a verdadero cuando se realiza un cambio en el campo
           }}
         />
-        {!campoValidoPuntos && <div className="invalid-feedback">Este campo es obligatorio</div>} {/* Muestra un mensaje de error si el campo no es válido */}
+        {!campoValidoPuntos && (
+          <div className="invalid-feedback">Este campo es obligatorio</div>
+        )}{" "}
+        {/* Muestra un mensaje de error si el campo no es válido */}
       </div>
 
       <div className="form-group">
-        <label htmlFor="Examen_Porcentaje">Porcentaje del examen :</label>
+        <label htmlFor="Examen_Porcentaje">Porcentaje del examen:</label>
         <input
           type="number"
-          className={`form-control ${!campoValidoPorcentaje ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
+          className={`form-control ${
+            !campoValidoPorcentaje ? "is-invalid" : ""
+          }`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Examen_Porcentaje"
           value={Examen_Porcentaje}
           onChange={(e) => {
@@ -168,7 +174,10 @@ const Examen = () => {
             setCampoValidoPorcentaje(true); // Restaura el estado de campo de porcentaje válido a verdadero cuando se realiza un cambio en el campo
           }}
         />
-        {!campoValidoPorcentaje && <div className="invalid-feedback">Este campo es obligatorio</div>} {/* Muestra un mensaje de error si el campo no es válido */}
+        {!campoValidoPorcentaje && (
+          <div className="invalid-feedback">Este campo es obligatorio</div>
+        )}{" "}
+        {/* Muestra un mensaje de error si el campo no es válido */}
       </div>
 
       <div>
@@ -195,7 +204,7 @@ const Examen = () => {
           </button>
         )}
         <Link to="/profesordashboard" className="btn btn-secondary m-3">
-          Menu Principal 
+          Menú Principal
         </Link>
       </div>
 
@@ -207,7 +216,6 @@ const Examen = () => {
               <th scope="col">Puntos</th>
               <th scope="col">Porcentaje</th>
               <th scope="col">Funcionalidad</th>
-
             </tr>
           </thead>
           <tbody>

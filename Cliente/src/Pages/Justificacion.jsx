@@ -16,7 +16,11 @@ const Justificacion = () => {
 
   const add = () => {
     // Validar campos obligatorios antes de enviar la solicitud
-    if (Asistencia_FActual.trim() === "" || Asistencia_justificacion.trim() === "" || Asistencia_Tipo.trim() === "") {
+    if (
+      Asistencia_FActual.trim() === "" ||
+      Asistencia_justificacion.trim() === "" ||
+      Asistencia_Tipo.trim() === ""
+    ) {
       setCamposVacios(true);
       return;
     }
@@ -32,7 +36,7 @@ const Justificacion = () => {
         html:
           "<i>Justificación <strong>" +
           Asistencia_justificacion +
-          "</strong></i>",
+          "</strong> registrada.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -68,13 +72,16 @@ const Justificacion = () => {
 
   return (
     <div className="container">
-      <h1>Justificación de Asistencia</h1>
+      <h1>Formulario sobre justificación</h1>
 
-      <h3>Justificación</h3>
+      <h2>Justificación sobre inasistencia</h2>
       <div className="form-group">
-        <label htmlFor="Asistencia_Tipo">Tipo Justificación:</label>
+        <label htmlFor="Asistencia_Tipo">Tipo de justificación:</label>
         <select
-          className={"form-control" + (camposVacios && Asistencia_Tipo.trim() === "" ? " is-invalid" : "")}
+          className={
+            "form-control" +
+            (camposVacios && Asistencia_Tipo.trim() === "" ? " is-invalid" : "")
+          }
           id="Asistencia_Tipo"
           value={Asistencia_Tipo}
           onChange={(e) => setTipo(e.target.value)}
@@ -90,10 +97,15 @@ const Justificacion = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="Asistencia_FActual">Fecha Justificación:</label>
+        <label htmlFor="Asistencia_FActual">Fecha de justificación:</label>
         <input
           type="date"
-          className={"form-control" + (camposVacios && Asistencia_FActual.trim() === "" ? " is-invalid" : "")}
+          className={
+            "form-control" +
+            (camposVacios && Asistencia_FActual.trim() === ""
+              ? " is-invalid"
+              : "")
+          }
           id="Asistencia_FActual"
           value={Asistencia_FActual}
           onChange={(e) => setFActual(e.target.value)}
@@ -104,10 +116,15 @@ const Justificacion = () => {
       </div>
       <div className="form-group">
         <label htmlFor="Asistencia_justificacion">
-          Justificación de la Ausencia:
+          Justificación de la ausencia:
         </label>
         <textarea
-          className={"form-control" + (camposVacios && Asistencia_justificacion.trim() === "" ? " is-invalid" : "")}
+          className={
+            "form-control" +
+            (camposVacios && Asistencia_justificacion.trim() === ""
+              ? " is-invalid"
+              : "")
+          }
           id="Asistencia_justificacion"
           value={Asistencia_justificacion}
           onChange={(e) => setJustificacion(e.target.value)}

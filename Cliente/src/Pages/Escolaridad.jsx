@@ -16,8 +16,8 @@ const Escolaridad = () => {
     if (!Escolaridad_Nombre.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Campo Vacío",
-        text: "Por favor completa el nombre de la escolaridad",
+        title: "Campo vacío",
+        text: "Por favor, complete el nombre de la escolaridad.",
       });
       return;
     }
@@ -28,9 +28,11 @@ const Escolaridad = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
+        title: "<strong >Guardado exitoso</strong>",
         html:
-          "<i>el Escolaridad <strong>" + Escolaridad_Nombre + "</strong></i>",
+          "<i>La escolaridad <strong>" +
+          Escolaridad_Nombre +
+          "</strong> ha sido registrada.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -63,8 +65,8 @@ const Escolaridad = () => {
     if (!Escolaridad_Nombre.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Campo Vacío",
-        text: "Por favor completa el nombre de la escolaridad",
+        title: "Campo vacío",
+        text: "Por favor, complete el nombre de la escolaridad.",
       });
       return;
     }
@@ -73,13 +75,13 @@ const Escolaridad = () => {
     Axios.put("http://localhost:3001/actualizarEscolaridad", {
       Escolaridad_Nombre: Escolaridad_Nombre,
       Escolaridad_Id: Escolaridad_Id,
-    }).then(() => {
-    
-    });
+    }).then(() => {});
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
+      title: "<strong >Editado exitoso</strong>",
       html:
-        "<i>el Estudiante <strong>" + Escolaridad_Nombre + "</strong></i>",
+        "<i>La escolaridad <strong>" +
+        Escolaridad_Nombre +
+        "</strong> ha sido actualizada.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -95,14 +97,14 @@ const Escolaridad = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Escolaridad_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
@@ -111,7 +113,7 @@ const Escolaridad = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "el usuario ha sido eliminado", "success");
+        Swal.fire("Eliminado", "La escolaridad ha sido eliminada.", "success");
       }
     });
   };
@@ -139,12 +141,10 @@ const Escolaridad = () => {
 
   return (
     <div className="container">
-      <h1>Escolaridad de la Persona</h1>
-
-      {/* Datos personales del estudiante */}
-      <h3>Datos personales</h3>
+      <h1>Formulario sobre la escolaridad del encargado (a)</h1>
+      <h2>Escolaridad del encargado (a)</h2>
       <div className="form-group">
-        <label htmlFor="Escolaridad_Nombre">Nombre :</label>
+        <label htmlFor="Escolaridad_Nombre">Nombre:</label>
         <input
           type="text"
           className="form-control"
@@ -181,7 +181,7 @@ const Escolaridad = () => {
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
         <Link to="/Grado" className="btn btn-warning m-3">
           Grado del Estudiante
@@ -195,7 +195,6 @@ const Escolaridad = () => {
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Funcionalidad</th>
-
             </tr>
           </thead>
           <tbody>
@@ -229,4 +228,3 @@ const Escolaridad = () => {
 };
 
 export default Escolaridad;
-

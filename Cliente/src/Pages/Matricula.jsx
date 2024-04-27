@@ -88,8 +88,7 @@ function Matricula() {
     ) {
       Swal.fire({
         title: "<strong >Campos requeridos vacíos</strong>",
-        html:
-          "<i>Por favor complete todos los campos requeridos</i>",
+        html: "<i>Por favor, complete todos los campos requeridos.</i>",
         icon: "error",
         timer: 3000,
       });
@@ -110,7 +109,9 @@ function Matricula() {
       Swal.fire({
         title: "<strong >Guardado exitoso</strong>",
         html:
-          "<i>El Estudiante <strong>" + Estudiantes_Estado + "</strong> ha sido matriculado</i>",
+          "<i>El estudiante <strong>" +
+          Estudiantes_Estado +
+          "</strong> ha sido matriculado.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -160,13 +161,12 @@ function Matricula() {
     });
     Swal.fire({
       title: "<strong >Actualización exitosa</strong>",
-      html:
-        "<i>La matrícula del estudiante ha sido actualizada</i>",
+      html: "<i>La matrícula del estudiante ha sido actualizada.</i>",
       icon: "success",
       timer: 3000,
     });
   };
-  
+
   const limpiarDatos = () => {
     setEstudiante_id("");
     setPersona_Id("");
@@ -181,296 +181,325 @@ function Matricula() {
   const eliminar = (Estudiantes_id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
-      html:
-        "<i>Realmente desea eliminar la matrícula del estudiante</i>",
+      html: "<i>¿Realmente desea eliminar la matrícula del estudiante?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       confirmButtonText: "Sí, Eliminar",
-}).then((res) => {
-if (res.isConfirmed) {
-Axios.delete(
-"http://localhost:3001/deleteMatricula/" + Estudiantes_id
-).then(() => {
-getListaMatricula();
-limpiarDatos();
-});
-Swal.fire("Eliminado", "La matrícula del estudiante ha sido eliminada", "success");
-}
-});
-};
+    }).then((res) => {
+      if (res.isConfirmed) {
+        Axios.delete(
+          "http://localhost:3001/deleteMatricula/" + Estudiantes_id
+        ).then(() => {
+          getListaMatricula();
+          limpiarDatos();
+        });
+        Swal.fire(
+          "Eliminado",
+          "La matrícula del estudiante ha sido eliminada.",
+          "success"
+        );
+      }
+    });
+  };
 
-useEffect(() => {
-if (darkMode) {
-document.body.classList.add("bg-dark");
-document.body.classList.add("text-white");
-} else {
-document.body.classList.remove("bg-dark");
-document.body.classList.remove("text-white");
-document.body.classList.add("bg-light");
-document.body.classList.add("text-dark");
-}
-return () => {
-  document.body.classList.remove(
-    "bg-dark",
-    "text-white",
-    "bg-light",
-    "text-dark"
-  );
-};}, [darkMode]);
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("bg-dark");
+      document.body.classList.add("text-white");
+    } else {
+      document.body.classList.remove("bg-dark");
+      document.body.classList.remove("text-white");
+      document.body.classList.add("bg-light");
+      document.body.classList.add("text-dark");
+    }
+    return () => {
+      document.body.classList.remove(
+        "bg-dark",
+        "text-white",
+        "bg-light",
+        "text-dark"
+      );
+    };
+  }, [darkMode]);
 
-const obtenerNombrePersonaPorId = (personaId) => {
-  const persona = ObtenerPersona.find((p) => p.Persona_Id === personaId);
-  return persona
-    ? `${persona.Persona_Nombre} ${persona.Persona_PApellido} ${persona.Persona_SApellido}`
-    : "Nombre no encontrado";
-};
+  const obtenerNombrePersonaPorId = (personaId) => {
+    const persona = ObtenerPersona.find((p) => p.Persona_Id === personaId);
+    return persona
+      ? `${persona.Persona_Nombre} ${persona.Persona_PApellido} ${persona.Persona_SApellido}`
+      : "Nombre no encontrado";
+  };
 
-return (
-  <div className="container">
-  <div>
-  <div>
-  <h5>Registrar Matrícula</h5>
-  </div>
-      {/* Encargado */}
-      <div className={`input-group mb-3 ${Encargados_Id === "" ? 'border border-danger' : ''}`}>
-      <span className="input-group-text" id="basic-addon1">
-        Encargado:
-      </span>
-      <select
-        className="form-select"
-        aria-label="Default select example"
-        value={Encargados_Id}
-        onChange={(event) => setEncargado_Id(event.target.value)}
-      >
-        <option value="" disabled>
-          Seleccione una opción
-        </option>
-        {obtenerEncargado.map((option) => (
-          <option key={option.Encargados_Id} value={option.Encargados_Id}>
-            Teléfono Encargado: {option.Encargado_Telefono}, Lugar Trabajo:{" "}
-            {option.Encargados_LugarTrabajo}, Nombre del encargado:{" "}
-            {option.Encargado_Nombre} {option.Encargado_Apellido1}
-
-
-
-          </option>
-        ))}
-      </select>
-    </div>
-
-    {/* Estudiante */}
-    <div className={`input-group mb-3 ${Persona_Id === "" ? 'border border-danger' : ''}`}>
-      <span className="input-group-text" id="basic-addon1">
-        Estudiante:
-      </span>
-      <select
-        className="form-select"
-        aria-label="Default select example"
-        value={Persona_Id}
-        onChange={(event) => setPersona_Id(event.target.value)}
-      >
-        <option value="" disabled>
-          Seleccione una opción
-        </option>
-        {ObtenerPersona.map((option) => (
-          <option key={option.Persona_Id} value={option.Persona_Id}>
-            Nombre Estudiante: {option.Persona_Nombre}{" "}
-            {option.Persona_PApellido} {option.Persona_SApellido}
-          </option>
-        ))}
-      </select>
-    </div>
-
-    {/* Enfermedades */}
-    <div className={`input-group mb-3 ${Enfermedades_Id === "" ? 'border border-danger' : ''}`}>
-      <span className="input-group-text" id="basic-addon1">
-        Enfermedades:
-      </span>
-      <select
-        className="form-select"
-        aria-label="Default select example"
-        value={Enfermedades_Id}
-        onChange={(event) => setEnfermedad_Id(event.target.value)}
-      >
-        <option value="" disabled>
-          Seleccione una opción
-        </option>
-        {ObtenerEnfermedad.map((option) => (
-          <option
-            key={option.Enfermedades_Id}
-            value={option.Enfermedades_Id}
-          >
-            Nombre Enfermedad: {option.Enfermedades_Nombre}
-          </option>
-        ))}
-      </select>
-    </div>
-
-    {/* Adecuacion */}
-    <div className={`input-group mb-3 ${Adecuacion_Id === "" ? 'border border-danger' : ''}`}>
-      <span className="input-group-text" id="basic-addon1">
-        Adecuación:
-      </span>
-      <select
-        className="form-select"
-        aria-label="Default select example"
-        value={Adecuacion_Id}
-        onChange={(event) => setAdecuacion_Id(event.target.value)}
-      >
-        <option value="" disabled>
-          Seleccione una opción
-        </option>
-        {obtenerAdecuacion.map((option) => (
-          <option key={option.Adecuacion_Id} value={option.Adecuacion_Id}>
-            Nombre Adecuación: {option.Adecuacion_Nombre}
-          </option>
-        ))}
-      </select>
-    </div>
-
-    {/* Residente */}
-    <div className={`input-group mb-3 ${Residencia_Id === "" ? 'border border-danger' : ''}`}>
-      <span className="input-group-text" id="basic-addon1">
-        Residente:
-      </span>
-      <select
-        className="form-select"
-        aria-label="Default select example"
-        value={Residencia_Id}
-        onChange={(event) => setResidencia_ID(event.target.value)}
-      >
-        <option value="" disabled>
-          Seleccione una opción
-        </option>
-        {obtenerResidencia.map((option) => (
-          <option key={option.Residencia_Id} value={option.Residencia_Id}>
-            Cantón: {option.Residencia_Canton}, Comunidad:{" "}
-            {option.Residencia_Comunidad}
-          </option>
-        ))}
-      </select>
-    </div>
-
-    {/* Grado y Estado del Estudiante */}
-    <div>
-      <div className={`input-group mb-3 ${Estudiantes_Grado === "" ? 'border border-danger' : ''}`}>
-        <span className="input-group-text" id="basic-addon1">
-          Grado del Estudiante:
-        </span>
-        <select
-          className="form-select"
-          aria-label="Default select example"
-          value={Estudiantes_Grado}
-          onChange={(event) => setGrado(event.target.value)}
+  return (
+    <div className="container">
+      <div>
+        <div>
+          <h1>Formulario de matrícula</h1>
+          <h2>Registrar matrícula</h2>
+        </div>
+        {/* Encargado */}
+        <div
+          className={`input-group mb-3 ${
+            Encargados_Id === "" ? "border border-danger" : ""
+          }`}
         >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-          <option value="Primero">Primero</option>
-          <option value="Segundo">Segundo</option>
-          <option value="Tercero">Tercero</option>
-          <option value="Cuarto">Cuarto</option>
-          <option value="Quinto">Quinto</option>
-          <option value="Sexto">Sexto</option>
-        </select>
+          <span className="input-group-text" id="basic-addon1">
+            Encargado (a):
+          </span>
+          <select
+            className="form-select"
+            aria-label="Default select example"
+            value={Encargados_Id}
+            onChange={(event) => setEncargado_Id(event.target.value)}
+          >
+            <option value="" disabled>
+              Seleccione una opción
+            </option>
+            {obtenerEncargado.map((option) => (
+              <option key={option.Encargados_Id} value={option.Encargados_Id}>
+                Teléfono del encargado(a): {option.Encargado_Telefono}, Lugar de
+                trabajo: {option.Encargados_LugarTrabajo}, Nombre del
+                encargado(a): {option.Encargado_Nombre}{" "}
+                {option.Encargado_Apellido1}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Estudiante */}
+        <div
+          className={`input-group mb-3 ${
+            Persona_Id === "" ? "border border-danger" : ""
+          }`}
+        >
+          <span className="input-group-text" id="basic-addon1">
+            Estudiante:
+          </span>
+          <select
+            className="form-select"
+            aria-label="Default select example"
+            value={Persona_Id}
+            onChange={(event) => setPersona_Id(event.target.value)}
+          >
+            <option value="" disabled>
+              Seleccione una opción
+            </option>
+            {ObtenerPersona.map((option) => (
+              <option key={option.Persona_Id} value={option.Persona_Id}>
+                Nombre del estudiante: {option.Persona_Nombre}{" "}
+                {option.Persona_PApellido} {option.Persona_SApellido}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Enfermedades */}
+        <div
+          className={`input-group mb-3 ${
+            Enfermedades_Id === "" ? "border border-danger" : ""
+          }`}
+        >
+          <span className="input-group-text" id="basic-addon1">
+            Enfermedades:
+          </span>
+          <select
+            className="form-select"
+            aria-label="Default select example"
+            value={Enfermedades_Id}
+            onChange={(event) => setEnfermedad_Id(event.target.value)}
+          >
+            <option value="" disabled>
+              Seleccione una opción
+            </option>
+            {ObtenerEnfermedad.map((option) => (
+              <option
+                key={option.Enfermedades_Id}
+                value={option.Enfermedades_Id}
+              >
+                Nombre de la enfermedad: {option.Enfermedades_Nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Adecuacion */}
+        <div
+          className={`input-group mb-3 ${
+            Adecuacion_Id === "" ? "border border-danger" : ""
+          }`}
+        >
+          <span className="input-group-text" id="basic-addon1">
+            Adecuación:
+          </span>
+          <select
+            className="form-select"
+            aria-label="Default select example"
+            value={Adecuacion_Id}
+            onChange={(event) => setAdecuacion_Id(event.target.value)}
+          >
+            <option value="" disabled>
+              Seleccione una opción
+            </option>
+            {obtenerAdecuacion.map((option) => (
+              <option key={option.Adecuacion_Id} value={option.Adecuacion_Id}>
+                Nombre de la adecuación: {option.Adecuacion_Nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Residente */}
+        <div
+          className={`input-group mb-3 ${
+            Residencia_Id === "" ? "border border-danger" : ""
+          }`}
+        >
+          <span className="input-group-text" id="basic-addon1">
+            Residencia:
+          </span>
+          <select
+            className="form-select"
+            aria-label="Default select example"
+            value={Residencia_Id}
+            onChange={(event) => setResidencia_ID(event.target.value)}
+          >
+            <option value="" disabled>
+              Seleccione una opción
+            </option>
+            {obtenerResidencia.map((option) => (
+              <option key={option.Residencia_Id} value={option.Residencia_Id}>
+                Cantón: {option.Residencia_Canton}, Comunidad:{" "}
+                {option.Residencia_Comunidad}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Grado y Estado del Estudiante */}
+        <div>
+          <div
+            className={`input-group mb-3 ${
+              Estudiantes_Grado === "" ? "border border-danger" : ""
+            }`}
+          >
+            <span className="input-group-text" id="basic-addon1">
+              Grado del estudiante:
+            </span>
+            <select
+              className="form-select"
+              aria-label="Default select example"
+              value={Estudiantes_Grado}
+              onChange={(event) => setGrado(event.target.value)}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
+              <option value="Primero">Primero</option>
+              <option value="Segundo">Segundo</option>
+              <option value="Tercero">Tercero</option>
+              <option value="Cuarto">Cuarto</option>
+              <option value="Quinto">Quinto</option>
+              <option value="Sexto">Sexto</option>
+            </select>
+          </div>
+
+          <div
+            className={`input-group mb-3 ${
+              Estudiantes_Estado === "" ? "border border-danger" : ""
+            }`}
+          >
+            <span className="input-group-text" id="basic-addon1">
+              Estado del estudiante:
+            </span>
+            <select
+              className="form-select"
+              aria-label="Default select example"
+              value={Estudiantes_Estado}
+              onChange={(event) => setEstado(event.target.value)}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
+              <option value="Matriculado">Matriculado</option>
+              <option value="Translado">Traslado</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      <div className={`input-group mb-3 ${Estudiantes_Estado === "" ? 'border border-danger' : ''}`}>
-        <span className="input-group-text" id="basic-addon1">
-         
-        Estado del Estudiante:
-</span>
-<select
-className="form-select"
-aria-label="Default select example"
-value={Estudiantes_Estado}
-onChange={(event) => setEstado(event.target.value)}
->
-<option value="" disabled>
-Seleccione una opción
-</option>
-<option value="Matriculado">Matriculado</option>
-<option value="Translado">Translado</option>
-</select>
-</div>
-</div>
-</div>
-
-  {/* Card Footer */}
-  <div className="card-footer text-muted">
-    <div>
-      {editar ? (
+      {/* Card Footer */}
+      <div className="card-footer text-muted">
         <div>
-          <button
-            type="submit"
-            className="btn btn-warning m-3"
-            onClick={actualizar}
-          >
-            Actualizar
-          </button>
-          <button
-            type="submit"
-            className="btn btn-danger m-3"
-            onClick={limpiarDatos}
-          >
-            Cancelar
-          </button>
+          {editar ? (
+            <div>
+              <button
+                type="submit"
+                className="btn btn-warning m-3"
+                onClick={actualizar}
+              >
+                Actualizar
+              </button>
+              <button
+                type="submit"
+                className="btn btn-danger m-3"
+                onClick={limpiarDatos}
+              >
+                Cancelar
+              </button>
+            </div>
+          ) : (
+            <button type="submit" className="btn btn-primary m-3" onClick={add}>
+              Registrar
+            </button>
+          )}
+          <Link to="/admindashboard" className="btn btn-secondary m-3">
+            Menú Principal
+          </Link>
         </div>
-      ) : (
-        <button type="submit" className="btn btn-primary m-3" onClick={add}>
-          Registrar
-        </button>
-      )}
-      <Link to="/admindashboard" className="btn btn-secondary m-3">
-        Menú Principal
-      </Link>
-    </div>
 
-    {/* Table */}
-    <div className="form-group">
-      <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Grado</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Funcionalidad</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Matricula.map((val, key) => (
-            <tr key={key}>
-              <th>{val.Estudiantes_id}</th>
-              <th>{val.Estudiantes_Grado}</th>
-              <td>{val.Estudiantes_Estado}</td>
-              <td>{obtenerNombrePersonaPorId(val.Persona_Id)}</td>
-              <td>
-                <div className="btn-group" role="group">
-                  <button
-                    className="btn btn-info"
-                    onClick={() => editarMatricula(val)}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => eliminar(val.Estudiantes_id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        {/* Table */}
+        <div className="form-group">
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Grado</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Funcionalidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Matricula.map((val, key) => (
+                <tr key={key}>
+                  <th>{val.Estudiantes_id}</th>
+                  <th>{val.Estudiantes_Grado}</th>
+                  <td>{val.Estudiantes_Estado}</td>
+                  <td>{obtenerNombrePersonaPorId(val.Persona_Id)}</td>
+                  <td>
+                    <div className="btn-group" role="group">
+                      <button
+                        className="btn btn-info"
+                        onClick={() => editarMatricula(val)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => eliminar(val.Estudiantes_id)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-);
-          }
+  );
+}
 
 export default Matricula;
-  

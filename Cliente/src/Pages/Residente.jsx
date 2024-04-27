@@ -10,34 +10,33 @@ const Residente = () => {
   const [Residencia_Direccion, setDireccion] = useState("");
   const [Residencia_Id, setId] = useState("");
   const [Residencia_EstadoCasa, setEstadoCasa] = useState("");
-  const [Residencia_Internet, setInternet] = useState(""); 
+  const [Residencia_Internet, setInternet] = useState("");
   const [Residencia_Provincia, setProvincia] = useState("");
   const [Residencia_Canton, setCanton] = useState("");
   const [Residencia_Distrito, setDistrito] = useState("");
-  const [Residencia_Comunidad, setComunidad] = useState(""); 
-
-  
+  const [Residencia_Comunidad, setComunidad] = useState("");
 
   const [Residente_List, setResidente_List] = useState([]);
   const [editar, setEditar] = useState(false);
 
   const add = () => {
     Axios.post("http://localhost:3001/createResidente", {
-        Residencia_Direccion: Residencia_Direccion,
-        Residencia_EstadoCasa: Residencia_EstadoCasa,
-        Residencia_Internet: Residencia_Internet,
-        Residencia_Provincia: Residencia_Provincia,
-        Residencia_Canton: Residencia_Canton,
-        Residencia_Distrito: Residencia_Distrito,
-        Residencia_Comunidad:Residencia_Comunidad
-        
-
+      Residencia_Direccion: Residencia_Direccion,
+      Residencia_EstadoCasa: Residencia_EstadoCasa,
+      Residencia_Internet: Residencia_Internet,
+      Residencia_Provincia: Residencia_Provincia,
+      Residencia_Canton: Residencia_Canton,
+      Residencia_Distrito: Residencia_Distrito,
+      Residencia_Comunidad: Residencia_Comunidad,
     }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Residencia <strong>" + Residencia_Comunidad + "</strong></i>",
+        title: "<strong >Guardado exitoso</strong>",
+        html:
+          "<i>La residencia <strong>" +
+          Residencia_Comunidad +
+          "</strong> ha sido registrada.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -75,20 +74,23 @@ const Residente = () => {
 
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizarResidente", {
-        Residencia_Direccion: Residencia_Direccion,
-        Residencia_EstadoCasa: Residencia_EstadoCasa,
-        Residencia_Internet: Residencia_Internet,
-        Residencia_Provincia: Residencia_Provincia,
-        Residencia_Canton: Residencia_Canton,
-        Residencia_Distrito: Residencia_Distrito,
-        Residencia_Comunidad:Residencia_Comunidad,
-        Residencia_Id:Residencia_Id,
+      Residencia_Direccion: Residencia_Direccion,
+      Residencia_EstadoCasa: Residencia_EstadoCasa,
+      Residencia_Internet: Residencia_Internet,
+      Residencia_Provincia: Residencia_Provincia,
+      Residencia_Canton: Residencia_Canton,
+      Residencia_Distrito: Residencia_Distrito,
+      Residencia_Comunidad: Residencia_Comunidad,
+      Residencia_Id: Residencia_Id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Residencia <strong>" + Residencia_Comunidad + "</strong></i>",
+      title: "<strong >Editado exitoso</strong>",
+      html:
+        "<i>La residencia <strong>" +
+        Residencia_Comunidad +
+        "</strong> ha sido actualizada.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -109,9 +111,9 @@ const Residente = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar la<strong>" +
+        "<i>¿Realmente desea eliminar la <strong>" +
         Residencia_Comunidad +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
@@ -125,7 +127,7 @@ const Residente = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "la Adecuacion ha sido eliminado", "success");
+        Swal.fire("Eliminado", "La comunidad ha sido eliminada.", "success");
       }
     });
   };
@@ -152,12 +154,12 @@ const Residente = () => {
   }, [darkMode]);
   return (
     <div className="container">
-      <h1>Escolaridad de la Persona</h1>
+      <h1>Formulario sobre la residencia</h1>
 
       {/* Datos personales del estudiante */}
-      <h3>Datos personales</h3>
+      <h2>Datos de la residencia</h2>
       <div className="form-group">
-        <label htmlFor="Residencia_Direccion">Direccion:</label>
+        <label htmlFor="Residencia_Direccion">Dirección:</label>
         <input
           type="text"
           className="form-control"
@@ -167,7 +169,7 @@ const Residente = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Residencia_EstadoCasa">Estado Casa:</label>
+        <label htmlFor="Residencia_EstadoCasa">Estado de la casa:</label>
         <input
           type="text"
           className="form-control"
@@ -177,7 +179,7 @@ const Residente = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Residencia_Internet">Posee Internet:</label>
+        <label htmlFor="Residencia_Internet">Posee internet en la casa:</label>
         <input
           type="text"
           className="form-control"
@@ -187,7 +189,7 @@ const Residente = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Residencia_Provincia">Residencia Provincia :</label>
+        <label htmlFor="Residencia_Provincia">Provincia:</label>
         <input
           type="text"
           className="form-control"
@@ -197,7 +199,7 @@ const Residente = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Residencia_Canton">Residencia Canton:</label>
+        <label htmlFor="Residencia_Canton">Canton:</label>
         <input
           type="text"
           className="form-control"
@@ -207,7 +209,7 @@ const Residente = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Residencia_Distrito">Residencia Distrito:</label>
+        <label htmlFor="Residencia_Distrito">Distrito:</label>
         <input
           type="text"
           className="form-control"
@@ -217,7 +219,7 @@ const Residente = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Residencia_Comunidad">Residencia Comunidad:</label>
+        <label htmlFor="Residencia_Comunidad">Comunidad:</label>
         <input
           type="text"
           className="form-control"
@@ -226,7 +228,6 @@ const Residente = () => {
           onChange={(e) => setComunidad(e.target.value)}
         />
       </div>
-
 
       <div>
         {editar ? (
@@ -251,8 +252,8 @@ const Residente = () => {
             Registrar
           </button>
         )}
-          <Link to="/admindashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menú Principal
         </Link>
       </div>
 

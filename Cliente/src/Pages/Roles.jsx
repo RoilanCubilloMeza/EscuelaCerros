@@ -17,11 +17,11 @@ const Roles = () => {
 
   const add = () => {
     // Validación de campos vacíos
-    if (Roles_Nombre.trim() === '' || Roles_Descripcion.trim() === '') {
+    if (Roles_Nombre.trim() === "" || Roles_Descripcion.trim() === "") {
       Swal.fire({
-        icon: 'warning',
-        title: 'Campos Vacíos',
-        text: 'Por favor completa todos los campos',
+        icon: "warning",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
       });
       return; // Salir de la función si hay campos vacíos
     }
@@ -33,8 +33,8 @@ const Roles = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
-        html: "<i>EL ROl es de  <strong>" + Roles_Nombre + "</strong></i>",
+        title: "<strong >Guardado exitoso</strong>",
+        html: "<i>EL rol es de  <strong>" + Roles_Nombre + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -62,20 +62,20 @@ const Roles = () => {
     setEditar(true);
     setId(val.Roles_Id);
     setDescripcion(val.Roles_Descripcion);
-    setNombre(val.Roles_Nombre)
+    setNombre(val.Roles_Nombre);
   };
 
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizarRoles", {
-        Roles_Descripcion: Roles_Descripcion,
-        Roles_Nombre: Roles_Nombre,
-        Roles_Id:Roles_Id,
+      Roles_Descripcion: Roles_Descripcion,
+      Roles_Nombre: Roles_Nombre,
+      Roles_Id: Roles_Id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
-      html: "<i>EL ROl <strong>" + Roles_Nombre + "</strong></i>",
+      title: "<strong >Editado exitoso</strong>",
+      html: "<i>El rol <strong>" + Roles_Nombre + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
@@ -90,23 +90,23 @@ const Roles = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Roles_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(
-          "http://localhost:3001/deleteRoles/" + Roles_Id
-        ).then(() => {
-          getLista();
-          limpiarDatos();
-        });
-        Swal.fire("Eliminado", "los puntos ha sido eliminado", "success");
+        Axios.delete("http://localhost:3001/deleteRoles/" + Roles_Id).then(
+          () => {
+            getLista();
+            limpiarDatos();
+          }
+        );
+        Swal.fire("Eliminado", "El rol ha sido eliminado.", "success");
       }
     });
   };
@@ -131,19 +131,19 @@ const Roles = () => {
       );
     };
   }, [darkMode]);
-  
+
   const inputNombreStyle = {
-    borderColor: Roles_Nombre.trim() === '' ? 'red' : '',
+    borderColor: Roles_Nombre.trim() === "" ? "red" : "",
   };
-  
+
   const inputDescripcionStyle = {
-    borderColor: Roles_Descripcion.trim() === '' ? 'red' : '',
+    borderColor: Roles_Descripcion.trim() === "" ? "red" : "",
   };
-  
 
   return (
     <div className="container">
-      <h1>Roles de la Persona</h1>
+      <h1>Formulario sobre roles</h1>
+      <h2>Roles de la persona</h2>
 
       <div className="form-group">
         <label htmlFor="Roles_Nombre">Nombre:</label>
@@ -158,7 +158,7 @@ const Roles = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="Roles_Descripcion">Descripcion:</label>
+        <label htmlFor="Roles_Descripcion">Descripción:</label>
         <input
           type="text"
           className="form-control"
@@ -193,7 +193,7 @@ const Roles = () => {
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
       </div>
 
@@ -203,7 +203,7 @@ const Roles = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
-              <th scope="col">Descripcion</th>
+              <th scope="col">Descripción</th>
             </tr>
           </thead>
           <tbody>

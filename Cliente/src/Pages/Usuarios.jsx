@@ -19,8 +19,8 @@ const Usuarios = () => {
     if (!usuarios_Nombre.trim() || !Usuarios_contraseña.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
       });
       return;
     }
@@ -33,8 +33,11 @@ const Usuarios = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Adecuacion <strong>" + usuarios_Nombre + "</strong></i>",
+        title: "<strong >Guardado exitoso</strong>",
+        html:
+          "<i>El usuario <strong>" +
+          usuarios_Nombre +
+          "</strong> ha sido registrado.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -53,7 +56,9 @@ const Usuarios = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerUsuariosLogin");
+      const response = await fetch(
+        "http://localhost:3001/obtenerUsuariosLogin"
+      );
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -65,7 +70,7 @@ const Usuarios = () => {
       console.error("Error fetching data:", error);
     }
   };
-getLista();
+  getLista();
   const editarAdecuacion = (val) => {
     setEditar(true);
     setId(val.Usuarios_Id);
@@ -78,8 +83,8 @@ getLista();
     if (!usuarios_Nombre.trim() || !Usuarios_contraseña.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
       });
       return;
     }
@@ -93,8 +98,11 @@ getLista();
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Adecuacion <strong>" + usuarios_Nombre + "</strong></i>",
+      title: "<strong >Editado exitoso</strong>",
+      html:
+        "<i>El usuario <strong>" +
+        usuarios_Nombre +
+        "</strong> ha sido actualizado.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -112,14 +120,14 @@ getLista();
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar a <strong>" +
         usuarios_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
@@ -128,11 +136,7 @@ getLista();
           getLista();
           limpiarDatos();
         });
-        Swal.fire(
-          "Eliminado",
-          "la Adecuacion ha sido eliminado",
-          "success"
-        );
+        Swal.fire("Eliminado", "El usuario ha sido eliminado.", "success");
       }
     });
   };
@@ -160,10 +164,10 @@ getLista();
 
   return (
     <div className="container">
-      <h1>Escolaridad de la Persona</h1>
+      <h1>Formulario para usuarios</h1>
 
       {/* Datos personales del estudiante */}
-      <h3>Datos personales</h3>
+      <h2>Datos del usuario</h2>
       <div className="form-group">
         <label htmlFor="usuarios_Nombre">Nombre del usuario:</label>
         <input
@@ -193,7 +197,7 @@ getLista();
       <br></br>
       <div className="input-group mb-3">
         <span className="input-group-text" id="basic-addon1">
-          Rol:
+          Rol
         </span>
         <select
           className="form-select"
@@ -206,7 +210,7 @@ getLista();
           </option>
           {obtenerRol.map((option) => (
             <option key={option.Roles_Id} value={option.Roles_Id}>
-               {option.Roles_Nombre} ID: {option.Roles_Id}
+              {option.Roles_Nombre} ID: {option.Roles_Id}
             </option>
           ))}
         </select>
@@ -236,7 +240,7 @@ getLista();
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
       </div>
 
@@ -247,9 +251,8 @@ getLista();
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Contraseña</th>
-              <th scope="col">ROL</th>
+              <th scope="col">Rol</th>
               <th scope="col">Funcionalidad</th>
-
             </tr>
           </thead>
           <tbody>

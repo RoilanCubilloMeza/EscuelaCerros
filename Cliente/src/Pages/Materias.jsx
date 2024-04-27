@@ -33,7 +33,10 @@ const Materias = () => {
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitoso</strong>",
-        html: "<i>La materia <strong>" + Materias_Nombre + "</strong></i>",
+        html:
+          "<i>La materia <strong>" +
+          Materias_Nombre +
+          "</strong> ha sido registrada.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -66,13 +69,16 @@ const Materias = () => {
     Axios.put("http://localhost:3001/actualizarMaterias", {
       Materias_Nombre: Materias_Nombre,
       Materias_Tipo: Materias_Tipo,
-      Materias_id:Materias_id,
+      Materias_id: Materias_id,
     }).then(() => {
       getLista();
     });
     Swal.fire({
       title: "<strong >Editado exitoso</strong>",
-      html: "<i>la materia <strong>" + Materias_Nombre + "</strong></i>",
+      html:
+        "<i>La materia <strong>" +
+        Materias_Nombre +
+        "</strong> ha sido actualizada.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -91,14 +97,14 @@ const Materias = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Materias_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
@@ -107,7 +113,7 @@ const Materias = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "la materia ha sido eliminada", "success");
+        Swal.fire("Eliminado", "La materia ha sido eliminada.", "success");
       }
     });
   };
@@ -136,15 +142,15 @@ const Materias = () => {
 
   return (
     <div className="container">
-      <h1>Registrar Materias</h1>
+      <h1>Formulario para registrar materias</h1>
 
       {/* Datos personales del estudiante */}
-      <h3>Datos de la materia</h3>
+      <h2>Datos de la materia</h2>
       <div className="form-group">
-        <label htmlFor="Materias_Nombre">Nombre de la Materia :</label>
+        <label htmlFor="Materias_Nombre">Nombre de la materia:</label>
         <input
           type="text"
-          className={`form-control ${!campoValidoNombre ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
+          className={`form-control ${!campoValidoNombre ? "is-invalid" : ""}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Materias_Nombre"
           value={Materias_Nombre}
           onChange={(e) => {
@@ -152,14 +158,17 @@ const Materias = () => {
             setCampoValidoNombre(true); // Restaura el estado de campo de nombre válido a verdadero cuando se realiza un cambio en el campo
           }}
         />
-        {!campoValidoNombre && <div className="invalid-feedback">Este campo es obligatorio</div>} {/* Muestra un mensaje de error si el campo no es válido */}
+        {!campoValidoNombre && (
+          <div className="invalid-feedback">Este campo es obligatorio</div>
+        )}{" "}
+        {/* Muestra un mensaje de error si el campo no es válido */}
       </div>
 
       <div className="form-group">
-        <label htmlFor="Grado_Aula">Tipo de la Materia :</label>
+        <label htmlFor="Grado_Aula">Tipo de materia:</label>
         <input
           type="text"
-          className={`form-control ${!campoValidoTipo ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
+          className={`form-control ${!campoValidoTipo ? "is-invalid" : ""}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="Materias_Tipo"
           value={Materias_Tipo}
           onChange={(e) => {
@@ -167,7 +176,10 @@ const Materias = () => {
             setCampoValidoTipo(true); // Restaura el estado de campo de tipo válido a verdadero cuando se realiza un cambio en el campo
           }}
         />
-        {!campoValidoTipo && <div className="invalid-feedback">Este campo es obligatorio</div>} {/* Muestra un mensaje de error si el campo no es válido */}
+        {!campoValidoTipo && (
+          <div className="invalid-feedback">Este campo es obligatorio</div>
+        )}{" "}
+        {/* Muestra un mensaje de error si el campo no es válido */}
       </div>
 
       <div>
@@ -194,7 +206,7 @@ const Materias = () => {
           </button>
         )}
         <Link to="/profesordashboard" className="btn btn-secondary m-3">
-          Menu Principal 
+          Menú Principal
         </Link>
       </div>
 
@@ -206,7 +218,6 @@ const Materias = () => {
               <th scope="col">Nombre</th>
               <th scope="col">Tipo</th>
               <th scope="col">Funcionalidad</th>
-
             </tr>
           </thead>
           <tbody>

@@ -27,7 +27,7 @@ const Registration = () => {
 
       Swal.fire({
         title: "Registro exitoso",
-        html: `<i>Usuario  <strong>${Usuarios_Nombre} <i> ingresar en Login</strong>`,
+        html: `<i>Usuario  <strong>${Usuarios_Nombre}</strong> ingresar en Login.</i>`,
         icon: "success",
         timer: 3000,
       });
@@ -68,10 +68,10 @@ const Registration = () => {
   return (
     <div className="d-flex justify-content-center align-items-center">
       <div>
-        <h2 className="m-3">Registro de Usuario</h2>
+        <h2 className="m-3">Registro del usuario</h2>
         <form className="container" onSubmit={Registrar}>
           <div className="form-group">
-            <label>Nombre de Usuario:</label>
+            <label>Nombre del usuario:</label>
             <input
               type="text"
               className="form-control"

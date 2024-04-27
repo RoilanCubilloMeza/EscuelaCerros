@@ -99,8 +99,8 @@ const Encargado = () => {
     ) {
       Swal.fire({
         icon: "warning",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
       });
       return;
     }
@@ -121,12 +121,12 @@ const Encargado = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
+        title: "<strong >Guardado exitoso</strong>",
         html:
-          "<i>el Estudiante <strong>" +
+          "<i>El encargado <strong>" +
           Encargado_Nombre +
           Encargado_Apellido1 +
-          "</strong></i>",
+          "</strong> ha sido registrado.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -173,8 +173,8 @@ const Encargado = () => {
     ) {
       Swal.fire({
         icon: "warning",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
       });
       return;
     }
@@ -195,12 +195,12 @@ const Encargado = () => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
+      title: "<strong >Editado exitoso</strong>",
       html:
-        "<i>el Estudiante <strong>" +
+        "<i>El encargado <strong>" +
         Encargado_Nombre +
         Encargado_Apellido1 +
-        "</strong></i>",
+        "</strong> ha sido actualizado.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -228,15 +228,15 @@ const Encargado = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar a <strong>" +
         Encargado_Nombre +
         Encargado_Apellido1 +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
@@ -245,7 +245,7 @@ const Encargado = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "el usuario ha sido eliminado", "success");
+        Swal.fire("Eliminado", "El encargado ha sido eliminado.", "success");
       }
     });
   };
@@ -253,10 +253,11 @@ const Encargado = () => {
   getLista();
   return (
     <div className="container">
-      <h3>Encargado del Niño</h3>
+      <h1>Formulario del encargado (a) del niño (a)</h1>
+      <h2>Datos del encargado (a)</h2>
       <div className="form-group">
         <label htmlFor="Encargados_LugarTrabajo">
-          Lugar de Trabajo del Encargado:
+          Lugar de trabajo del encargado(a):
         </label>
         <input
           type="text"
@@ -273,7 +274,7 @@ const Encargado = () => {
       </div>
       <div className="form-group">
         <label htmlFor="Encargado_ViveEstudiante">
-          ¿El Estudiante vive con el Encargado?:
+          ¿El encargado(a) vive con el o la estudiante?
         </label>
         <input
           type="text"
@@ -290,7 +291,7 @@ const Encargado = () => {
       </div>
       <div className="form-group">
         <label htmlFor="Encargado_Telefono">
-          Numero telefónico del Encargado:
+          Número telefónico del encargado(a):
         </label>
         <input
           type="text"
@@ -307,7 +308,7 @@ const Encargado = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="Encargado_EstadoCivil">Estado Civil:</label>
+        <label htmlFor="Encargado_EstadoCivil">Estado civil:</label>
         <input
           type="text"
           className={`form-control ${
@@ -324,7 +325,7 @@ const Encargado = () => {
       <div>
         <div className="mb-3">
           <label htmlFor="Encargado_Nombre" className="form-label">
-            Nombre del Encargado :
+            Nombre del encargado(a):
           </label>
           <input
             type="text"
@@ -339,7 +340,7 @@ const Encargado = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="Encargado_Nombre2" className="form-label">
-            Segundo Nombre del Encargado :
+            Segundo nombre del encargado(a):
           </label>
           <input
             type="text"
@@ -354,7 +355,7 @@ const Encargado = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="Encargado_Apellido1" className="form-label">
-            Primer Apellido del Encargado:
+            Primer apellido del encargado(a):
           </label>
           <input
             type="text"
@@ -369,7 +370,7 @@ const Encargado = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="Encargado_Apellido2" className="form-label">
-            Segundo Apellido del Encargado :
+            Segundo apellido del encargado(a):
           </label>
           <input
             type="text"
@@ -386,7 +387,7 @@ const Encargado = () => {
 
       <div className="input-group mb-3">
         <span className="input-group-text" id="basic-addon1">
-          Escolaridad de la Persona:
+          Escolaridad de la persona:
         </span>
         <select
           className={`form-select ${!Escolaridad_Id && "is-invalid"}`}
@@ -410,7 +411,7 @@ const Encargado = () => {
 
       <div className="input-group mb-3">
         <span className="input-group-text" id="basic-addon1">
-          Ocupacion de la Persona:
+          Ocupación de la persona:
         </span>
         <select
           className={`form-select ${!Ocupacion_Id && "is-invalid"}`}
@@ -434,7 +435,7 @@ const Encargado = () => {
 
       <div className="input-group mb-3">
         <span className="input-group-text" id="basic-addon1">
-          Parentesco con el estudiante:
+          Parentesco con el o la estudiante:
         </span>
         <select
           className={`form-select ${!Parentesco_Id && "is-invalid"}`}
@@ -480,7 +481,7 @@ const Encargado = () => {
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
         <Link to="/Parentesco" className="btn btn-warning m-3">
           Parentesco

@@ -7,8 +7,7 @@ import { useTheme } from "../components/Theme";
 const Enfermedades = () => {
   const { darkMode } = useTheme();
 
-  const [Enfermedades_PresentaEnfermedad, setPresentaEnfermedad] =
-    useState("");
+  const [Enfermedades_PresentaEnfermedad, setPresentaEnfermedad] = useState("");
   const [Enfermedades_Nombre, setNombreEnfermedades] = useState("");
   const [Enfermedades_Medicamento, setNombreMedicamento] = useState("");
   const [Enfermedades_Alergia, setAlergiaMedicamento] = useState("");
@@ -17,11 +16,16 @@ const Enfermedades = () => {
   const [Enfermedades_Id, setId] = useState("");
 
   const add = () => {
-    if (!Enfermedades_Nombre.trim() || !Enfermedades_Medicamento.trim() || !Enfermedades_Alergia.trim() || !Enfermedades_PresentaEnfermedad.trim()) {
+    if (
+      !Enfermedades_Nombre.trim() ||
+      !Enfermedades_Medicamento.trim() ||
+      !Enfermedades_Alergia.trim() ||
+      !Enfermedades_PresentaEnfermedad.trim()
+    ) {
       Swal.fire({
         icon: "warning",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
       });
       return;
     }
@@ -35,9 +39,11 @@ const Enfermedades = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitosa</strong>",
+        title: "<strong >Guardado exitoso</strong>",
         html:
-          "<i>el Estudiante <strong>" + Enfermedades_Nombre + "</strong></i>",
+          "<i>La enfermedad <strong>" +
+          Enfermedades_Nombre +
+          "</strong> ha sido registrada.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -69,11 +75,16 @@ const Enfermedades = () => {
   };
 
   const actualizar = () => {
-    if (!Enfermedades_Nombre.trim() || !Enfermedades_Medicamento.trim() || !Enfermedades_Alergia.trim() || !Enfermedades_PresentaEnfermedad.trim()) {
+    if (
+      !Enfermedades_Nombre.trim() ||
+      !Enfermedades_Medicamento.trim() ||
+      !Enfermedades_Alergia.trim() ||
+      !Enfermedades_PresentaEnfermedad.trim()
+    ) {
       Swal.fire({
         icon: "warning",
-        title: "Campos Vacíos",
-        text: "Por favor completa todos los campos",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
       });
       return;
     }
@@ -88,8 +99,11 @@ const Enfermedades = () => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Estudiante <strong>" + Enfermedades_Nombre + "</strong></i>",
+      title: "<strong >Editado exitoso</strong>",
+      html:
+        "<i>La enfermedad <strong>" +
+        Enfermedades_Nombre +
+        "</strong> ha sido actualizada.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -109,23 +123,23 @@ const Enfermedades = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Enfermedades_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(
-          "http://localhost:3001/delete/" + Enfermedades_Id
-        ).then(() => {
-          getLista();
-          limpiarDatos();
-        });
-        Swal.fire("Eliminado", "La enfermedad ha sido eliminado", "success");
+        Axios.delete("http://localhost:3001/delete/" + Enfermedades_Id).then(
+          () => {
+            getLista();
+            limpiarDatos();
+          }
+        );
+        Swal.fire("Eliminado", "La enfermedad ha sido eliminada.", "success");
       }
     });
   };
@@ -164,14 +178,10 @@ const Enfermedades = () => {
 
   return (
     <div className="container">
-      <h3 className="justify-content-center text-center">
-        ENFERMEDADES Y MEDICAMENTOS
-      </h3>
-
+      <h1>Formulario sobre enfermedades y medicamentos</h1>
+      <h2>Datos sobre la enfermedad del estudiante</h2>
       <div className="form-group">
-        <label htmlFor="Enfermedades_Nombre">
-          Nombre de la enfermedad:
-        </label>
+        <label htmlFor="Enfermedades_Nombre">Nombre de la enfermedad:</label>
         <input
           type="text"
           className="form-control"
@@ -196,7 +206,7 @@ const Enfermedades = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Enfermedades_Alergia">Posee Alergia: </label>
+        <label htmlFor="Enfermedades_Alergia">Posee alergia: </label>
         <input
           type="text"
           className="form-control"
@@ -209,7 +219,7 @@ const Enfermedades = () => {
 
       <div className="form-group">
         <label htmlFor="Enfermedades_PresentaEnfermedad">
-          Presenta Enfermedad:
+          Presenta enfermedad:
         </label>
         <input
           type="text"
@@ -244,7 +254,7 @@ const Enfermedades = () => {
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
         <Link to="/Encargado" className="btn btn-warning m-3">
           Encargado
@@ -290,4 +300,3 @@ const Enfermedades = () => {
 };
 
 export default Enfermedades;
-

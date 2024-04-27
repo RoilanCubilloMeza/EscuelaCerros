@@ -45,7 +45,7 @@ const Home = () => {
             </div>
             <div className="col-md-6 animate__animated animate__slideInRight">
               <h2 className={darkMode ? "text-white" : "text-dark"}>
-                Historia de la Escuela
+                Historia de la escuela
               </h2>
               <p className={darkMode ? "text-white" : "text-dark"}>
                 Aquí puedes agregar información sobre la historia de la escuela.

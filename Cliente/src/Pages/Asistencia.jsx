@@ -53,7 +53,7 @@ const Asistencia = () => {
   const editarAdecuacion = (val) => {
     setEditar(true);
     setId(val.VA_Id);
-    setValor(val.VA_Valor)
+    setValor(val.VA_Valor);
   };
 
   const actualizar = () => {
@@ -81,9 +81,7 @@ const Asistencia = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>¿Realmente desea eliminar <strong>" +
-        VA_Valor +
-        "</strong>?</i>",
+        "<i>¿Realmente desea eliminar <strong>" + VA_Valor + "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
@@ -91,12 +89,12 @@ const Asistencia = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(
-          "http://localhost:3001/deleteAsistencia/" + VA_Id
-        ).then(() => {
-          getLista();
-          limpiarDatos();
-        });
+        Axios.delete("http://localhost:3001/deleteAsistencia/" + VA_Id).then(
+          () => {
+            getLista();
+            limpiarDatos();
+          }
+        );
         Swal.fire("Eliminado", "los puntos ha sido eliminado", "success");
       }
     });
@@ -131,7 +129,7 @@ const Asistencia = () => {
         <label htmlFor="VA_Valor">Puntos de Asistencia:</label>
         <input
           type="number"
-          className={`form-control ${!campoValido ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
+          className={`form-control ${!campoValido ? "is-invalid" : ""}`} // Aplica la clase 'is-invalid' si el campo no es válido
           id="VA_Valor"
           value={VA_Valor}
           onChange={(e) => {
@@ -139,7 +137,10 @@ const Asistencia = () => {
             setCampoValido(true); // Restaura el estado de campo válido a verdadero cuando se realiza un cambio en el campo
           }}
         />
-        {!campoValido && <div className="invalid-feedback">Campo obligatorio</div>} {/* Muestra un mensaje de error si el campo no es válido */}
+        {!campoValido && (
+          <div className="invalid-feedback">Campo obligatorio</div>
+        )}{" "}
+        {/* Muestra un mensaje de error si el campo no es válido */}
       </div>
 
       <div>
@@ -177,7 +178,6 @@ const Asistencia = () => {
               <th scope="col">ID</th>
               <th scope="col">Valor</th>
               <th scope="col">Funcionalidad</th>
-
             </tr>
           </thead>
           <tbody>

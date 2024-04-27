@@ -38,7 +38,10 @@ const Eventos = () => {
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitoso</strong>",
-        html: "<i>Los Eventos <strong>" + Eventos_Nombre + "</strong></i>",
+        html:
+          "<i>Los eventos <strong>" +
+          Eventos_Nombre +
+          "</strong> han sido registrados.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -92,7 +95,10 @@ const Eventos = () => {
     });
     Swal.fire({
       title: "<strong >Editado exitoso</strong>",
-      html: "<i>la materia <strong>" + Eventos_Nombre + "</strong></i>",
+      html:
+        "<i>El evento <strong>" +
+        Eventos_Nombre +
+        "</strong> ha sido actualizado.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -111,14 +117,14 @@ const Eventos = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Eventos_Nombre +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete("http://localhost:3001/deleteEvento/" + Evento_id).then(
@@ -127,7 +133,7 @@ const Eventos = () => {
             limpiarDatos();
           }
         );
-        Swal.fire("Eliminado", "la materia ha sido eliminada", "success");
+        Swal.fire("Eliminado", "El evento ha sido eliminado.", "success");
       }
     });
   };
@@ -159,11 +165,11 @@ const Eventos = () => {
 
   return (
     <div className="container">
-      <h1>Eventos Noticias</h1>
+      <h1>Formulario de eventos (noticias)</h1>
 
-      <h3>Datos del Evento</h3>
+      <h2>Datos del evento</h2>
       <div className="form-group">
-        <label htmlFor="Eventos_Nombre">Nombre del Evento :</label>
+        <label htmlFor="Eventos_Nombre">Nombre del evento:</label>
         <input
           type="text"
           className={`form-control ${!campoValidoNombre ? "is-invalid" : ""}`}
@@ -180,7 +186,7 @@ const Eventos = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="Eventos_Imagen">Imagen :</label>
+        <label htmlFor="Eventos_Imagen">Imagen:</label>
         <input
           type="file"
           className={`form-control ${!campoValidoTipo ? "is-invalid" : ""}`}
@@ -221,7 +227,7 @@ const Eventos = () => {
           </button>
         )}
         <Link to="/AdminDashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
       </div>
 

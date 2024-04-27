@@ -7,7 +7,10 @@ dotenv.config();
 const { connection } = require("../config");
 
 app.post("/createEncargado", (req, res) => {
-  const Persona_Id = req.body.Persona_Id;
+  const Encargado_Nombre=req.body.Encargado_Nombre;
+  const Encargado_Nombre2=req.body.Encargado_Nombre2;
+  const Encargado_Apellido1=req.body.Encargado_Apellido1;
+  const Encargado_Apellido2=req.body.Encargado_Apellido2;
   const Encargados_LugarTrabajo = req.body.Encargados_LugarTrabajo;
   const Escolaridad_Id = req.body.Escolaridad_Id;
   const Ocupacion_Id = req.body.Ocupacion_Id;
@@ -17,9 +20,12 @@ app.post("/createEncargado", (req, res) => {
   const Encargado_EstadoCivil = req.body.Encargado_EstadoCivil;
 
   connection.query(
-    "INSERT INTO encargados (Persona_Id, Encargados_LugarTrabajo, Escolaridad_Id, Ocupacion_Id, Parentesco_Id, Encargado_ViveEstudiante, Encargado_Telefono, Encargado_EstadoCivil) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO encargados ( Encargado_Nombre,  Encargado_Nombre2, Encargado_Apellido1,Encargado_Apellido2, Encargados_LugarTrabajo, Escolaridad_Id, Ocupacion_Id, Parentesco_Id, Encargado_ViveEstudiante, Encargado_Telefono, Encargado_EstadoCivil) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)",
     [
-      Persona_Id,
+      Encargado_Nombre,
+      Encargado_Nombre2,
+      Encargado_Apellido1,
+      Encargado_Apellido2,
       Encargados_LugarTrabajo,
       Escolaridad_Id,
       Ocupacion_Id,
@@ -40,16 +46,6 @@ app.post("/createEncargado", (req, res) => {
 });
 
 
-//app.get("/obtener", (req, res) => {
-//connection.query("SELECT * FROM pruebas", (err, result) => {
-//if (err) {
-//console.log(err);
-//} else {
-//res.send(result);
-//}
-//});
-//});
-
 app.get("/obtenerEncargados", (req, res) => {
   connection.query("SELECT * FROM encargados", (err, result) => {
     if (err) {
@@ -61,7 +57,11 @@ app.get("/obtenerEncargados", (req, res) => {
 });
 
 app.put("/actualizarEncargados", (req, res) => {
-  const Persona_Id = req.body.Persona_Id;
+
+  const Encargado_Nombre=req.body.Encargado_Nombre;
+  const Encargado_Nombre2=req.body.Encargado_Nombre2;
+  const Encargado_Apellido1=req.body.Encargado_Apellido1;
+  const Encargado_Apellido2=req.body.Encargado_Apellido2;
   const Encargados_LugarTrabajo = req.body.Encargados_LugarTrabajo;
   const Escolaridad_Id = req.body.Escolaridad_Id;
   const Ocupacion_Id = req.body.Ocupacion_Id;
@@ -72,9 +72,12 @@ app.put("/actualizarEncargados", (req, res) => {
   const Encargados_Id = req.body.Encargados_Id; 
 
   connection.query(
-    "UPDATE encargados SET Persona_Id=?, Encargados_LugarTrabajo=?,  Escolaridad_Id=?,  Ocupacion_Id=?,  Parentesco_Id=?,  Encargado_ViveEstudiante=?, Encargado_Telefono=?, Encargado_EstadoCivil=? WHERE Encargados_Id=?",
-    [ // Agrega la coma aquí
-      Persona_Id,
+    "UPDATE encargados SET  Encargado_Nombre=?,Encargado_Nombre2=?,Encargado_Apellido1=?,Encargado_Apellido2=?, Encargados_LugarTrabajo=?,  Escolaridad_Id=?,  Ocupacion_Id=?,  Parentesco_Id=?,  Encargado_ViveEstudiante=?, Encargado_Telefono=?, Encargado_EstadoCivil=? WHERE Encargados_Id=?",
+    [ 
+      Encargado_Nombre,
+      Encargado_Nombre2,
+      Encargado_Apellido1,
+      Encargado_Apellido2,
       Encargados_LugarTrabajo,
       Escolaridad_Id,
       Ocupacion_Id,

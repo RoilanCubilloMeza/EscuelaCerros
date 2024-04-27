@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 const Ocupacion = () => {
   const { darkMode } = useTheme();
 
-  //Estudiantes
   const [Ocupacion_Nombre, setNombre] = useState("");
  const [Ocupacion_Id,setId]=useState("");
   const [ Ocupacion_List, setOcupacion_List] = useState([]);
@@ -121,10 +120,8 @@ const Ocupacion = () => {
   }, [darkMode]);
   return (
     <div className="container">
-      <h1>Escolaridad de la Persona</h1>
+      <h1>Ocupacion del Encargado</h1>
 
-      {/* Datos personales del estudiante */}
-      <h3>Datos personales</h3>
       <div className="form-group">
         <label htmlFor="Ocupacion_Nombre">Nombre del Trabajo :</label>
         <input
@@ -162,6 +159,8 @@ const Ocupacion = () => {
           <Link to="/admindashboard" className="btn btn-secondary m-3">
          Menu Principal 
         </Link>
+        <Link to="/Enfermedades" className="btn btn-warning m-3">
+Enfermedades        </Link>
       </div>
 
       <div className="form-group">

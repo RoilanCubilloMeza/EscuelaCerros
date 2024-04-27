@@ -251,7 +251,10 @@ return (
           <option key={option.Encargados_Id} value={option.Encargados_Id}>
             Teléfono Encargado: {option.Encargado_Telefono}, Lugar Trabajo:{" "}
             {option.Encargados_LugarTrabajo}, Nombre del encargado:{" "}
-            {obtenerNombrePersonaPorId(option.Persona_Id)}
+            {option.Encargado_Nombre} {option.Encargado_Apellido1}
+
+
+
           </option>
         ))}
       </select>

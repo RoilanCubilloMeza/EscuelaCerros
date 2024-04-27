@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "./Theme";
-import { FaSun, FaMoon } from "react-icons/fa";
+import { FaSun, FaMoon, FaUser } from "react-icons/fa"; // Importar el ícono de usuario
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -55,7 +55,9 @@ const CustomNavbar = () => {
           <Nav className="ml-auto">
             {token ? (
               <>
-                <Nav.Link disabled>Bienvenido, {username}</Nav.Link>
+                <Nav.Link disabled>
+                  <FaUser className="mr-1" /> {username}
+                </Nav.Link>
                 <Nav.Link as={Link} to="/horarios">
                   Horarios
                 </Nav.Link>

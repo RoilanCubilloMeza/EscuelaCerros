@@ -12,11 +12,10 @@ import {
   FaAddressCard,
   FaNewspaper,
   FaUserCircle,
+  FaBriefcase,
 } from "react-icons/fa";
 import { HiAdjustments } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
-
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const CategoryButton = ({ category, icon, path, onClick, color }) => {
   return (
@@ -33,16 +32,12 @@ const CategoryButton = ({ category, icon, path, onClick, color }) => {
 };
 
 const AdminDashboard = () => {
-
-
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
-
-  
 
   const { darkMode } = useTheme();
 
@@ -107,12 +102,19 @@ const AdminDashboard = () => {
       color: "btn-warning",
     },
     {
+      category: "Ocupacion",
+      icon: <FaBriefcase size={40} />,
+      path: "/Ocupacion",
+      color: "btn-success",
+    },
+
+    {
       category: "Enfermedad",
       icon: <FaStethoscope size={40} />,
       path: "/Enfermedades",
       color: "btn-primary",
     },
-   
+
     {
       category: "Encargado",
       icon: <FaUser size={40} />,

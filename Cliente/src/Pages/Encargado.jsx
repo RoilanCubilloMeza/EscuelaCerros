@@ -8,7 +8,6 @@ const Encargado = () => {
   const { darkMode } = useTheme();
 
   const [Encargados_Id, setId] = useState("");
-  const [Persona_Id, setPersonaId] = useState("");
   const [Encargados_LugarTrabajo, setEncargadosLugarTrabajo] = useState("");
   const [Escolaridad_Id, setEscolaridadId] = useState("");
   const [Ocupacion_Id, setOcupacionId] = useState("");
@@ -16,11 +15,13 @@ const Encargado = () => {
   const [Encargado_ViveEstudiante, setEncargadoViveEstudiante] = useState("");
   const [Encargado_Telefono, setEncargadoTelefono] = useState("");
   const [Encargado_EstadoCivil, setEncargadoEstadoCivil] = useState("");
-  const [Persona_Nombre] = useState("");
+  const [Encargado_Nombre, setEncargadoNombre] = useState("");
+  const [Encargado_Nombre2, setEncargadoNombre2] = useState("");
+  const [Encargado_Apellido1, setEncargadoApellido1] = useState("");
+  const [Encargado_Apellido2, setEncargadoApellido2] = useState("");
 
   const [EncargadoList, setEncargadoList] = useState([]);
   const [editar, setEditar] = useState(false);
-  const [PersonaList, setPersonaList] = useState([]);
   const [EscolaridadList, setEscolaridadList] = useState([]);
   const [OcupacionList, setOcupacionList] = useState([]);
   const [ParentescoList, setParentescoList] = useState([]);
@@ -49,7 +50,7 @@ const Encargado = () => {
   useEffect(() => {
     Axios.get("http://localhost:3001/obtenerPersonas")
       .then((response) => {
-        setPersonaList(response.data);
+        setEncargadoList(response.data);
       })
       .catch((error) => {
         console.error("Error al obtener datos:", error);
@@ -88,7 +89,6 @@ const Encargado = () => {
 
   const add = () => {
     if (
-      !Persona_Id.trim() ||
       !Encargados_LugarTrabajo.trim() ||
       !Encargado_ViveEstudiante.trim() ||
       !Encargado_Telefono.trim() ||
@@ -106,7 +106,10 @@ const Encargado = () => {
     }
 
     Axios.post("http://localhost:3001/createEncargado", {
-      Persona_Id: Persona_Id,
+      Encargado_Nombre: Encargado_Nombre,
+      Encargado_Nombre2: Encargado_Nombre2,
+      Encargado_Apellido1: Encargado_Apellido1,
+      Encargado_Apellido2: Encargado_Apellido2,
       Encargados_LugarTrabajo: Encargados_LugarTrabajo,
       Ocupacion_Id: Ocupacion_Id,
       Parentesco_Id: Parentesco_Id,
@@ -119,7 +122,11 @@ const Encargado = () => {
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitosa</strong>",
-        html: "<i>el Estudiante <strong>" + Persona_Nombre + "</strong></i>",
+        html:
+          "<i>el Estudiante <strong>" +
+          Encargado_Nombre +
+          Encargado_Apellido1 +
+          "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -144,7 +151,10 @@ const Encargado = () => {
   const editarEstudiante = (val) => {
     setEditar(true);
     setId(val.Persona_Id);
-    setPersonaId(val.Persona_Id);
+    setEncargadoNombre(val.Encargado_Nombre);
+    setEncargadoNombre2(val.Encargado_Nombre2);
+    setEncargadoApellido1(val.Encargado_Apellido1);
+    setEncargadoApellido2(val.Encargado_Apellido2);
     setEncargadosLugarTrabajo(val.Encargados_LugarTrabajo);
     setEscolaridadId(val.Escolaridad_Id);
     setOcupacionId(val.Ocupacion_Id);
@@ -156,14 +166,10 @@ const Encargado = () => {
 
   const actualizar = () => {
     if (
-      !Persona_Id.trim() ||
       !Encargados_LugarTrabajo.trim() ||
       !Encargado_ViveEstudiante.trim() ||
       !Encargado_Telefono.trim() ||
-      !Encargado_EstadoCivil.trim() ||
-      !Escolaridad_Id.trim() ||
-      !Ocupacion_Id.trim() ||
-      !Parentesco_Id.trim()
+      !Encargado_EstadoCivil.trim()
     ) {
       Swal.fire({
         icon: "warning",
@@ -174,7 +180,10 @@ const Encargado = () => {
     }
 
     Axios.put("http://localhost:3001/actualizarEncargados", {
-      Persona_Id: Persona_Id,
+      Encargado_Nombre: Encargado_Nombre,
+      Encargado_Nombre2: Encargado_Nombre2,
+      Encargado_Apellido1: Encargado_Apellido1,
+      Encargado_Apellido2: Encargado_Apellido2,
       Encargados_LugarTrabajo: Encargados_LugarTrabajo,
       Ocupacion_Id: Ocupacion_Id,
       Parentesco_Id: Parentesco_Id,
@@ -187,7 +196,11 @@ const Encargado = () => {
     });
     Swal.fire({
       title: "<strong >Editado exitosa</strong>",
-      html: "<i>el Estudiante <strong>" + Persona_Nombre + "</strong></i>",
+      html:
+        "<i>el Estudiante <strong>" +
+        Encargado_Nombre +
+        Encargado_Apellido1 +
+        "</strong></i>",
       icon: "success",
       timer: 3000,
     });
@@ -196,7 +209,10 @@ const Encargado = () => {
   const limpiarDatos = () => {
     setId("");
     setId("");
-    setPersonaId("");
+    setEncargadoNombre("");
+    setEncargadoNombre2("");
+    setEncargadoApellido1("");
+    setEncargadoApellido2("");
     setEncargadosLugarTrabajo("");
     setEscolaridadId("");
     setOcupacionId("");
@@ -213,7 +229,8 @@ const Encargado = () => {
       title: "<strong >Eliminar</strong>",
       html:
         "<i>Realmente desea eliminar <strong>" +
-        Persona_Nombre +
+        Encargado_Nombre +
+        Encargado_Apellido1 +
         "</strong></i>",
       icon: "warning",
       showCancelButton: true,
@@ -233,13 +250,6 @@ const Encargado = () => {
     });
   };
 
-  const obtenerNombrePersonaPorId = (personaId) => {
-    const persona = PersonaList.find((p) => p.Persona_Id === personaId);
-    return persona
-      ? `${persona.Persona_Nombre} ${persona.Persona_PApellido} ${persona.Persona_SApellido}`
-      : "Nombre no encontrado";
-  };
-
   getLista();
   return (
     <div className="container">
@@ -250,12 +260,16 @@ const Encargado = () => {
         </label>
         <input
           type="text"
-          className={`form-control ${!Encargados_LugarTrabajo.trim() && "is-invalid"}`}
+          className={`form-control ${
+            !Encargados_LugarTrabajo.trim() && "is-invalid"
+          }`}
           id="Encargados_LugarTrabajo"
           value={Encargados_LugarTrabajo}
           onChange={(e) => setEncargadosLugarTrabajo(e.target.value)}
         />
-        {!Encargados_LugarTrabajo.trim() && <div className="invalid-feedback">Campo requerido</div>}
+        {!Encargados_LugarTrabajo.trim() && (
+          <div className="invalid-feedback">Campo requerido</div>
+        )}
       </div>
       <div className="form-group">
         <label htmlFor="Encargado_ViveEstudiante">
@@ -263,12 +277,16 @@ const Encargado = () => {
         </label>
         <input
           type="text"
-          className={`form-control ${!Encargado_ViveEstudiante.trim() && "is-invalid"}`}
+          className={`form-control ${
+            !Encargado_ViveEstudiante.trim() && "is-invalid"
+          }`}
           id="Encargado_ViveEstudiante"
           value={Encargado_ViveEstudiante}
           onChange={(e) => setEncargadoViveEstudiante(e.target.value)}
         />
-        {!Encargado_ViveEstudiante.trim() && <div className="invalid-feedback">Campo requerido</div>}
+        {!Encargado_ViveEstudiante.trim() && (
+          <div className="invalid-feedback">Campo requerido</div>
+        )}
       </div>
       <div className="form-group">
         <label htmlFor="Encargado_Telefono">
@@ -276,47 +294,96 @@ const Encargado = () => {
         </label>
         <input
           type="text"
-          className={`form-control ${!Encargado_Telefono.trim() && "is-invalid"}`}
+          className={`form-control ${
+            !Encargado_Telefono.trim() && "is-invalid"
+          }`}
           id="Encargado_Telefono"
           value={Encargado_Telefono}
           onChange={(e) => setEncargadoTelefono(e.target.value)}
         />
-        {!Encargado_Telefono.trim() && <div className="invalid-feedback">Campo requerido</div>}
+        {!Encargado_Telefono.trim() && (
+          <div className="invalid-feedback">Campo requerido</div>
+        )}
       </div>
 
       <div className="form-group">
         <label htmlFor="Encargado_EstadoCivil">Estado Civil:</label>
         <input
           type="text"
-          className={`form-control ${!Encargado_EstadoCivil.trim() && "is-invalid"}`}
+          className={`form-control ${
+            !Encargado_EstadoCivil.trim() && "is-invalid"
+          }`}
           id="Encargado_EstadoCivil"
           value={Encargado_EstadoCivil}
           onChange={(e) => setEncargadoEstadoCivil(e.target.value)}
         />
-        {!Encargado_EstadoCivil.trim() && <div className="invalid-feedback">Campo requerido</div>}
+        {!Encargado_EstadoCivil.trim() && (
+          <div className="invalid-feedback">Campo requerido</div>
+        )}
       </div>
-      <div className="input-group mb-3">
-        <span className="input-group-text" id="basic-addon1">
-          Nombre de la Persona:
-        </span>
-        <select
-          className={`form-select ${!Persona_Id && "is-invalid"}`}
-          aria-label="Default select example"
-          value={Persona_Id}
-          onChange={(event) => setPersonaId(event.target.value)}
-        >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-          {PersonaList.map((option) => (
-            <option key={option.Persona_Id} value={option.Persona_Id}>
-              {option.Persona_Nombre} {option.Persona_PApellido}{" "}
-              {option.Persona_SApellido}
-            </option>
-          ))}
-        </select>
-        {!Persona_Id && <div className="invalid-feedback">Campo requerido</div>}
+      <div>
+        <div className="mb-3">
+          <label htmlFor="Encargado_Nombre" className="form-label">
+            Nombre del Encargado :
+          </label>
+          <input
+            type="text"
+            className={`form-control ${!Encargado_Nombre && "is-invalid"}`}
+            id="Encargado_Nombre"
+            value={Encargado_Nombre}
+            onChange={(event) => setEncargadoNombre(event.target.value)}
+          />
+          {!Encargado_Nombre && (
+            <div className="invalid-feedback">Campo requerido</div>
+          )}
+        </div>
+        <div className="mb-3">
+          <label htmlFor="Encargado_Nombre2" className="form-label">
+            Segundo Nombre del Encargado :
+          </label>
+          <input
+            type="text"
+            className={`form-control ${!Encargado_Nombre2 && "is-invalid"}`}
+            id="Encargado_Nombre2"
+            value={Encargado_Nombre2}
+            onChange={(event) => setEncargadoNombre2(event.target.value)}
+          />
+          {!Encargado_Nombre2 && (
+            <div className="invalid-feedback">Campo requerido</div>
+          )}
+        </div>
+        <div className="mb-3">
+          <label htmlFor="Encargado_Apellido1" className="form-label">
+            Primer Apellido del Encargado:
+          </label>
+          <input
+            type="text"
+            className={`form-control ${!Encargado_Apellido1 && "is-invalid"}`}
+            id="Encargado_Apellido1"
+            value={Encargado_Apellido1}
+            onChange={(event) => setEncargadoApellido1(event.target.value)}
+          />
+          {!Encargado_Apellido1 && (
+            <div className="invalid-feedback">Campo requerido</div>
+          )}
+        </div>
+        <div className="mb-3">
+          <label htmlFor="Encargado_Apellido2" className="form-label">
+            Segundo Apellido del Encargado :
+          </label>
+          <input
+            type="text"
+            className={`form-control ${!Encargado_Apellido2 && "is-invalid"}`}
+            id="Encargado_Apellido2"
+            value={Encargado_Apellido2}
+            onChange={(event) => setEncargadoApellido2(event.target.value)}
+          />
+          {!Encargado_Apellido2 && (
+            <div className="invalid-feedback">Campo requerido</div>
+          )}
+        </div>
       </div>
+
       <div className="input-group mb-3">
         <span className="input-group-text" id="basic-addon1">
           Escolaridad de la Persona:
@@ -332,127 +399,133 @@ const Encargado = () => {
           </option>
           {EscolaridadList.map((option) => (
             <option key={option.Escolaridad_Id} value={option.Escolaridad_Id}>
-            {option.Escolaridad_Nombre}
-          </option>
-        ))}
-      </select>
-      {!Escolaridad_Id && <div className="invalid-feedback">Campo requerido</div>}
-    </div>
-
-    <div className="input-group mb-3">
-      <span className="input-group-text" id="basic-addon1">
-        Ocupacion de la Persona:
-      </span>
-      <select
-        className={`form-select ${!Ocupacion_Id && "is-invalid"}`}
-        aria-label="Default select example"
-        value={Ocupacion_Id}
-        onChange={(event) => setOcupacionId(event.target.value)}
-      >
-        <option value="" disabled>
-          Seleccione una opción
-        </option>
-        {OcupacionList.map((option) => (
-          <option key={option.Ocupacion_Id} value={option.Ocupacion_Id}>
-            {option.Ocupacion_Nombre}
-          </option>
-        ))}
-      </select>
-      {!Ocupacion_Id && <div className="invalid-feedback">Campo requerido</div>}
-    </div>
-
-    <div className="input-group mb-3">
-      <span className="input-group-text" id="basic-addon1">
-        Parentesco con el estudiante:
-      </span>
-      <select
-        className={`form-select ${!Parentesco_Id && "is-invalid"}`}
-        aria-label="Default select example"
-        value={Parentesco_Id}
-        onChange={(event) => setParentescoId(event.target.value)}
-      >
-        <option value="" disabled>
-          Seleccione una opción
-        </option>
-        {ParentescoList.map((option) => (
-          <option key={option.Parentesco_Id} value={option.Parentesco_Id}>
-            {option.Parentesco_Nombre}
-          </option>
-        ))}
-      </select>
-      {!Parentesco_Id && <div className="invalid-feedback">Campo requerido</div>}
-    </div>
-
-    <div>
-      {editar ? (
-        <div>
-          <button
-            type="submit"
-            className="btn btn-warning m-3"
-            onClick={actualizar}
-          >
-            Actualizar
-          </button>
-          <button
-            type="submit"
-            className="btn btn-danger m-3"
-            onClick={limpiarDatos}
-          >
-            Cancelar
-          </button>
-        </div>
-      ) : (
-        <button type="submit" className="btn btn-primary m-3" onClick={add}>
-          Registrar
-        </button>
-      )}
-      <Link to="/admindashboard" className="btn btn-secondary m-3">
-        Menu Principal
-      </Link>
-      <Link to="/Parentesco" className="btn btn-warning m-3">
-        Parentesco
-      </Link>
-    </div>
-
-    <div className="form-group">
-      <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Nombres y Apellidos </th>
-          </tr>
-        </thead>
-        <tbody>
-          {EncargadoList.map((val, key) => (
-            <tr key={key}>
-              <th>{val.Encargados_Id}</th>
-              <td>{obtenerNombrePersonaPorId(val.Persona_Id)}</td>
-
-              <td>
-                <div className="btn-group" role="group">
-                  <button
-                    className="btn btn-info"
-                    onClick={() => editarEstudiante(val)}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => eliminar(val.Encargados_Id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              </td>
-            </tr>
+              {option.Escolaridad_Nombre}
+            </option>
           ))}
-        </tbody>
-      </table>
+        </select>
+        {!Escolaridad_Id && (
+          <div className="invalid-feedback">Campo requerido</div>
+        )}
+      </div>
+
+      <div className="input-group mb-3">
+        <span className="input-group-text" id="basic-addon1">
+          Ocupacion de la Persona:
+        </span>
+        <select
+          className={`form-select ${!Ocupacion_Id && "is-invalid"}`}
+          aria-label="Default select example"
+          value={Ocupacion_Id}
+          onChange={(event) => setOcupacionId(event.target.value)}
+        >
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          {OcupacionList.map((option) => (
+            <option key={option.Ocupacion_Id} value={option.Ocupacion_Id}>
+              {option.Ocupacion_Nombre}
+            </option>
+          ))}
+        </select>
+        {!Ocupacion_Id && (
+          <div className="invalid-feedback">Campo requerido</div>
+        )}
+      </div>
+
+      <div className="input-group mb-3">
+        <span className="input-group-text" id="basic-addon1">
+          Parentesco con el estudiante:
+        </span>
+        <select
+          className={`form-select ${!Parentesco_Id && "is-invalid"}`}
+          aria-label="Default select example"
+          value={Parentesco_Id}
+          onChange={(event) => setParentescoId(event.target.value)}
+        >
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          {ParentescoList.map((option) => (
+            <option key={option.Parentesco_Id} value={option.Parentesco_Id}>
+              {option.Parentesco_Nombre}
+            </option>
+          ))}
+        </select>
+        {!Parentesco_Id && (
+          <div className="invalid-feedback">Campo requerido</div>
+        )}
+      </div>
+
+      <div>
+        {editar ? (
+          <div>
+            <button
+              type="submit"
+              className="btn btn-warning m-3"
+              onClick={actualizar}
+            >
+              Actualizar
+            </button>
+            <button
+              type="submit"
+              className="btn btn-danger m-3"
+              onClick={limpiarDatos}
+            >
+              Cancelar
+            </button>
+          </div>
+        ) : (
+          <button type="submit" className="btn btn-primary m-3" onClick={add}>
+            Registrar
+          </button>
+        )}
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menu Principal
+        </Link>
+        <Link to="/Parentesco" className="btn btn-warning m-3">
+          Parentesco
+        </Link>
+      </div>
+
+      <div className="form-group">
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Apellido</th>
+            </tr>
+          </thead>
+          <tbody>
+            {EncargadoList.map((val, key) => (
+              <tr key={key}>
+                <th>{val.Encargados_Id}</th>
+                <td>{val.Encargado_Nombre}</td>
+                <td>{val.Encargado_Apellido1}</td>
+
+                <td>
+                  <div className="btn-group" role="group">
+                    <button
+                      className="btn btn-info"
+                      onClick={() => editarEstudiante(val)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => eliminar(val.Encargados_Id)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default Encargado;
-
-

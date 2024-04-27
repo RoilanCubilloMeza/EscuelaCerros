@@ -54,9 +54,11 @@ function App() {
             <Route path="/Cotidiano" roles={[1, 2, 3]} element={<Cotidiano />} />
             <Route path="/Asistencia" roles={[1, 2, 3]} element={<Asistencia />} />
             <Route path="/Matricula" roles={[1, 2, 3]} element={<Matricula />} />
+
             <Route path="/AdminDashboard" roles={[1]} element={<AdminDashboard />} />
             <Route path="/ProfesorDashboard" roles={[2]} element={<ProfesorDashboard />} />
             <Route path="/EstudianteDashboard" roles={[3]} element={<EstudianteDashboard />} /> 
+            
             <Route path="/Usuarios" roles={[1, 2, 3]} element={<Usuarios/>}/>
             <Route path="/Roles" roles={[1, 2, 3]} element={<Roles/>}/>
             <Route path="/Noticias" roles={[1, 2, 3]} element={<Noticias/>}/>

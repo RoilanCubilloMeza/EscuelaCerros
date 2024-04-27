@@ -1,14 +1,34 @@
 const express = require("express");
 const app = express.Router();
 const dotenv = require("dotenv");
+const multer = require("multer");
 const { connection } = require("../config");
 
 dotenv.config();
-
 app.use(express.json());
 
-app.post("/createEventos", (req, res) => {
-  const { Eventos_Nombre, Eventos_Imagen } = req.body;
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 20 * 1024 * 1024 // 20 MB en bytes
+  },
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype === "image/jpeg" ||
+      file.mimetype === "image/png" ||
+      file.mimetype === "image/jpg"
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Formato de archivo no válido. Solo se permiten archivos JPG, JPEG y PNG."));
+    }
+  }
+});
+
+app.post("/createEventos", upload.single("Eventos_Imagen"), (req, res) => {
+  const { Eventos_Nombre } = req.body;
+  const Eventos_Imagen = req.file ? req.file.buffer : null;
 
   if (!Eventos_Nombre || !Eventos_Imagen) {
     return res
@@ -17,9 +37,9 @@ app.post("/createEventos", (req, res) => {
   }
 
   const sql =
-    "INSERT INTO eventosescolares (Eventos_Imagen, Eventos_Nombre) VALUES (?, ?)";
+    "INSERT INTO eventosescolares (Eventos_Nombre, Eventos_Imagen) VALUES (?, ?)";
 
-  connection.query(sql, [Eventos_Imagen, Eventos_Nombre], (err, result) => {
+  connection.query(sql, [Eventos_Nombre, Eventos_Imagen], (err, result) => {
     if (err) {
       console.error("Error al crear el evento:", err);
       return res.status(500).send("Error al crear el evento.");
@@ -49,7 +69,7 @@ app.put("/actualizarEventos", (req, res) => {
 
   connection.query(
     sql,
-    [Evento_id, Eventos_Nombre, Eventos_Imagen],
+    [Eventos_Nombre, Eventos_Imagen, Evento_id],
     (err, result) => {
       if (err) {
         console.error("Error al actualizar el evento:", err);
@@ -63,7 +83,7 @@ app.put("/actualizarEventos", (req, res) => {
 });
 
 app.delete("/deleteEvento/:Evento_id", (req, res) => {
-  const Evento_id = req.params.Persona_Id;
+  const Evento_id = req.params.Evento_id;
 
   connection.query(
     "DELETE FROM eventosescolares WHERE Evento_id=?",
@@ -79,5 +99,25 @@ app.delete("/deleteEvento/:Evento_id", (req, res) => {
     }
   );
 });
+
+app.get("/getImage/:id", (req, res) => {
+  const id = req.params.id;
+
+  connection.query(
+    "SELECT Eventos_Imagen FROM eventosescolares WHERE Evento_id = ?",
+    id,
+    (err, result) => {
+      if (err) {
+        console.error("Error al obtener la imagen:", err);
+        return res.status(500).send("Error al obtener la imagen.");
+      } else {
+        const imagen = result[0].Eventos_Imagen;
+        res.setHeader("Content-Type", "image/jpeg"); 
+        res.send(imagen);
+      }
+    }
+  );
+});
+
 
 module.exports = app;

@@ -16,8 +16,8 @@ const Adecuacion = () => {
     if (!Adecuacion_Nombre.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Campo Vacío",
-        text: "Por favor completa el campo Nombre de la Adecuación",
+        title: "Campo vacío",
+        text: "Por favor, complete el campo Nombre de la adecuación.",
       });
       return;
     }
@@ -30,9 +30,9 @@ const Adecuacion = () => {
       Swal.fire({
         title: "<strong >Guardado exitoso</strong>",
         html:
-          "<i>La Adecuación <strong>" +
+          "<i>La adecuación <strong>" +
           Adecuacion_Nombre +
-          "</strong> ha sido registrada</i>",
+          "</strong> ha sido registrada.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -66,8 +66,8 @@ const Adecuacion = () => {
     if (!Adecuacion_Nombre.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Campo Vacío",
-        text: "Por favor completa el campo Nombre de la Adecuación",
+        title: "Campo vacío",
+        text: "Por favor, complete el campo Nombre de la adecuación.",
       });
       return;
     }
@@ -81,9 +81,9 @@ const Adecuacion = () => {
     Swal.fire({
       title: "<strong >Editado exitoso</strong>",
       html:
-        "<i>La Adecuación <strong>" +
+        "<i>La adecuación <strong>" +
         Adecuacion_Nombre +
-        "</strong> ha sido actualizada</i>",
+        "</strong> ha sido actualizada.</i>",
       icon: "success",
       timer: 3000,
     });
@@ -106,7 +106,7 @@ const Adecuacion = () => {
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
@@ -117,7 +117,7 @@ const Adecuacion = () => {
         });
         Swal.fire(
           "Eliminado",
-          "La Adecuación ha sido eliminada exitosamente",
+          "La Adecuación ha sido eliminada exitosamente.",
           "success"
         );
       }
@@ -147,12 +147,10 @@ const Adecuacion = () => {
 
   return (
     <div className="container">
-      <h1>Escolaridad de la Persona</h1>
-
-      {/* Datos personales del estudiante */}
-      <h3>Datos personales</h3>
+      <h1>Formulario de adecuación</h1>
+      <h3>Datos sobre la adecuación</h3>
       <div className="form-group">
-        <label htmlFor="Adecuacion_Nombre">Nombre de la Adecuación:</label>
+        <label htmlFor="Adecuacion_Nombre">Nombre de la adecuación:</label>
         <input
           type="text"
           className="form-control"
@@ -189,7 +187,7 @@ const Adecuacion = () => {
           </button>
         )}
         <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
         <Link to="/LugarResidencia" className="btn btn-warning m-3">
           Lugar Residencia

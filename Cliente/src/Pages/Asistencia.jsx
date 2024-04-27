@@ -27,7 +27,7 @@ const Asistencia = () => {
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitoso</strong>",
-        html: "<i>la tarea es de  <strong>" + VA_Valor + "</strong></i>",
+        html: "<i>La tarea es de  <strong>" + VA_Valor + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -65,7 +65,7 @@ const Asistencia = () => {
     });
     Swal.fire({
       title: "<strong >Editado exitoso</strong>",
-      html: "<i>la puntuacion <strong>" + VA_Valor + "</strong></i>",
+      html: "<i>La puntuacion es <strong>" + VA_Valor + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
@@ -81,14 +81,14 @@ const Asistencia = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         VA_Valor +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
@@ -126,11 +126,9 @@ const Asistencia = () => {
   return (
     <div className="container">
       <h1>Asistencia</h1>
-
-      {/* Datos personales del estudiante */}
-      <h3>Valor Asistencia</h3>
+      <h2>Valor de la asistencia</h2>
       <div className="form-group">
-        <label htmlFor="VA_Valor">Puntos de Asistencia  :</label>
+        <label htmlFor="VA_Valor">Puntos de Asistencia:</label>
         <input
           type="number"
           className={`form-control ${!campoValido ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
@@ -168,7 +166,7 @@ const Asistencia = () => {
           </button>
         )}
         <Link to="/profesordashboard" className="btn btn-secondary m-3">
-          Menu Principal
+          Menú Principal
         </Link>
       </div>
 

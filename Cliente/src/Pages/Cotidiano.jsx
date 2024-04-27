@@ -34,7 +34,7 @@ const Cotidiano = () => {
       limpiarDatos();
       Swal.fire({
         title: "<strong >Guardado exitoso</strong>",
-        html: "<i>la tarea es de  <strong>" + Cotidiano_Puntos + "</strong></i>",
+        html: "<i>La tarea es de  <strong>" + Cotidiano_Puntos + "</strong></i>",
         icon: "success",
         timer: 3000,
       });
@@ -74,7 +74,7 @@ const Cotidiano = () => {
     });
     Swal.fire({
       title: "<strong >Editado exitoso</strong>",
-      html: "<i>la puntuacion <strong>" + Cotidiano_Puntos + "</strong></i>",
+      html: "<i>La puntuacion es <strong>" + Cotidiano_Puntos + "</strong></i>",
       icon: "success",
       timer: 3000,
     });
@@ -91,14 +91,14 @@ const Cotidiano = () => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
-        "<i>Realmente desea eliminar <strong>" +
+        "<i>¿Realmente desea eliminar <strong>" +
         Cotidiano_Puntos +
-        "</strong></i>",
+        "</strong>?</i>",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Eliminar",
+      confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
@@ -107,7 +107,7 @@ const Cotidiano = () => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "los puntos ha sido eliminado", "success");
+        Swal.fire("Eliminado", "Los puntos han sido eliminados.", "success");
       }
     });
   };
@@ -135,11 +135,9 @@ const Cotidiano = () => {
   return (
     <div className="container">
       <h1>Cotidiano</h1>
-
-      {/* Datos personales del estudiante */}
-      <h3>Datos del Cotidiano</h3>
+      <h2>Valor del cotidiano</h2>
       <div className="form-group">
-        <label htmlFor="Cotidiano_Puntos">Puntos del Cotidiano  :</label>
+        <label htmlFor="Cotidiano_Puntos">Puntos del cotidiano:</label>
         <input
           type="number"
           className={`form-control ${!campoValidoPuntos ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
@@ -154,7 +152,7 @@ const Cotidiano = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="Cotidiano_Porcentaje">Porcentaje del Cotidiano :</label>
+        <label htmlFor="Cotidiano_Porcentaje">Porcentaje del cotidiano :</label>
         <input
           type="number"
           className={`form-control ${!campoValidoPorcentaje ? 'is-invalid' : ''}`} // Aplica la clase 'is-invalid' si el campo no es válido
@@ -192,7 +190,7 @@ const Cotidiano = () => {
           </button>
         )}
          <Link to="/profesordashboard" className="btn btn-secondary m-3">
-         Menu Principal 
+         Menú Principal 
         </Link>
       </div>
 

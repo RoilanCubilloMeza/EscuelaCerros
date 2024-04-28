@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import Parentesco from './Perentesco';
 
 const Enfermedades = () => {
   const { darkMode } = useTheme();
@@ -256,8 +257,8 @@ const Enfermedades = () => {
         <Link to="/admindashboard" className="btn btn-secondary m-3">
           Menú Principal
         </Link>
-        <Link to="/Encargado" className="btn btn-warning m-3">
-          Encargado
+        <Link to="/Parentesco" className="btn btn-warning m-3">
+          Parentesco
         </Link>
       </div>
 

@@ -483,8 +483,8 @@ const Encargado = () => {
         <Link to="/admindashboard" className="btn btn-secondary m-3">
           Menú Principal
         </Link>
-        <Link to="/Parentesco" className="btn btn-warning m-3">
-          Parentesco
+        <Link to="/Grado" className="btn btn-warning m-3">
+          Grado
         </Link>
       </div>
 

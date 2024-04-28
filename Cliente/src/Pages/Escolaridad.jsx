@@ -183,8 +183,8 @@ const Escolaridad = () => {
         <Link to="/admindashboard" className="btn btn-secondary m-3">
           Menú Principal
         </Link>
-        <Link to="/Grado" className="btn btn-warning m-3">
-          Grado del Estudiante
+        <Link to="/Encargado" className="btn btn-warning m-3">
+        Encargado
         </Link>
       </div>
 

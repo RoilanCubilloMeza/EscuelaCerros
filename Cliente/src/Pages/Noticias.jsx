@@ -20,9 +20,8 @@ const Eventos = () => {
       return;
     }
 
-    // Verificar si se ha seleccionado una imagen
     if (!Eventos_Imagen) {
-      setImagen(null); // Establecer la imagen como null
+      setImagen(null); 
     }
 
     const formData = new FormData();

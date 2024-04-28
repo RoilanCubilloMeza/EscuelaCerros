@@ -1,13 +1,33 @@
 /* eslint-disable jsx-a11y/iframe-has-title */
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { MDBCarousel, MDBCarouselItem } from "mdb-react-ui-kit";
 import { FaFacebook, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTheme } from "../components/Theme";
 import { MDBCarouselCaption } from "mdbreact";
+import Carousel from 'react-bootstrap/Carousel';
+
 
 const Home = () => {
   const { darkMode } = useTheme();
+  const [Materias_List, setMaterias_List] = useState([]);
 
+  const getLista = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/obtenerEventos");
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setMaterias_List(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    getLista();
+  }, []);
   return (
     <div
       className={`container-fluid ${
@@ -16,23 +36,21 @@ const Home = () => {
     >
       <div className="row justify-content-center align-items-center min-vh-100">
         <div className="carousel-container">
-          <MDBCarousel showControls showIndicators>
-            {["pag1.jpg", "pag2.jpg", "pag3.jpg"].map((page, index) => (
-              <MDBCarouselItem
-                className="w-100 d-block"
-                itemId={index + 1}
-                src={`/${page}`}
-                alt="..."
-              >
-                <MDBCarouselCaption>
-                  <h5 className="animate__animated animate__fadeInDown">
-                    Actividades Importantes
-                  </h5>
-                  <p className="animate__animated animate__fadeInUp">hola</p>
-                </MDBCarouselCaption>
-              </MDBCarouselItem>
-            ))}
-          </MDBCarousel>
+        <Carousel>
+      {Materias_List.map((val, key) => (
+        <Carousel.Item key={key}>
+          <img
+            className="d-block w-100"
+            src={`http://localhost:3001/getImage/${val.Evento_id}`}
+            alt={val.Eventos_Nombre}
+            style={{ width: "auto", height: "auto" }}
+          />
+          <Carousel.Caption>
+            <h3>{val.Eventos_Nombre}</h3>
+          </Carousel.Caption>
+        </Carousel.Item>
+      ))}
+    </Carousel>
         </div>
         <div className="mt-5">
           <div className="row justify-content-center align-items-center">
@@ -68,6 +86,7 @@ const Home = () => {
                 style={{ width: "100%", height: "500px" }}
               ></iframe>
             </div>
+          
           </div>
           <footer className="footer text-center mt-5 animate__animated animate__fadeIn">
             <div className="container-lg">

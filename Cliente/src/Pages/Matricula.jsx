@@ -12,7 +12,7 @@ function Matricula() {
   const [Enfermedades_Id, setEnfermedad_Id] = useState("");
   const [Encargados_Id, setEncargado_Id] = useState("");
   const [Adecuacion_Id, setAdecuacion_Id] = useState("");
-  const [Residencia_Id, setResidencia_ID] = useState("");
+  const [Residencia_ID, setResidencia_ID] = useState("");
   const [Estudiantes_id, setEstudiante_id] = useState("");
   const [Estudiantes_Estado, setEstado] = useState("");
   const [Estudiantes_Grado, setGrado] = useState("");
@@ -82,7 +82,7 @@ function Matricula() {
       Enfermedades_Id === "" ||
       Encargados_Id === "" ||
       Adecuacion_Id === "" ||
-      Residencia_Id === "" ||
+      Residencia_ID === "" ||
       Estudiantes_Estado === "" ||
       Estudiantes_Grado === ""
     ) {
@@ -92,7 +92,7 @@ function Matricula() {
         icon: "error",
         timer: 3000,
       });
-      return; // Salir de la función si hay campos vacíos
+      return; 
     }
 
     Axios.post("http://localhost:3001/createMatricula", {
@@ -100,7 +100,7 @@ function Matricula() {
       Encargados_Id: Encargados_Id,
       Enfermedades_Id: Enfermedades_Id,
       Adecuacion_Id: Adecuacion_Id,
-      Residencia_Id: Residencia_Id,
+      Residencia_ID: Residencia_ID,
       Estudiantes_Estado: Estudiantes_Estado,
       Estudiantes_Grado: Estudiantes_Grado,
     }).then(() => {
@@ -140,7 +140,7 @@ function Matricula() {
     setPersona_Id(val.Persona_Id);
     setEstado(val.Estudiantes_Estado);
     setAdecuacion_Id(val.Adecuacion_Id);
-    setResidencia_ID(val.Residencia_Id);
+    setResidencia_ID(val.Residencia_ID);
     setEnfermedad_Id(val.Encargados_Id);
     setGrado(val.Estudiantes_Grado);
     setEncargado_Id(val.Encargados_Id);
@@ -148,11 +148,11 @@ function Matricula() {
   };
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizarMatricula", {
-      Persona_Id: Persona_Id,
+      
       Encargados_Id: Encargados_Id,
       Enfermedades_Id: Enfermedades_Id,
       Adecuacion_Id: Adecuacion_Id,
-      Residencia_Id: Residencia_Id,
+      Residencia_ID: Residencia_ID,
       Estudiantes_Estado: Estudiantes_Estado,
       Estudiantes_Grado: Estudiantes_Grado,
       Estudiantes_id: Estudiantes_id,
@@ -351,7 +351,7 @@ function Matricula() {
         {/* Residente */}
         <div
           className={`input-group mb-3 ${
-            Residencia_Id === "" ? "border border-danger" : ""
+            Residencia_ID === "" ? "border border-danger" : ""
           }`}
         >
           <span className="input-group-text" id="basic-addon1">
@@ -360,7 +360,7 @@ function Matricula() {
           <select
             className="form-select"
             aria-label="Default select example"
-            value={Residencia_Id}
+            value={Residencia_ID}
             onChange={(event) => setResidencia_ID(event.target.value)}
           >
             <option value="" disabled>

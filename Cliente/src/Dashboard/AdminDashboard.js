@@ -114,13 +114,6 @@ const AdminDashboard = () => {
       path: "/Enfermedades",
       color: "btn-primary",
     },
-
-    {
-      category: "Encargado(a)",
-      icon: <FaUser size={40} />,
-      path: "/Encargado",
-      color: "btn-secondary",
-    },
     {
       category: "Parentesco",
       icon: <FaUser size={40} />,
@@ -133,6 +126,13 @@ const AdminDashboard = () => {
       path: "/Escolaridad",
       color: "btn-success",
     },
+    {
+      category: "Encargado(a)",
+      icon: <FaUser size={40} />,
+      path: "/Encargado",
+      color: "btn-secondary",
+    },
+   
     {
       category: "Grado",
       icon: <FaGraduationCap size={40} />,

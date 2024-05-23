@@ -13,10 +13,31 @@ const Usuarios = () => {
   const [usuarios_Nombre, setNombre] = useState("");
   const [Usuarios_contraseña, setContraseña] = useState("");
   const [Roles_Id, setRolId] = useState(3);
+  const [Persona_Id, setPersonaId] = useState("");
+  const [ObtenerPersona, setPersona] = useState([]);
   const [obtenerRol, setRol] = useState([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const personaResponse = await Axios.get("http://localhost:3001/obtenerPersonas");
+        setPersona(personaResponse.data);
+
+        const rolResponse = await Axios.get("http://localhost:3001/obtenerRoles");
+        setRol(rolResponse.data);
+
+        const usuariosResponse = await Axios.get("http://localhost:3001/obtenerUsuariosLogin");
+        setAdecuacion_List(usuariosResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const add = () => {
-    if (!usuarios_Nombre.trim() || !Usuarios_contraseña.trim()) {
+    if (!usuarios_Nombre.trim() || !Usuarios_contraseña.trim() || !Roles_Id || !Persona_Id) {
       Swal.fire({
         icon: "warning",
         title: "Campos vacíos",
@@ -29,6 +50,7 @@ const Usuarios = () => {
       usuarios_Nombre: usuarios_Nombre,
       Usuarios_contraseña: Usuarios_contraseña,
       Roles_Id: Roles_Id,
+      Persona_Id: Persona_Id,
     }).then(() => {
       getLista();
       limpiarDatos();
@@ -41,24 +63,14 @@ const Usuarios = () => {
         icon: "success",
         timer: 3000,
       });
+    }).catch(error => {
+      console.error("Error creating user:", error);
     });
   };
 
-  useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerRoles")
-      .then((response) => {
-        setRol(response.data);
-      })
-      .catch((error) => {
-        console.error("Error al obtener datos:", error);
-      });
-  }, []);
-
   const getLista = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:3001/obtenerUsuariosLogin"
-      );
+      const response = await fetch("http://localhost:3001/obtenerUsuariosLogin");
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -70,17 +82,18 @@ const Usuarios = () => {
       console.error("Error fetching data:", error);
     }
   };
-  getLista();
+
   const editarAdecuacion = (val) => {
     setEditar(true);
     setId(val.Usuarios_Id);
     setNombre(val.Usuarios_Nombre);
     setContraseña(val.Usuarios_contraseña);
     setRolId(val.Roles_Id);
+    setPersonaId(val.Persona_Id);
   };
 
   const actualizar = () => {
-    if (!usuarios_Nombre.trim() || !Usuarios_contraseña.trim()) {
+    if (!usuarios_Nombre.trim() || !Usuarios_contraseña.trim() || !Roles_Id || !Persona_Id) {
       Swal.fire({
         icon: "warning",
         title: "Campos vacíos",
@@ -93,18 +106,21 @@ const Usuarios = () => {
       usuarios_Nombre: usuarios_Nombre,
       Usuarios_contraseña: Usuarios_contraseña,
       Roles_Id: Roles_Id,
+      Persona_Id: Persona_Id,
       Usuarios_Id: Usuarios_Id,
     }).then(() => {
       getLista();
-    });
-    Swal.fire({
-      title: "<strong >Editado exitoso</strong>",
-      html:
-        "<i>El usuario <strong>" +
-        usuarios_Nombre +
-        "</strong> ha sido actualizado.</i>",
-      icon: "success",
-      timer: 3000,
+      Swal.fire({
+        title: "<strong >Editado exitoso</strong>",
+        html:
+          "<i>El usuario <strong>" +
+          usuarios_Nombre +
+          "</strong> ha sido actualizado.</i>",
+        icon: "success",
+        timer: 3000,
+      });
+    }).catch(error => {
+      console.error("Error updating user:", error);
     });
   };
 
@@ -112,11 +128,12 @@ const Usuarios = () => {
     setId("");
     setNombre("");
     setContraseña("");
-    setRolId("");
+    setRolId(3);
+    setPersonaId("");
     setEditar(false);
   };
 
-  const eliminar = (Usuarios_Id) => {
+  const eliminar = (Usuarios_Id, usuarios_Nombre) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
       html:
@@ -135,38 +152,22 @@ const Usuarios = () => {
         ).then(() => {
           getLista();
           limpiarDatos();
+          Swal.fire("Eliminado", "El usuario ha sido eliminado.", "success");
+        }).catch(error => {
+          console.error("Error deleting user:", error);
         });
-        Swal.fire("Eliminado", "El usuario ha sido eliminado.", "success");
       }
     });
   };
 
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("bg-dark");
-      document.body.classList.add("text-white");
-    } else {
-      document.body.classList.remove("bg-dark");
-      document.body.classList.remove("text-white");
-      document.body.classList.add("bg-light");
-      document.body.classList.add("text-dark");
-    }
-
-    return () => {
-      document.body.classList.remove(
-        "bg-dark",
-        "text-white",
-        "bg-light",
-        "text-dark"
-      );
-    };
-  }, [darkMode]);
+  const obtenerNombrePersonaPorId = (personaId) => {
+    const persona = ObtenerPersona.find((p) => p.Persona_Id === personaId);
+    return persona ? `${persona.Persona_Nombre} ${persona.Persona_PApellido} ${persona.Persona_SApellido}` : "Nombre no encontrado";
+  };
 
   return (
     <div className="container">
       <h1>Formulario para usuarios</h1>
-
-      {/* Datos personales del estudiante */}
       <h2>Datos del usuario</h2>
       <div className="form-group">
         <label htmlFor="usuarios_Nombre">Nombre del usuario:</label>
@@ -176,9 +177,7 @@ const Usuarios = () => {
           id="usuarios_Nombre"
           value={usuarios_Nombre}
           onChange={(e) => setNombre(e.target.value)}
-          style={{
-            borderColor: usuarios_Nombre.trim() === "" ? "red" : "",
-          }}
+          required
         />
       </div>
       <div className="form-group">
@@ -189,12 +188,10 @@ const Usuarios = () => {
           id="Usuarios_contraseña"
           value={Usuarios_contraseña}
           onChange={(e) => setContraseña(e.target.value)}
-          style={{
-            borderColor: Usuarios_contraseña.trim() === "" ? "red" : "",
-          }}
+          required
         />
       </div>
-      <br></br>
+      <br />
       <div className="input-group mb-3">
         <span className="input-group-text" id="basic-addon1">
           Rol
@@ -215,7 +212,26 @@ const Usuarios = () => {
           ))}
         </select>
       </div>
-
+      <div className="input-group mb-3">
+        <span className="input-group-text" id="basic-addon1">
+          Persona
+        </span>
+        <select
+          className="form-select"
+          aria-label="Default select example"
+          value={Persona_Id}
+          onChange={(event) => setPersonaId(event.target.value)}
+        >
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          {ObtenerPersona.map((option) => (
+            <option key={option.Persona_Id} value={option.Persona_Id}>
+              {option.Persona_Nombre} {option.Persona_PApellido}   {option.Persona_SApellido} 
+            </option>
+          ))}
+        </select>
+      </div>
       <div>
         {editar ? (
           <div>
@@ -243,7 +259,6 @@ const Usuarios = () => {
           Menú Principal
         </Link>
       </div>
-
       <div className="form-group">
         <table className="table">
           <thead>
@@ -252,6 +267,7 @@ const Usuarios = () => {
               <th scope="col">Nombre</th>
               <th scope="col">Contraseña</th>
               <th scope="col">Rol</th>
+              <th scope="col">Persona</th>
               <th scope="col">Funcionalidad</th>
             </tr>
           </thead>
@@ -262,7 +278,7 @@ const Usuarios = () => {
                 <td>{val.Usuarios_Nombre}</td>
                 <th>{val.Usuarios_contraseña}</th>
                 <td>{val.Roles_Id}</td>
-
+                <td>{obtenerNombrePersonaPorId(val.Persona_Id)}</td>
                 <td>
                   <div className="btn-group" role="group">
                     <button
@@ -273,7 +289,7 @@ const Usuarios = () => {
                     </button>
                     <button
                       className="btn btn-danger"
-                      onClick={() => eliminar(val.Usuarios_Id)}
+                      onClick={() => eliminar(val.Usuarios_Id, val.Usuarios_Nombre)}
                     >
                       Eliminar
                     </button>

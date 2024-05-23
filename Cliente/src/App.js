@@ -29,6 +29,9 @@ import Parentesco from "./Pages/Perentesco";
 import Horarios from "./Pages/Horarios";
 import Examen from "./Pages/Examen";
 import Justificacion from "./Pages/Justificacion";
+import Notas from "./Pages/Notas";
+import NotasEstudiante from "./Pages/NotasEstudiante";
+import NotasFinales from "./Pages/NotasFinales";
 
 function App() {
   const [refresh, setRefresh] = useState(false);
@@ -36,7 +39,7 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRefresh(prevRefresh => !prevRefresh);
+      setRefresh((prevRefresh) => !prevRefresh);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -52,28 +55,236 @@ function App() {
             <Route path="/register" element={<Registration />} />
             <Route path="/" element={<Home />} />
             <Route path="/Horarios" element={<Horarios />} />
-            <Route path="/Estudiantes" element={isAuthenticated ? <Persona /> : <Navigate to="/Persona" replace />} />
-            <Route path="/Encargado" element={isAuthenticated ? <Encargado /> : <Navigate to="/Encargado" replace />} />
-            <Route path="/Enfermedades" element={isAuthenticated ? <Enfermedades /> : <Navigate to="/login" replace />} />
-            <Route path="/Escolaridad" element={isAuthenticated ? <Escolaridad /> : <Navigate to="/Enfermedades" replace />} />
-            <Route path="/Adecuacion" element={isAuthenticated ? <Adecuacion /> : <Navigate to="/Adecuacion" replace />} />
-            <Route path="/Ocupacion" element={isAuthenticated ? <Ocupacion /> : <Navigate to="/Ocupacion" replace />} />
-            <Route path="/LugarResidencia" element={isAuthenticated ? <LugarResidencia /> : <Navigate to="/LugarResidencia" replace />} />
-            <Route path="/Grado" element={isAuthenticated ? <Grado /> : <Navigate to="/Grado" replace />} />
-            <Route path="/Matricula" element={isAuthenticated ? <Matricula /> : <Navigate to="/Matricula" replace />} />
-            <Route path="/Usuarios" element={isAuthenticated ? <Usuarios /> : <Navigate to="/Usuarios" replace />} />
-            <Route path="/Roles" element={isAuthenticated ? <Roles /> : <Navigate to="/Roles" replace />} />
-            <Route path="/Noticias" element={isAuthenticated ? <Noticias /> : <Navigate to="/Noticias" replace />} />
-            <Route path="/Parentesco" element={isAuthenticated ? <Parentesco /> : <Navigate to="/Parentesco" replace />} />
-            <Route path="/Materias" element={isAuthenticated ? <Materias /> : <Navigate to="/Materias" replace />} />
-            <Route path="/Examen" element={isAuthenticated ? <Examen /> : <Navigate to="/Examen" replace />} />
-            <Route path="/Tareas" element={isAuthenticated ? <Tareas /> : <Navigate to="/Tareas" replace />} />
-            <Route path="/Cotidiano" element={isAuthenticated ? <Cotidiano /> : <Navigate to="/Cotidiano" replace />} />
-            <Route path="/Asistencia" element={isAuthenticated ? <Asistencia /> : <Navigate to="/Asistencia" replace />} />
-            <Route path="/Justificacion" element={isAuthenticated ? <Justificacion /> : <Navigate to="/Justificacion" replace />} />
-            <Route path="/AdminDashboard" element={isAuthenticated ? <AdminDashboard /> : <Navigate to="/AdminDashboard" replace />} />
-            <Route path="/ProfesorDashboard" element={isAuthenticated ? <ProfesorDashboard /> : <Navigate to="/ProfesorDashboard" replace />} />
-            <Route path="/EstudianteDashboard" element={isAuthenticated ? <EstudianteDashboard /> : <Navigate to="/EstudianteDashboard" replace />} />
+            <Route
+              path="/Estudiantes"
+              element={
+                isAuthenticated ? (
+                  <Persona />
+                ) : (
+                  <Navigate to="/Persona" replace />
+                )
+              }
+            />
+            <Route
+              path="/Encargado"
+              element={
+                isAuthenticated ? (
+                  <Encargado />
+                ) : (
+                  <Navigate to="/Encargado" replace />
+                )
+              }
+            />
+            <Route
+              path="/Enfermedades"
+              element={
+                isAuthenticated ? (
+                  <Enfermedades />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="/Escolaridad"
+              element={
+                isAuthenticated ? (
+                  <Escolaridad />
+                ) : (
+                  <Navigate to="/Enfermedades" replace />
+                )
+              }
+            />
+            <Route
+              path="/Adecuacion"
+              element={
+                isAuthenticated ? (
+                  <Adecuacion />
+                ) : (
+                  <Navigate to="/Adecuacion" replace />
+                )
+              }
+            />
+            <Route
+              path="/Ocupacion"
+              element={
+                isAuthenticated ? (
+                  <Ocupacion />
+                ) : (
+                  <Navigate to="/Ocupacion" replace />
+                )
+              }
+            />
+            <Route
+              path="/LugarResidencia"
+              element={
+                isAuthenticated ? (
+                  <LugarResidencia />
+                ) : (
+                  <Navigate to="/LugarResidencia" replace />
+                )
+              }
+            />
+            <Route
+              path="/Grado"
+              element={
+                isAuthenticated ? <Grado /> : <Navigate to="/Grado" replace />
+              }
+            />
+            <Route
+              path="/Matricula"
+              element={
+                isAuthenticated ? (
+                  <Matricula />
+                ) : (
+                  <Navigate to="/Matricula" replace />
+                )
+              }
+            />
+            <Route
+              path="/Usuarios"
+              element={
+                isAuthenticated ? (
+                  <Usuarios />
+                ) : (
+                  <Navigate to="/Usuarios" replace />
+                )
+              }
+            />
+            <Route
+              path="/Roles"
+              element={
+                isAuthenticated ? <Roles /> : <Navigate to="/Roles" replace />
+              }
+            />
+            <Route
+              path="/Noticias"
+              element={
+                isAuthenticated ? (
+                  <Noticias />
+                ) : (
+                  <Navigate to="/Noticias" replace />
+                )
+              }
+            />
+            <Route
+              path="/NotasEstudiante"
+              element={
+                isAuthenticated ? (
+                  <NotasEstudiante />
+                ) : (
+                  <Navigate to="/NotasEstudiante" replace />
+                )
+              }
+            />
+            <Route
+              path="/Parentesco"
+              element={
+                isAuthenticated ? (
+                  <Parentesco />
+                ) : (
+                  <Navigate to="/Parentesco" replace />
+                )
+              }
+            />
+            <Route
+              path="/Materias"
+              element={
+                isAuthenticated ? (
+                  <Materias />
+                ) : (
+                  <Navigate to="/Materias" replace />
+                )
+              }
+            />
+            <Route
+              path="/Examen"
+              element={
+                isAuthenticated ? <Examen /> : <Navigate to="/Examen" replace />
+              }
+            />
+            <Route
+              path="/Tareas"
+              element={
+                isAuthenticated ? <Tareas /> : <Navigate to="/Tareas" replace />
+              }
+            />
+            <Route
+              path="/Cotidiano"
+              element={
+                isAuthenticated ? (
+                  <Cotidiano />
+                ) : (
+                  <Navigate to="/Cotidiano" replace />
+                )
+              }
+            />
+            <Route
+              path="/Asistencia"
+              element={
+                isAuthenticated ? (
+                  <Asistencia />
+                ) : (
+                  <Navigate to="/Asistencia" replace />
+                )
+              }
+            />
+            <Route
+              path="/Justificacion"
+              element={
+                isAuthenticated ? (
+                  <Justificacion />
+                ) : (
+                  <Navigate to="/Justificacion" replace />
+                )
+              }
+            />
+            <Route
+              path="/AdminDashboard"
+              element={
+                isAuthenticated ? (
+                  <AdminDashboard />
+                ) : (
+                  <Navigate to="/AdminDashboard" replace />
+                )
+              }
+            />
+            <Route
+              path="/ProfesorDashboard"
+              element={
+                isAuthenticated ? (
+                  <ProfesorDashboard />
+                ) : (
+                  <Navigate to="/ProfesorDashboard" replace />
+                )
+              }
+            />
+            <Route
+              path="/EstudianteDashboard"
+              element={
+                isAuthenticated ? (
+                  <EstudianteDashboard />
+                ) : (
+                  <Navigate to="/EstudianteDashboard" replace />
+                )
+              }
+            />
+            <Route
+              path="/Notas"
+              element={
+                isAuthenticated ? <Notas /> : <Navigate to="/Notas" replace />
+              }
+            />
+            <Route
+              path="/NotasFinales"
+              element={
+                isAuthenticated ? (
+                  <NotasFinales />
+                ) : (
+                  <Navigate to="/NotasFinales" replace />
+                )
+              }
+            />
           </Routes>
         </ThemeProvider>
       </UserProvider>

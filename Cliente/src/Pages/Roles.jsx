@@ -151,8 +151,8 @@ const Roles = () => {
           type="text"
           className="form-control"
           id="Roles_Nombre"
-          style={inputNombreStyle}
-          value={Roles_Nombre}
+          required        
+            value={Roles_Nombre}
           onChange={(e) => setNombre(e.target.value)}
         />
       </div>
@@ -163,9 +163,10 @@ const Roles = () => {
           type="text"
           className="form-control"
           id="Roles_Descripcion"
-          style={inputDescripcionStyle}
-          value={Roles_Descripcion}
+                   
+           value={Roles_Descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
+          required   
         />
       </div>
 

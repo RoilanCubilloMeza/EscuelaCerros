@@ -10,14 +10,16 @@ app.post("/createUsuarioslogin", (req, res) => {
   const usuarios_Nombre = req.body.usuarios_Nombre;
   const Usuarios_contraseña = req.body.Usuarios_contraseña;
   const Roles_Id= req.body.Roles_Id;
+  const Persona_Id= req.body.Persona_Id;
  
  
   connection.query(
-    "INSERT INTO usuarios(usuarios_Nombre,  Usuarios_contraseña,Roles_Id) VALUES (?,?,?)",
+    "INSERT INTO usuarios(usuarios_Nombre,Usuarios_contraseña,Roles_Id,Persona_Id) VALUES (?,?,?,?)",
     [
       usuarios_Nombre,
       Usuarios_contraseña,
       Roles_Id,
+      Persona_Id,
     ],
     (err, result) => {
       if (err) {
@@ -30,15 +32,6 @@ app.post("/createUsuarioslogin", (req, res) => {
   );
 });
 
-//app.get("/obtener", (req, res) => {
-//connection.query("SELECT * FROM pruebas", (err, result) => {
-//if (err) {
-//console.log(err);
-//} else {
-//res.send(result);
-//}
-//});
-//});
 
 app.get("/obtenerUsuariosLogin", (req, res) => {
   connection.query("SELECT * FROM usuarios", (err, result) => {
@@ -55,14 +48,17 @@ app.put("/actualizarUsuariosLogin", (req, res) => {
   const usuarios_Nombre = req.body.usuarios_Nombre;
   const Usuarios_contraseña = req.body.Usuarios_contraseña;
   const Roles_Id= req.body.Roles_Id;
+  const Persona_Id= req.body.Persona_Id;
   
   connection.query(
-    "UPDATE usuarios SET usuarios_Nombre=?,Usuarios_contraseña=?,Roles_Id=? WHERE Usuarios_Id=?",
+    "UPDATE usuarios SET usuarios_Nombre=?,Usuarios_contraseña=?,Roles_Id=? , Persona_Id=? WHERE Usuarios_Id=?",
     [
         usuarios_Nombre,
         Usuarios_contraseña,
         Roles_Id,
-        Usuarios_Id,
+        Persona_Id,
+        Usuarios_Id
+        
     ],
     (err, result) => {
       if (err) {

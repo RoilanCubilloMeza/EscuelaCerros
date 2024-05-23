@@ -7,7 +7,7 @@ dotenv.config();
 const { connection } = require("../config");
 
 app.post("/createEncargado", (req, res) => {
-  const Encargado_Nombre=req.body.Encargado_Nombre;
+  const Encargados_Nombre=req.body.Encargados_Nombre;
   const Encargado_Nombre2=req.body.Encargado_Nombre2;
   const Encargado_Apellido1=req.body.Encargado_Apellido1;
   const Encargado_Apellido2=req.body.Encargado_Apellido2;
@@ -20,9 +20,9 @@ app.post("/createEncargado", (req, res) => {
   const Encargado_EstadoCivil = req.body.Encargado_EstadoCivil;
 
   connection.query(
-    "INSERT INTO encargados ( Encargado_Nombre,  Encargado_Nombre2, Encargado_Apellido1,Encargado_Apellido2, Encargados_LugarTrabajo, Escolaridad_Id, Ocupacion_Id, Parentesco_Id, Encargado_ViveEstudiante, Encargado_Telefono, Encargado_EstadoCivil) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)",
+    "INSERT INTO encargados ( Encargados_Nombre,  Encargado_Nombre2, Encargado_Apellido1,Encargado_Apellido2, Encargados_LugarTrabajo, Escolaridad_Id, Ocupacion_Id, Parentesco_Id, Encargado_ViveEstudiante, Encargado_Telefono, Encargado_EstadoCivil) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)",
     [
-      Encargado_Nombre,
+      Encargados_Nombre,
       Encargado_Nombre2,
       Encargado_Apellido1,
       Encargado_Apellido2,
@@ -58,7 +58,7 @@ app.get("/obtenerEncargados", (req, res) => {
 
 app.put("/actualizarEncargados", (req, res) => {
 
-  const Encargado_Nombre=req.body.Encargado_Nombre;
+  const Encargados_Nombre=req.body.Encargados_Nombre;
   const Encargado_Nombre2=req.body.Encargado_Nombre2;
   const Encargado_Apellido1=req.body.Encargado_Apellido1;
   const Encargado_Apellido2=req.body.Encargado_Apellido2;
@@ -72,9 +72,9 @@ app.put("/actualizarEncargados", (req, res) => {
   const Encargados_Id = req.body.Encargados_Id; 
 
   connection.query(
-    "UPDATE encargados SET  Encargado_Nombre=?,Encargado_Nombre2=?,Encargado_Apellido1=?,Encargado_Apellido2=?, Encargados_LugarTrabajo=?,  Escolaridad_Id=?,  Ocupacion_Id=?,  Parentesco_Id=?,  Encargado_ViveEstudiante=?, Encargado_Telefono=?, Encargado_EstadoCivil=? WHERE Encargados_Id=?",
+    "UPDATE encargados SET  Encargados_Nombre=?,Encargado_Nombre2=?,Encargado_Apellido1=?,Encargado_Apellido2=?, Encargados_LugarTrabajo=?,  Escolaridad_Id=?,  Ocupacion_Id=?,  Parentesco_Id=?,  Encargado_ViveEstudiante=?, Encargado_Telefono=?, Encargado_EstadoCivil=? WHERE Encargados_Id=?",
     [ 
-      Encargado_Nombre,
+      Encargados_Nombre,
       Encargado_Nombre2,
       Encargado_Apellido1,
       Encargado_Apellido2,

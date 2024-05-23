@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-import Axios from "axios";
 import React, { useState, useEffect } from "react";
+import Axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../components/Theme";
@@ -8,30 +7,56 @@ import { useTheme } from "../components/Theme";
 const Registration = () => {
   const [Usuarios_Nombre, setUsuarios_Nombre] = useState("");
   const [Usuarios_contraseña, setUsuarios_contraseña] = useState("");
+  const [Persona_Nombre, setNombre] = useState("");
+  const [Persona_PApellido, setPApellido] = useState("");
+  const [Persona_SApellido, setSApellido] = useState("");
+  const [Persona_Cedula, setCedula] = useState("");
+  const [Persona_Edad, setEdad] = useState("");
+  const [Persona_Sexo, setSexo] = useState("");
+  const [Persona_FNAciomiento, setFNAciomiento] = useState("");
+  const [Persona_Correo, setCorreoElectronico] = useState("");
   const [Roles_Id] = useState(3);
   const navigate = useNavigate();
   const { darkMode } = useTheme();
 
   const Registrar = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await Axios.post(
+      // Primero, registra la información de la persona
+      const responsePersona = await Axios.post(
+        `http://localhost:3001/createRegistroPersona`,
+        {
+          Persona_Nombre,
+          Persona_PApellido,
+          Persona_SApellido,
+          Persona_Cedula,
+          Persona_Edad,
+          Persona_Sexo,
+          Persona_FNAciomiento,
+          Persona_Correo,
+        }
+      );
+
+      // Obtiene el ID de la persona registrada
+      const personaId = responsePersona.data.personaId;
+
+      // Luego, registra el usuario asociado a la persona
+      const responseUsuario = await Axios.post(
         `http://localhost:3001/createRegistroUsuario`,
         {
           Usuarios_Nombre,
           Usuarios_contraseña,
           Roles_Id,
+          Persona_Id: personaId, // Asocia el ID de la persona al usuario
         }
       );
 
       Swal.fire({
         title: "Registro exitoso",
-        html: `<i>Usuario  <strong>${Usuarios_Nombre}</strong> ingresar en Login.</i>`,
+        html: `<i>Usuario  <strong>${Usuarios_Nombre}</strong> ingresado en Login.</i>`,
         icon: "success",
         timer: 3000,
       });
-
       navigate("/login");
     } catch (error) {
       Swal.fire({
@@ -54,7 +79,6 @@ const Registration = () => {
       document.body.classList.add("bg-light");
       document.body.classList.add("text-dark");
     }
-
     return () => {
       document.body.classList.remove(
         "bg-dark",
@@ -90,8 +114,97 @@ const Registration = () => {
               required
             />
           </div>
-
-          <input type="hidden" value={Roles_Id} />
+          <div className="form-group">
+            <label htmlFor="nPersona_Nombre">Nombre de la persona:</label>
+            <input
+              type="text"
+              className="form-control"
+              id="Persona_Nombre"
+              value={Persona_Nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="Persona_PApellido">Primer apellido:</label>
+            <input
+              type="text"
+              className="form-control"
+              id="Persona_PApellido"
+              value={Persona_PApellido}
+              onChange={(e) => setPApellido(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="Persona_SApellido">Segundo apellido:</label>
+            <input
+              type="text"
+              className="form-control"
+              id="Persona_SApellido"
+              value={Persona_SApellido}
+              onChange={(e) => setSApellido(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="cedula">Cédula:</label>
+            <input
+              type="text"
+              className="form-control"
+              id="cedula"
+              value={Persona_Cedula}
+              onChange={(e) => setCedula(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="Persona_Edad">Edad:</label>
+            <input
+              type="text"
+              className="form-control"
+              id="Persona_Edad"
+              value={Persona_Edad}
+              onChange={(e) => setEdad(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="sexo">Sexo:</label>
+            <select
+              className="form-control"
+              id="sexo"
+              value={Persona_Sexo}
+              onChange={(e) => setSexo(e.target.value)}
+              required
+            >
+              <option value="">Seleccione</option>
+              <option value="Hombre">Hombre</option>
+              <option value="Mujer">Mujer</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="Persona_FNAciomiento">Fecha de nacimiento:</label>
+            <input
+              type="date"
+              className="form-control"
+              id="Persona_FNAciomiento"
+              value={Persona_FNAciomiento}
+              onChange={(e) => setFNAciomiento(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="Persona_Correo">Correo electrónico:</label>
+            <input
+              type="email"
+              className="form-control"
+              id="Persona_Correo"
+              value={Persona_Correo}
+              onChange={(e) => setCorreoElectronico(e.target.value)}
+              required
+            />
+          </div>
 
           <div className="">
             <button type="submit" className="btn btn-primary ml-2 m-3">

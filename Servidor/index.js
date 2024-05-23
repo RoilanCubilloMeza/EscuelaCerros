@@ -32,6 +32,8 @@ app.use(require('./services/Parentesco'))
 app.use(require('./services/Examen'))
 app.use(require('./services/Justificacion'))
 app.use(require('./services/Noticias'))
+app.use(require('./services/Notas'))
+app.use(require('./services/NotasFinales'))
 
 
 app.listen(process.env.PORT||3001,() => {

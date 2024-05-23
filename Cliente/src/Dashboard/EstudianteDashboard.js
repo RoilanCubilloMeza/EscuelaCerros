@@ -45,7 +45,7 @@ const EstudianteDashboard = () => {
           {
             category: "Notas",
             icon: <FaClipboardCheck size={40} />,
-            path: "/Nota",
+            path: "/NotasEstudiante",
             colorClass: darkMode ? "btn-secondary" : "btn-primary",
           },
           {

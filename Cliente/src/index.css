@@ -1,5 +1,5 @@
 body {
-  margin: 0;
+  margin: 30px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -41,4 +41,68 @@ code {
     transform: translateY(0);
   }
 
+}
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container-fluid {
+  padding: 20px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Estilos para el modo oscuro */
+.bg-dark {
+  background-color: #333;
+}
+
+.text-white {
+  color: #fff;
+}
+
+/* Estilos para el carousel */
+.carousel-container {
+  margin-bottom: 20px;
+}
+
+.carousel-item img {
+  border-radius: 5px;
+}
+
+.carousel-caption {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Estilos para la sección de historia */
+.historia {
+  margin-top: 20px;
+}
+
+/* Estilos para la sección de ubicación */
+.ubicacion {
+  margin-top: 20px;
+}
+
+
+.animate-scroll-down {
+  animation: animateScrollDown 0.5s ease forwards;
+}
+
+@keyframes animateScrollDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

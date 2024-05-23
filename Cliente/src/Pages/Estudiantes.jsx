@@ -207,6 +207,7 @@ const Persona = () => {
           value={Persona_Nombre}
           onChange={(e) => setNombre(e.target.value)}
           style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
+
         />
       </div>
       <div className="form-group">
@@ -228,7 +229,7 @@ const Persona = () => {
           id="Persona_SApellido"
           value={Persona_SApellido}
           onChange={(e) => setSApellido(e.target.value)}
-          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
+          style={{ borderColor: Persona_SApellido.trim() === "" ? "red" : "" }}
         />
       </div>
       <div className="form-group">
@@ -239,7 +240,7 @@ const Persona = () => {
           id="cedula"
           value={Persona_Cedula}
           onChange={(e) => setCedula(e.target.value)}
-          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
+          style={{ borderColor: Persona_Cedula.trim() === "" ? "red" : "" }}
         />
       </div>
       <div className="form-group">

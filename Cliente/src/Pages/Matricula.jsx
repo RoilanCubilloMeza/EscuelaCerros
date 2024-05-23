@@ -148,7 +148,7 @@ function Matricula() {
   };
   const actualizar = () => {
     Axios.put("http://localhost:3001/actualizarMatricula", {
-      
+      Persona_Id:Persona_Id,
       Encargados_Id: Encargados_Id,
       Enfermedades_Id: Enfermedades_Id,
       Adecuacion_Id: Adecuacion_Id,
@@ -259,7 +259,7 @@ function Matricula() {
               <option key={option.Encargados_Id} value={option.Encargados_Id}>
                 Teléfono del encargado(a): {option.Encargado_Telefono}, Lugar de
                 trabajo: {option.Encargados_LugarTrabajo}, Nombre del
-                encargado(a): {option.Encargado_Nombre}{" "}
+                encargado(a): {option.Encargados_Nombre}{" "}
                 {option.Encargado_Apellido1}
               </option>
             ))}
@@ -368,7 +368,7 @@ function Matricula() {
             </option>
             {obtenerResidencia.map((option) => (
               <option key={option.Residencia_Id} value={option.Residencia_Id}>
-                Cantón: {option.Residencia_Canton}, Comunidad:{" "}
+                {option.Residencia_Direccion}, Comunidad:{" "}
                 {option.Residencia_Comunidad}
               </option>
             ))}

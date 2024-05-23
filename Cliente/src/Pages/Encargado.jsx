@@ -15,7 +15,7 @@ const Encargado = () => {
   const [Encargado_ViveEstudiante, setEncargadoViveEstudiante] = useState("");
   const [Encargado_Telefono, setEncargadoTelefono] = useState("");
   const [Encargado_EstadoCivil, setEncargadoEstadoCivil] = useState("");
-  const [Encargado_Nombre, setEncargadoNombre] = useState("");
+  const [Encargados_Nombre, setEncargadoNombre] = useState("");
   const [Encargado_Nombre2, setEncargadoNombre2] = useState("");
   const [Encargado_Apellido1, setEncargadoApellido1] = useState("");
   const [Encargado_Apellido2, setEncargadoApellido2] = useState("");
@@ -106,7 +106,7 @@ const Encargado = () => {
     }
 
     Axios.post("http://localhost:3001/createEncargado", {
-      Encargado_Nombre: Encargado_Nombre,
+      Encargados_Nombre: Encargados_Nombre,
       Encargado_Nombre2: Encargado_Nombre2,
       Encargado_Apellido1: Encargado_Apellido1,
       Encargado_Apellido2: Encargado_Apellido2,
@@ -124,7 +124,7 @@ const Encargado = () => {
         title: "<strong >Guardado exitoso</strong>",
         html:
           "<i>El encargado <strong>" +
-          Encargado_Nombre +
+          Encargados_Nombre +
           Encargado_Apellido1 +
           "</strong> ha sido registrado.</i>",
         icon: "success",
@@ -151,7 +151,7 @@ const Encargado = () => {
   const editarEstudiante = (val) => {
     setEditar(true);
     setId(val.Persona_Id);
-    setEncargadoNombre(val.Encargado_Nombre);
+    setEncargadoNombre(val.Encargados_Nombre);
     setEncargadoNombre2(val.Encargado_Nombre2);
     setEncargadoApellido1(val.Encargado_Apellido1);
     setEncargadoApellido2(val.Encargado_Apellido2);
@@ -180,7 +180,7 @@ const Encargado = () => {
     }
 
     Axios.put("http://localhost:3001/actualizarEncargados", {
-      Encargado_Nombre: Encargado_Nombre,
+      Encargados_Nombre: Encargados_Nombre,
       Encargado_Nombre2: Encargado_Nombre2,
       Encargado_Apellido1: Encargado_Apellido1,
       Encargado_Apellido2: Encargado_Apellido2,
@@ -198,7 +198,7 @@ const Encargado = () => {
       title: "<strong >Editado exitoso</strong>",
       html:
         "<i>El encargado <strong>" +
-        Encargado_Nombre +
+        Encargados_Nombre +
         Encargado_Apellido1 +
         "</strong> ha sido actualizado.</i>",
       icon: "success",
@@ -229,7 +229,7 @@ const Encargado = () => {
       title: "<strong >Eliminar</strong>",
       html:
         "<i>¿Realmente desea eliminar a <strong>" +
-        Encargado_Nombre +
+        Encargados_Nombre +
         Encargado_Apellido1 +
         "</strong>?</i>",
       icon: "warning",
@@ -324,17 +324,17 @@ const Encargado = () => {
       </div>
       <div>
         <div className="mb-3">
-          <label htmlFor="Encargado_Nombre" className="form-label">
+          <label htmlFor="Encargados_Nombre" className="form-label">
             Nombre del encargado(a):
           </label>
           <input
             type="text"
-            className={`form-control ${!Encargado_Nombre && "is-invalid"}`}
-            id="Encargado_Nombre"
-            value={Encargado_Nombre}
+            className={`form-control ${!Encargados_Nombre && "is-invalid"}`}
+            id="Encargados_Nombre"
+            value={Encargados_Nombre}
             onChange={(event) => setEncargadoNombre(event.target.value)}
           />
-          {!Encargado_Nombre && (
+          {!Encargados_Nombre && (
             <div className="invalid-feedback">Campo requerido</div>
           )}
         </div>
@@ -501,7 +501,7 @@ const Encargado = () => {
             {EncargadoList.map((val, key) => (
               <tr key={key}>
                 <th>{val.Encargados_Id}</th>
-                <td>{val.Encargado_Nombre}</td>
+                <td>{val.Encargados_Nombre}</td>
                 <td>{val.Encargado_Apellido1}</td>
 
                 <td>

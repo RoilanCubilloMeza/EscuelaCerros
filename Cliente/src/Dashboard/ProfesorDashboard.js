@@ -42,6 +42,7 @@ const ProfesorDashboard = () => {
     Materias: "#ffc107", // Amarillo
     Tarea: "#dc3545", // Rojo
     Examen: "#17a2b8", // Cyan
+    NotasFinales: "#4610f2", // Purple
     Notas: "#6610f2", // Morado
   };
 
@@ -79,10 +80,15 @@ const ProfesorDashboard = () => {
             path: "/Examen",
           },
           {
+            category: "NotasFinales",
+            icon: <FaClipboardCheck size={40} />,
+            path: "/NotasFinales",
+          },
+          {
             category: "Notas",
             icon: <FaStickyNote size={40} />,
             path: "/Notas",
-          }, // Nuevo botón para "Notas"
+          }, 
         ].map((item, index) => (
           <div
             key={index}
@@ -90,7 +96,7 @@ const ProfesorDashboard = () => {
           >
             <Link
               to={item.path}
-              className={`btn btn-lg w-100`}
+              className="btn btn-lg w-100"
               style={{
                 backgroundColor: categoryColors[item.category],
                 color: "white",

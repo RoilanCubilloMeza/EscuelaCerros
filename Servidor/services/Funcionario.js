@@ -27,11 +27,11 @@ app.post("/login", (req, res) => {
           const token = sign(
             { Usuarios_Nombre, Roles_Id },
             process.env.JWT_SECRET
-          ); 
+          );
           res.json({
             message: "Login exitoso",
             token: token,
-            username: Usuarios_Nombre, // Añade el nombre del usuario a la respuesta
+            username: Usuarios_Nombre,
             Roles_Id: Roles_Id,
           });
         } else {
@@ -42,20 +42,35 @@ app.post("/login", (req, res) => {
   );
 });
 
-
 app.post("/createRegistroUsuario", (req, res) => {
-  const Usuarios_Nombre = req.body.Usuarios_Nombre;
-  const Usuarios_contraseña = req.body.Usuarios_contraseña;
-  const Roles_Id = req.body.Roles_Id;
+  const { Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id } = req.body;
+
   connection.query(
-    "INSERT INTO usuarios(Usuarios_Nombre, Usuarios_contraseña,Roles_Id) VALUES (?,?,?)",
-    [Usuarios_Nombre, Usuarios_contraseña, Roles_Id],
+    "INSERT INTO Usuarios (Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id) VALUES (?, ?, ?, ?)",
+    [Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id],
     (err, result) => {
       if (err) {
         console.log(err);
-        res.status(500).send("Error al crear la Adecuacion");
+        res.status(500).send("Error al crear el registro de usuario");
       } else {
-        res.send("Adecuacion creada exitosamente");
+        res.send("Registro de usuario creado exitosamente");
+      }
+    }
+  );
+});
+
+app.post("/createRegistroPersona", (req, res) => {
+  const { Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_FNAciomiento, Persona_Correo } = req.body;
+
+  connection.query(
+    "INSERT INTO Personas (Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_FNAciomiento, Persona_Correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_FNAciomiento, Persona_Correo],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Error al crear el registro de persona");
+      } else {
+        res.json({ message: "Registro de persona creado exitosamente", personaId: result.insertId });
       }
     }
   );

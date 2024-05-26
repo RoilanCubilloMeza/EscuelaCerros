@@ -1,23 +1,23 @@
 /* eslint-disable jsx-a11y/iframe-has-title */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaFacebook, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTheme } from "../components/Theme";
 import Carousel from "react-bootstrap/Carousel";
-import "animate.css/animate.min.css"; 
+import "animate.css/animate.min.css";
 
 const Home = () => {
   const { darkMode } = useTheme();
-  const [Materias_List, setMaterias_List] = useState([]);
-  const [showCarousel, setShowCarousel] = useState(false); 
+  const [materiasList, setMateriasList] = useState([]);
+  const [showCarousel, setShowCarousel] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     const scrollPosition = window.scrollY;
     if (scrollPosition > 100) {
-      document.body.classList.add("animate-scroll-down");
     } else {
       document.body.classList.remove("animate-scroll-down");
     }
-  };
+  }, []);
 
   const getLista = async () => {
     try {
@@ -28,8 +28,8 @@ const Home = () => {
       }
 
       const data = await response.json();
-      setMaterias_List(data);
-      setShowCarousel(true); 
+      setMateriasList(data);
+      setShowCarousel(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -37,30 +37,46 @@ const Home = () => {
 
   useEffect(() => {
     getLista();
-    window.addEventListener("scroll", handleScroll); 
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll); 
+      window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [handleScroll]);
+
+  useEffect(() => {
+    if (materiasList.length > 0) {
+      const imagePromises = materiasList.map((val) =>
+        new Promise((resolve) => {
+          const img = new Image();
+          img.src = `http://localhost:3001/getImage/${val.Evento_id}`;
+          img.onload = () => {
+            resolve(val.Evento_id);
+          };
+        })
+      );
+
+      Promise.all(imagePromises).then(() => {
+        setImagesLoaded(true);
+      });
+    }
+  }, [materiasList]);
 
   return (
-    <div
-      className={`container-fluid ${
-        darkMode ? "bg-dark text-white" : "bg-light text-dark"
-      }`}
-    >
-      <div className={`row justify-content-center align-items-center min-vh-100 ${showCarousel ? 'animate__animated animate__fadeIn' : ''}`}>
-        <div className="carousel-container">
-          {showCarousel && ( 
+    <div className={`container-fluid ${darkMode ? "bg-dark text-white" : "bg-light text-dark"}`}>
+      <div className={`row justify-content-center align-items-center min-vh-100 ${showCarousel ? "animate__animated animate__fadeIn" : ""}`}>
+        {showCarousel && imagesLoaded && (
+          <div className="col-12">
             <Carousel interval={5000} pause={false}>
-              {Materias_List.map((val, key) => (
+              {materiasList.map((val, key) => (
                 <Carousel.Item key={key}>
                   <img
                     className="d-block w-100"
                     src={`http://localhost:3001/getImage/${val.Evento_id}`}
                     alt={val.Eventos_Nombre}
-                    style={{ width: "600px", height: "700px" }}
+                    loading="lazy"
+                    onLoad={(e) => e.target.classList.add("loaded")}
+                    style={{ width: "600px", height: "700px", backgroundColor: "#333" }}
                   />
                   <Carousel.Caption>
                     <h3>{val.Eventos_Nombre}</h3>
@@ -68,9 +84,10 @@ const Home = () => {
                 </Carousel.Item>
               ))}
             </Carousel>
-          )}
-        </div>
-        <div className="mt-5">
+          </div>
+        )}
+
+        <div className="col-12 mt-5">
           <div className="row justify-content-center align-items-center animate__animated animate__fadeIn">
             <div className="col-md-6">
               <img
@@ -80,22 +97,18 @@ const Home = () => {
               />
             </div>
             <div className="col-md-6">
-              <h2 className={darkMode ? "text-white animate__animated animate__slideInRight" : "text-dark animate__animated animate__slideInRight"}>
+              <h2 className={`animate__animated animate__slideInRight ${darkMode ? "text-white" : "text-dark"}`}>
                 Historia de la escuela
               </h2>
-              <p className={darkMode ? "text-white animate__animated animate__slideInRight" : "text-dark animate__animated animate__slideInRight"}>
-              La primera Junta de Educación la integraron Ventura Elizondo, Adán Elizondo Valverde ellos donaron el lote para la escuela San Rafaela  de Cerros, se llamaba así debido a que un señor llamado Rafael Vindas Hernández acostumbraba a celebrar una fiesta al santo llamado San Rafael, existía una escultura de madera que representaba dicho Santo.
-
-En el año 1970, se construyó en terrenos de la Empresa Palma Tica, 3 aulas, en los terrenos actuales, y no fue hasta el año 2021, que se logró que el terreno fuera traspasado al estado, para uso de la Escuela Cerros. 
-.
+              <p className={`animate__animated animate__slideInRight ${darkMode ? "text-white" : "text-dark"}`}>
+                La primera Junta de Educación la integraron Ventura Elizondo, Adán Elizondo Valverde ellos donaron el lote para la escuela San Rafaela de Cerros, se llamaba así debido a que un señor llamado Rafael Vindas Hernández acostumbraba a celebrar una fiesta al santo llamado San Rafael, existía una escultura de madera que representaba dicho Santo. En el año 1970, se construyó en terrenos de la Empresa Palma Tica, 3 aulas, en los terrenos actuales, y no fue hasta el año 2021, que se logró que el terreno fuera traspasado al estado, para uso de la Escuela Cerros.
               </p>
             </div>
           </div>
           <div className="mt-5 text-center animate__animated animate__fadeIn">
             <h2 className="animate__animated animate__bounceIn">Ubicación</h2>
             <p className="animate__animated animate__bounceIn">
-              Puntarenas, Quepos, Quepos, Cerros, frente a la Iglesia Evangélica
-              Maná Nueva Cosecha
+              Puntarenas, Quepos, Quepos, Cerros, frente a la Iglesia Evangélica Maná Nueva Cosecha
             </p>
             <div className="embed-responsive embed-responsive-16by9 animate__animated animate__zoomIn">
               <iframe
@@ -149,4 +162,3 @@ En el año 1970, se construyó en terrenos de la Empresa Palma Tica, 3 aulas, en
 };
 
 export default Home;
-

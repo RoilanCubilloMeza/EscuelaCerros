@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import Axios from "axios";
 import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 
 const Notas = () => {
-  const [notas, setNotas] = useState([]);
   const [Estudiantes_id, setEstudiante_id] = useState("");
   const [Materias_id, setMaterias_id] = useState("");
+  const [Nota_Total, setNota_Total] = useState("");
+  const [Nota_Periodo, setNota_Periodo] = useState("");
   const [Materias_List, setMaterias_List] = useState([]);
   const [Matricula, setMatricula] = useState([]);
   const [NotasFinales_List, setNotasFinales_List] = useState([]);
+  const [editingNotaId, setEditingNotaId] = useState(null);
   const { darkMode } = useTheme();
 
   useEffect(() => {
@@ -55,38 +55,181 @@ const Notas = () => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
+      console.log("Materias_List data:", data); // Agrega esta línea
       setMaterias_List(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  const getLista = async () => {
+  const buscarNotas = async () => {
     try {
-      const response = await fetch("http://localhost:3001/notasDetalladas");
+      const response = await fetch(
+        `http://localhost:3001/notasDetalladas?Estudiantes_id=${Estudiantes_id}&Materias_id=${Materias_id}&Nota_Periodo=${Nota_Periodo}`
+      );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
       setNotasFinales_List(data);
+
+      if (data.length > 0) {
+        Swal.fire({
+          icon: "success",
+          title: "Resultados encontrados",
+          text: `Se encontraron ${data.length} resultados.`,
+        });
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "Sin resultados",
+          text: "No se encontraron resultados para los criterios de búsqueda.",
+        });
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Hubo un error al realizar la búsqueda. Por favor, inténtelo de nuevo.",
+      });
+    }
+  };
+
+  const agregarNota = async () => {
+    if (editingNotaId) {
+      actualizarNota();
+    } else {
+      try {
+        const response = await fetch("http://localhost:3001/agregarNota", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Estudiantes_id,
+            Materias_id,
+            Nota_Total,
+            Nota_Periodo,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        Swal.fire({
+          icon: "success",
+          title: "Nota agregada",
+          text: data.message,
+        });
+
+        buscarNotas();
+        limpiarCampos(); // Clear the fields after adding a note
+      } catch (error) {
+        console.error("Error adding note:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Hubo un error al agregar la nota. Por favor, inténtelo de nuevo.",
+        });
+      }
+    }
+  };
+
+  const limpiarCampos = () => {
+    setEstudiante_id("");
+    setMaterias_id("");
+    setNota_Total("");
+    setNota_Periodo("");
+    setNotasFinales_List([]);
+    setEditingNotaId(null); // Clear the editing note ID
+  };
+
+  const editarNota = (nota) => {
+    setEstudiante_id(nota.Estudiantes_id);
+    setMaterias_id(nota.Materias_id);
+    setNota_Total(nota.Nota_Total);
+    setNota_Periodo(nota.Nota_Periodo);
+    setEditingNotaId(nota.Nota_Id); // Almacenar Nota_Id en el estado
+  };
+
+  const actualizarNota = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/actualizarNota/${editingNotaId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Estudiantes_id,
+            Materias_id,
+            Nota_Total,
+            Nota_Periodo,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      Swal.fire({
+        icon: "success",
+        title: "Nota actualizada",
+        text: data.message,
+      });
+
+      buscarNotas();
+      limpiarCampos(); // Limpiar campos después de actualizar
+      setEditingNotaId(null); // Restablecer editingNotaId a null
+    } catch (error) {
+      console.error("Error updating note:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Hubo un error al actualizar la nota. Por favor, inténtelo de nuevo.",
+      });
+    }
+  };
+
+  const eliminarNota = async (notaId) => {
+    try {
+      const deleteResponse = await fetch(
+        `http://localhost:3001/eliminarNota/${notaId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!deleteResponse.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      // Mostrar mensaje de éxito y actualizar la lista de notas
+      Swal.fire({
+        icon: "success",
+        title: "Nota eliminada",
+        text: "La nota ha sido eliminada exitosamente.",
+      });
+      buscarNotas();
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Hubo un error al eliminar la nota. Por favor, inténtelo de nuevo.",
+      });
     }
   };
 
   useEffect(() => {
     getListaMatricula();
     getListaMaterias();
-    getLista();
   }, []);
-
-  // Filtering the notes based on selected student and subject
-  const filteredNotas = NotasFinales_List.filter((nota) => {
-    return (
-      (Estudiantes_id === "" || nota.Estudiantes_id === Estudiantes_id) &&
-      (Materias_id === "" || nota.Materias_id === Materias_id)
-    );
-  });
 
   return (
     <div className="container">
@@ -132,41 +275,98 @@ const Notas = () => {
           ))}
         </select>
       </div>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Estudiante</th>
-            <th>Materia</th>
-            <th>Nota Final</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredNotas.map((nota) => {
-            const estudiante = Matricula.find(
-              (est) => est.Estudiantes_id === nota.Estudiantes_id
-            );
-            const materia = Materias_List.find(
-              (mat) => mat.Materias_id === nota.Materias_id
-            );
-
-            return (
-              <tr key={nota.Nota_Id}>
-                <td>
-                  {estudiante
-                    ? `${estudiante.Persona_nombre} ${estudiante.Persona_PApellido} ${estudiante.Persona_SApellido}`
-                    : "Estudiante no encontrado"}
-                </td>
-                <td>
-                  {materia ? materia.Materias_Nombre : "Materia no encontrada"}
-                </td>
-                <td>{nota.Nota_Total}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div>
+        <span className="input-group-text" id="basic-addon1">
+          Nota Periodo:
+        </span>
+        <select
+          className="form-select"
+          aria-label="Default select example"
+          value={Nota_Periodo}
+          onChange={(event) => setNota_Periodo(event.target.value)}
+        >
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          <option value="I Periodo">I Periodo</option>
+          <option value="II Periodo">II Periodo</option>
+          <option value="III Periodo">III Periodo</option>
+        </select>
+      </div>
+      <div>
+        <span className="input-group-text" id="basic-addon1">
+          Nota Total:
+        </span>
+        <input
+          type="text"
+          className="form-control"
+          value={Nota_Total}
+          onChange={(event) => setNota_Total(event.target.value)}
+        />
+      </div>
+      <button className="btn btn-primary mt-3" onClick={buscarNotas}>
+        Buscar
+      </button>
+      <button className="btn btn-success mt-3 ms-2" onClick={agregarNota}>
+        {editingNotaId ? "Actualizar Nota" : "Agregar Nota"}
+      </button>
+      <button className="btn btn-warning mt-3 ms-2" onClick={limpiarCampos}>
+        Limpiar
+      </button>
+      {NotasFinales_List.length > 0 && (
+        <table className="table mt-3">
+          <thead>
+            <tr>
+              <th>Estudiante</th>
+              <th>Materia</th>
+              <th>Nota Final</th>
+              <th>Nota Periodo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {NotasFinales_List.map((nota) => {
+              const estudiante = Matricula.find(
+                (est) => est.Estudiantes_id === nota.Estudiantes_id
+              );
+              const materia = Materias_List.find(
+                (mat) => mat.Materias_List === nota.Materias_List
+              );
+              return (
+                <tr key={nota.Nota_Id}>
+                  <td>
+                    {estudiante
+                      ? `${estudiante.Persona_nombre} ${estudiante.Persona_PApellido} ${estudiante.Persona_SApellido}`
+                      : "Estudiante no encontrado"}
+                  </td>
+                  <td>
+                    {materia
+                      ? materia.Materias_Nombre
+                      : "Materia no encontrada"}
+                  </td>
+                  <td>{nota.Nota_Total}</td>
+                  <td>{nota.Nota_Periodo}</td>
+                  <td>
+                    <button
+                      className="btn btn-warning me-2"
+                      onClick={() => editarNota(nota)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => eliminarNota(nota.Nota_Id)}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
-
 export default Notas;

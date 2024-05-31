@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
+import { Link } from "react-router-dom";
 
 const Notas = () => {
   const [Estudiantes_id, setEstudiante_id] = useState("");
   const [Materias_id, setMaterias_id] = useState("");
   const [Nota_Total, setNota_Total] = useState("");
+  const[Nota_Id,setNota_Id]=useState("")
   const [Nota_Periodo, setNota_Periodo] = useState("");
   const [Materias_List, setMaterias_List] = useState([]);
   const [Matricula, setMatricula] = useState([]);
@@ -55,7 +57,7 @@ const Notas = () => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      console.log("Materias_List data:", data); // Agrega esta línea
+      console.log("Materias_List data:", data); 
       setMaterias_List(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -79,6 +81,7 @@ const Notas = () => {
           title: "Resultados encontrados",
           text: `Se encontraron ${data.length} resultados.`,
         });
+        console.log("NF",NotasFinales_List)
       } else {
         Swal.fire({
           icon: "warning",
@@ -126,7 +129,7 @@ const Notas = () => {
         });
 
         buscarNotas();
-        limpiarCampos(); 
+        limpiarCampos();
       } catch (error) {
         console.error("Error adding note:", error);
         Swal.fire({
@@ -153,6 +156,7 @@ const Notas = () => {
     setNota_Total(nota.Nota_Total);
     setNota_Periodo(nota.Nota_Periodo);
     setEditingNotaId(nota.Nota_Id);
+    console.log("Notaid",nota)
   };
 
   const actualizarNota = async () => {
@@ -167,6 +171,7 @@ const Notas = () => {
           body: JSON.stringify({
             Estudiantes_id,
             Materias_id,
+            Nota_Id,
             Nota_Total,
             Nota_Periodo,
           }),
@@ -185,8 +190,8 @@ const Notas = () => {
       });
 
       buscarNotas();
-      limpiarCampos(); 
-      setEditingNotaId(null); 
+      limpiarCampos();
+      setEditingNotaId(null);
     } catch (error) {
       console.error("Error updating note:", error);
       Swal.fire({
@@ -209,7 +214,6 @@ const Notas = () => {
         throw new Error("Network response was not ok");
       }
 
-      // Mostrar mensaje de éxito y actualizar la lista de notas
       Swal.fire({
         icon: "success",
         title: "Nota eliminada",
@@ -304,15 +308,21 @@ const Notas = () => {
           onChange={(event) => setNota_Total(event.target.value)}
         />
       </div>
-      <button className="btn btn-primary mt-3" onClick={buscarNotas}>
-        Buscar
-      </button>
-      <button className="btn btn-success mt-3 ms-2" onClick={agregarNota}>
-        {editingNotaId ? "Actualizar Nota" : "Agregar Nota"}
-      </button>
-      <button className="btn btn-warning mt-3 ms-2" onClick={limpiarCampos}>
-        Limpiar
-      </button>
+      <div>
+        <button className="btn btn-primary mt-3" onClick={buscarNotas}>
+          Buscar
+        </button>
+        
+        <button className="btn btn-success mt-3 ms-2" onClick={agregarNota}>
+          {editingNotaId ? "Actualizar Nota" : "Agregar Nota"}
+        </button>
+        <button className="btn btn-warning mt-3 ms-2" onClick={limpiarCampos}>
+          Limpiar
+        </button>
+        <Link to="/profesordashboard" className="btn btn-secondary m-3">
+          Menú Principal
+        </Link>
+      </div>
       {NotasFinales_List.length > 0 && (
         <table className="table mt-3">
           <thead>
@@ -330,7 +340,7 @@ const Notas = () => {
                 (est) => est.Estudiantes_id === nota.Estudiantes_id
               );
               const materia = Materias_List.find(
-                (mat) => mat.Materias_List === nota.Materias_List
+                (mat) => mat.Materias_Nombre === nota.Materias_Nombre
               );
               return (
                 <tr key={nota.Nota_Id}>
@@ -355,7 +365,7 @@ const Notas = () => {
                     </button>
                     <button
                       className="btn btn-danger"
-                      onClick={() => eliminarNota(nota.Nota_Id)}
+                      onClick={() => eliminarNota(nota.Matricula_Id)}
                     >
                       Eliminar
                     </button>

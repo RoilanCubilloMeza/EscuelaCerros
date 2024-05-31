@@ -51,9 +51,8 @@ app.get("/obtenerNotas", (req, res) => {
 
 app.get("/notasDetalladas", (req, res) => {
   // Obtener los parámetros de consulta
-  const { Estudiantes_id, Materias_Nombre, Nota_Periodo } = req.query;
+  const { Estudiantes_id, Materias_id, Nota_Periodo } = req.query;
 
-  // Construir la consulta SQL base
   let query = `
     SELECT 
       e.Estudiantes_id,
@@ -62,7 +61,9 @@ app.get("/notasDetalladas", (req, res) => {
       p.Persona_SApellido,
       m.Materias_Nombre,
       nf.Nota_Total,
-      nf.Nota_Periodo
+      nf.Nota_Periodo,
+      nf.Nota_Id,
+      ma.Matricula_Id
     FROM 
       Matricula ma
     JOIN 
@@ -71,37 +72,44 @@ app.get("/notasDetalladas", (req, res) => {
       Personas p ON e.Persona_Id = p.Persona_Id
     JOIN 
       Materias m ON ma.Materias_id = m.Materias_id
-    JOIN 
-      Nota_Final nf ON ma.Nota_Id = nf.Nota_Id
+    LEFT JOIN 
+      Nota_Final nf ON ma.Nota_Id = nf.Nota_Id AND nf.Nota_Periodo = ?
+    WHERE 
+      e.Estudiantes_id = ? AND 
+      m.Materias_id = ? 
   `;
 
-  // Agregar condiciones a la consulta si los parámetros están presentes
-  const conditions = [];
+ /* const conditions = [];
   if (Estudiantes_id) {
     conditions.push(`e.Estudiantes_id = ${connection.escape(Estudiantes_id)}`);
   }
-  if (Materias_Nombre) {
-    conditions.push(
-      `m.Materias_Nombre = ${connection.escape(Materias_Nombre)}`
-    );
+  if (Materias_id) {
+    conditions.push(`m.Materias_id = ${connection.escape(Materias_id)}`);
   }
   if (Nota_Periodo) {
     conditions.push(`nf.Nota_Periodo = ${connection.escape(Nota_Periodo)}`);
-  }
+  }*/
 
   // Si hay condiciones, agregarlas a la consulta
-  if (conditions.length > 0) {
+ /* if (conditions.length > 0) {
     query += ` WHERE ` + conditions.join(" AND ");
   }
-
+*/
+connection.query(query, [Nota_Periodo, Estudiantes_id, Materias_id], (error, results) => {
+  if (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  } else {
+    res.json(results);
+  }
   // Ejecutar la consulta
-  connection.query(query, (error, results) => {
+  /*connection.query(query, (error, results) => {
     if (error) {
       console.error(error);
       res.status(500).json({ error: "Internal Server Error" });
     } else {
       res.json(results);
-    }
+    }*/
   });
 });
 
@@ -134,6 +142,7 @@ app.delete("/Notas/:id", (req, res) => {
     res.send("Matricula eliminada con éxito");
   });
 });
+
 app.post("/agregarNota", (req, res) => {
   const { Estudiantes_id, Materias_id, Nota_Total, Nota_Periodo } = req.body;
 
@@ -216,7 +225,6 @@ app.put("/actualizarNota/:id", (req, res) => {
 app.delete("/eliminarNota/:id", (req, res) => {
   const { id } = req.params;
 
-  // Consulta para obtener el Nota_Id asociado al Matricula_Id
   const getNotaIdQuery = `SELECT Nota_Id FROM Matricula WHERE Matricula_Id = ?`;
 
   connection.query(getNotaIdQuery, [id], (error, results) => {

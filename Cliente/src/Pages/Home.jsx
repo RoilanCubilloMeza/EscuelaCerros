@@ -76,7 +76,7 @@ const Home = () => {
                     alt={val.Eventos_Nombre}
                     loading="lazy"
                     onLoad={(e) => e.target.classList.add("loaded")}
-                    style={{ width: "600px", height: "700px", backgroundColor: "#333" }}
+                    style={{ width: "100%", height: "auto", backgroundColor: "#333" }}
                   />
                   <Carousel.Caption>
                     <h3>{val.Eventos_Nombre}</h3>
@@ -89,14 +89,14 @@ const Home = () => {
 
         <div className="col-12 mt-5">
           <div className="row justify-content-center align-items-center animate__animated animate__fadeIn">
-            <div className="col-md-6">
+            <div className="col-12 col-md-6">
               <img
                 src="/EscuelaHome.jpg"
                 alt="Imagen de la escuela"
                 className="img-fluid animate__animated animate__slideInLeft"
               />
             </div>
-            <div className="col-md-6">
+            <div className="col-12 col-md-6">
               <h2 className={`animate__animated animate__slideInRight ${darkMode ? "text-white" : "text-dark"}`}>
                 Historia de la escuela
               </h2>
@@ -117,18 +117,18 @@ const Home = () => {
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                style={{ width: "100%", height: "500px" }}
+                style={{ width: "100%", height: "400px" }}
               ></iframe>
             </div>
           </div>
           <footer className="footer text-center mt-5 animate__animated animate__fadeIn">
             <div className="container-lg">
               <div className="row">
-                <div className="col-md-6 animate__animated animate__flipInX">
+                <div className="col-12 col-md-6 animate__animated animate__flipInX">
                   <h3>Información</h3>
                   <p>Ante el apagón educativo, encendamos juntos la luz.</p>
                 </div>
-                <div className="col-md-6 animate__animated animate__flipInX">
+                <div className="col-12 col-md-6 animate__animated animate__flipInX">
                   <h3>Redes Sociales</h3>
                   <ul className="list-unstyled">
                     <li>

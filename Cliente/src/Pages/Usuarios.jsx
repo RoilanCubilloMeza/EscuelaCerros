@@ -155,6 +155,26 @@ const Usuarios = () => {
     return persona ? `${persona.Persona_Nombre} ${persona.Persona_PApellido} ${persona.Persona_SApellido}` : "Nombre no encontrado";
   };
 
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("bg-dark");
+      document.body.classList.add("text-white");
+    } else {
+      document.body.classList.remove("bg-dark");
+      document.body.classList.remove("text-white");
+      document.body.classList.add("bg-light");
+      document.body.classList.add("text-dark");
+    }
+
+    return () => {
+      document.body.classList.remove(
+        "bg-dark",
+        "text-white",
+        "bg-light",
+        "text-dark"
+      );
+    };
+  }, [darkMode]);
   return (
     <div className="container">
       <h1>Formulario para usuarios</h1>

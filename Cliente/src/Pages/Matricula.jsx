@@ -477,7 +477,6 @@ function Matricula() {
                   <td>{val.Estudiantes_Estado}</td>
                   <td>{obtenerNombrePersonaPorId(val.Persona_Id)}</td>
                   <td>
-                    <div className="btn-group" role="group">
                       <button
                         className="btn btn-info"
                         onClick={() => editarMatricula(val)}
@@ -490,7 +489,6 @@ function Matricula() {
                       >
                         Eliminar
                       </button>
-                    </div>
                   </td>
                 </tr>
               ))}

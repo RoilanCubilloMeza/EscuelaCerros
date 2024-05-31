@@ -55,11 +55,8 @@ const Usuarios = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitoso</strong>",
-        html:
-          "<i>El usuario <strong>" +
-          usuarios_Nombre +
-          "</strong> ha sido registrado.</i>",
+        title: "<strong>Guardado exitoso</strong>",
+        html: `<i>El usuario <strong>${usuarios_Nombre}</strong> ha sido registrado.</i>`,
         icon: "success",
         timer: 3000,
       });
@@ -111,11 +108,8 @@ const Usuarios = () => {
     }).then(() => {
       getLista();
       Swal.fire({
-        title: "<strong >Editado exitoso</strong>",
-        html:
-          "<i>El usuario <strong>" +
-          usuarios_Nombre +
-          "</strong> ha sido actualizado.</i>",
+        title: "<strong>Editado exitoso</strong>",
+        html: `<i>El usuario <strong>${usuarios_Nombre}</strong> ha sido actualizado.</i>`,
         icon: "success",
         timer: 3000,
       });
@@ -135,11 +129,8 @@ const Usuarios = () => {
 
   const eliminar = (Usuarios_Id, usuarios_Nombre) => {
     Swal.fire({
-      title: "<strong >Eliminar</strong>",
-      html:
-        "<i>¿Realmente desea eliminar a <strong>" +
-        usuarios_Nombre +
-        "</strong>?</i>",
+      title: "<strong>Eliminar</strong>",
+      html: `<i>¿Realmente desea eliminar a <strong>${usuarios_Nombre}</strong>?</i>`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "green",
@@ -147,15 +138,14 @@ const Usuarios = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(
-          "http://localhost:3001/deleteUsuariosLogin/" + Usuarios_Id
-        ).then(() => {
-          getLista();
-          limpiarDatos();
-          Swal.fire("Eliminado", "El usuario ha sido eliminado.", "success");
-        }).catch(error => {
-          console.error("Error deleting user:", error);
-        });
+        Axios.delete(`http://localhost:3001/deleteUsuariosLogin/${Usuarios_Id}`)
+          .then(() => {
+            getLista();
+            limpiarDatos();
+            Swal.fire("Eliminado", "El usuario ha sido eliminado.", "success");
+          }).catch(error => {
+            console.error("Error deleting user:", error);
+          });
       }
     });
   };
@@ -169,68 +159,72 @@ const Usuarios = () => {
     <div className="container">
       <h1>Formulario para usuarios</h1>
       <h2>Datos del usuario</h2>
-      <div className="form-group">
-        <label htmlFor="usuarios_Nombre">Nombre del usuario:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="usuarios_Nombre"
-          value={usuarios_Nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          required
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="Usuarios_contraseña">Contraseña:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="Usuarios_contraseña"
-          value={Usuarios_contraseña}
-          onChange={(e) => setContraseña(e.target.value)}
-          required
-        />
+      <div className="row">
+        <div className="col-md-6">
+          <div className="form-group">
+            <label htmlFor="usuarios_Nombre">Nombre del usuario:</label>
+            <input
+              type="text"
+              className="form-control"
+              id="usuarios_Nombre"
+              value={usuarios_Nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="form-group">
+            <label htmlFor="Usuarios_contraseña">Contraseña:</label>
+            <input
+              type="password"
+              className="form-control"
+              id="Usuarios_contraseña"
+              value={Usuarios_contraseña}
+              onChange={(e) => setContraseña(e.target.value)}
+              required
+            />
+          </div>
+        </div>
       </div>
       <br />
-      <div className="input-group mb-3">
-        <span className="input-group-text" id="basic-addon1">
-          Rol
-        </span>
-        <select
-          className="form-select"
-          aria-label="Default select example"
-          value={Roles_Id}
-          onChange={(event) => setRolId(event.target.value)}
-        >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-          {obtenerRol.map((option) => (
-            <option key={option.Roles_Id} value={option.Roles_Id}>
-              {option.Roles_Nombre} ID: {option.Roles_Id}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="input-group mb-3">
-        <span className="input-group-text" id="basic-addon1">
-          Persona
-        </span>
-        <select
-          className="form-select"
-          aria-label="Default select example"
-          value={Persona_Id}
-          onChange={(event) => setPersonaId(event.target.value)}
-        >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-          {ObtenerPersona.map((option) => (
-            <option key={option.Persona_Id} value={option.Persona_Id}>
-              {option.Persona_Nombre} {option.Persona_PApellido}   {option.Persona_SApellido} 
-            </option>
-          ))}
-        </select>
+      <div className="row">
+        <div className="col-md-6">
+          <div className="input-group mb-3">
+            <span className="input-group-text" id="basic-addon1">Rol</span>
+            <select
+              className="form-select"
+              aria-label="Default select example"
+              value={Roles_Id}
+              onChange={(event) => setRolId(event.target.value)}
+            >
+              <option value="" disabled>Seleccione una opción</option>
+              {obtenerRol.map((option) => (
+                <option key={option.Roles_Id} value={option.Roles_Id}>
+                  {option.Roles_Nombre} ID: {option.Roles_Id}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="input-group mb-3">
+            <span className="input-group-text" id="basic-addon1">Persona</span>
+            <select
+              className="form-select"
+              aria-label="Default select example"
+              value={Persona_Id}
+              onChange={(event) => setPersonaId(event.target.value)}
+            >
+              <option value="" disabled>Seleccione una opción</option>
+              {ObtenerPersona.map((option) => (
+                <option key={option.Persona_Id} value={option.Persona_Id}>
+                  {option.Persona_Nombre} {option.Persona_PApellido} {option.Persona_SApellido}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
       <div>
         {editar ? (
@@ -259,7 +253,7 @@ const Usuarios = () => {
           Menú Principal
         </Link>
       </div>
-      <div className="form-group">
+      <div className="table-responsive">
         <table className="table">
           <thead>
             <tr>

@@ -371,7 +371,6 @@ const Persona = () => {
                 <td>{val.Persona_Edad}</td>
                 <td>{val.Persona_Cedula}</td>
                 <td>
-                  <div className="btn-group" role="group">
                     <button
                       className="btn btn-info"
                       onClick={() => editarEstudiante(val)}
@@ -384,7 +383,6 @@ const Persona = () => {
                     >
                       Eliminar
                     </button>
-                  </div>
                 </td>
               </tr>
             ))}

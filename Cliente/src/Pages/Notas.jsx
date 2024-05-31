@@ -126,7 +126,7 @@ const Notas = () => {
         });
 
         buscarNotas();
-        limpiarCampos(); // Clear the fields after adding a note
+        limpiarCampos(); 
       } catch (error) {
         console.error("Error adding note:", error);
         Swal.fire({
@@ -144,7 +144,7 @@ const Notas = () => {
     setNota_Total("");
     setNota_Periodo("");
     setNotasFinales_List([]);
-    setEditingNotaId(null); // Clear the editing note ID
+    setEditingNotaId(null);
   };
 
   const editarNota = (nota) => {
@@ -152,7 +152,7 @@ const Notas = () => {
     setMaterias_id(nota.Materias_id);
     setNota_Total(nota.Nota_Total);
     setNota_Periodo(nota.Nota_Periodo);
-    setEditingNotaId(nota.Nota_Id); // Almacenar Nota_Id en el estado
+    setEditingNotaId(nota.Nota_Id);
   };
 
   const actualizarNota = async () => {
@@ -185,8 +185,8 @@ const Notas = () => {
       });
 
       buscarNotas();
-      limpiarCampos(); // Limpiar campos después de actualizar
-      setEditingNotaId(null); // Restablecer editingNotaId a null
+      limpiarCampos(); 
+      setEditingNotaId(null); 
     } catch (error) {
       console.error("Error updating note:", error);
       Swal.fire({

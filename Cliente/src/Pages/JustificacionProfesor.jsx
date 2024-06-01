@@ -173,7 +173,7 @@ const JustificacionProfesor = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Asistencia_Justificacion">Justificación:</label>
+        <label htmlFor="Asistencia_Justificacion">Justificación , Nombre del estudiante:</label>
         <input
           type="text"
           className="form-control"
@@ -186,16 +186,22 @@ const JustificacionProfesor = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="Asistencia_Tipo">Tipo:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="Asistencia_Tipo"
-          value={Asistencia_Tipo}
-          onChange={(e) => setTipo(e.target.value)}
-          style={{ borderColor: Asistencia_Tipo.trim() === "" ? "red" : "" }}
-        />
-      </div>
+      <label htmlFor="Asistencia_Tipo">Tipo:</label>
+      <select
+        className="form-control"
+        id="Asistencia_Tipo"
+        value={Asistencia_Tipo}
+        onChange={(e) => setTipo(e.target.value)}
+        style={{ borderColor: Asistencia_Tipo.trim() === "" ? "red" : "" }}
+      >
+        <option value="">Seleccione un tipo de ausencia</option>
+        <option value="justificada">Justificada</option>
+        <option value="injustificada">Injustificada</option>
+        <option value="enfermedad">Enfermedad</option>
+        <option value="personal">Personal</option>
+        <option value="vacaciones">Vacaciones</option>
+      </select>
+    </div>
       <div>
         {editar ? (
           <div>

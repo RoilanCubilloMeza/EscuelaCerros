@@ -9,11 +9,11 @@ const { connection } = require("../config");
 app.post("/createJustificacion", (req, res) => {
   const Asistencia_Tipo = req.body.Asistencia_Tipo;
   const Asistencia_FActual = req.body.Asistencia_FActual;
-  const Asistencia_justificacion = req.body.Asistencia_justificacion;
+  const Asistencia_Justificacion = req.body.Asistencia_Justificacion;
 
   connection.query(
-    "INSERT INTO asistencia(Asistencia_justificacion , Asistencia_FActual,Asistencia_Tipo) VALUES (?,?,?)",
-    [Asistencia_justificacion, Asistencia_FActual,Asistencia_Tipo],
+    "INSERT INTO asistencia(Asistencia_Justificacion , Asistencia_FActual,Asistencia_Tipo) VALUES (?,?,?)",
+    [Asistencia_Justificacion, Asistencia_FActual,Asistencia_Tipo],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -37,12 +37,12 @@ app.get("/obtenerJustificion", (req, res) => {
 
 app.put("/actualizarJustificacion", (req, res) => {
     const Asistencia_Tipo = req.body.Asistencia_Tipo;
-    const Asistencia_justificacion = req.body.Asistencia_justificacion;
+    const Asistencia_Justificacion = req.body.Asistencia_Justificacion;
   const Asistencia_Id = req.body.Asistencia_Id;
 
   connection.query(
-    "UPDATE asistencia SET Asistencia_justificacion=? ,Asistencia_Tipo=? WHERE Asistencia_Id=?",
-    [Asistencia_justificacion, Asistencia_Tipo, Asistencia_Id],
+    "UPDATE asistencia SET Asistencia_Justificacion=? ,Asistencia_Tipo=? WHERE Asistencia_Id=?",
+    [Asistencia_Justificacion, Asistencia_Tipo, Asistencia_Id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -58,7 +58,7 @@ app.delete("/deleteJustificacion/:Asistencia_Id", (req, res) => {
   const Asistencia_Id = req.params.Asistencia_Id;
   connection.query(
     "DELETE FROM asistencia WHERE Asistencia_Id=?",
-    Examen_Id,
+    Asistencia_Id,
     (err, result) => {
       if (err) {
         console.log(err);

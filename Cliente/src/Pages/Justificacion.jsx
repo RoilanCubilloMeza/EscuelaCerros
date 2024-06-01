@@ -85,7 +85,7 @@ const Justificacion = () => {
           onChange={(e) => setTipo(e.target.value)}
         >
           <option value="">Seleccione un tipo</option>
-          <option value="figa">Familiar</option>
+          <option value="Familia">Familiar</option>
           <option value="medica">Médica</option>
           <option value="otro">Otro</option>
         </select>

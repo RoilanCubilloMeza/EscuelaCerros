@@ -3,45 +3,23 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import ProfesorDashboard from './../Dashboard/ProfesorDashboard';
 
-const Asistencia = () => {
+const JustificacionProfesor = () => {
   const { darkMode } = useTheme();
 
   const [Asistencia_Id, setAsistenciaId] = useState("");
   const [Asistencia_FActual, setFActual] = useState("");
   const [Asistencia_Justificacion, setJustificacion] = useState("");
   const [Asistencia_Tipo, setTipo] = useState("");
-  const [Matricula_Id, setMatriculaId] = useState("");
-  const [Persona_Id, setPersona_Id] = useState("");
-
   const [Asistencia_List, setAsistenciaList] = useState([]);
   const [editar, setEditar] = useState(false);
-  const [ObtenerPersona, setPersona] = useState([]);
 
-  useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerPersonas")
-      .then((response) => {
-        setPersona(response.data);
-      })
-      .catch((error) => {
-        console.error("Error al obtener datos:", error);
-      });
-  }, []);
-
-  const obtenerNombrePersonaPorId = (personaId) => {
-    const persona = ObtenerPersona.find((p) => p.Persona_Id === personaId);
-    return persona
-      ? `${persona.Persona_Nombre} ${persona.Persona_PApellido} ${persona.Persona_SApellido}`
-      : "Nombre no encontrado";
-  };
-
-  const add = async () => {
+  const add = () => {
     if (
       !Asistencia_FActual.trim() ||
       !Asistencia_Justificacion.trim() ||
-      !Asistencia_Tipo.trim() ||
-      !Matricula_Id ||
-      !Persona_Id
+      !Asistencia_Tipo.trim()
     ) {
       Swal.fire({
         icon: "warning",
@@ -51,14 +29,11 @@ const Asistencia = () => {
       return;
     }
 
-    try {
-      await Axios.post("http://localhost:3001/createJustificacion", {
-        Asistencia_FActual,
-        Asistencia_Justificacion,
-        Asistencia_Tipo,
-        Matricula_Id,
-        Persona_Id,
-      });
+    Axios.post("http://localhost:3001/createJustificacion", {
+      Asistencia_FActual: Asistencia_FActual,
+      Asistencia_Justificacion: Asistencia_Justificacion,
+      Asistencia_Tipo: Asistencia_Tipo,
+    }).then(() => {
       getLista();
       limpiarDatos();
       Swal.fire({
@@ -67,17 +42,17 @@ const Asistencia = () => {
         icon: "success",
         timer: 3000,
       });
-    } catch (error) {
-      console.error("Error al guardar:", error);
-    }
+    });
   };
 
   const getLista = async () => {
     try {
       const response = await fetch("http://localhost:3001/obtenerJustificion");
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+
       const data = await response.json();
       setAsistenciaList(data);
     } catch (error) {
@@ -91,21 +66,17 @@ const Asistencia = () => {
     setFActual(val.Asistencia_FActual);
     setJustificacion(val.Asistencia_Justificacion);
     setTipo(val.Asistencia_Tipo);
-    setMatriculaId(val.Matricula_Id);
-    setPersona_Id(val.Persona_Id);
   };
 
   useEffect(() => {
     getLista();
   }, []);
 
-  const actualizar = async () => {
+  const actualizar = () => {
     if (
       !Asistencia_FActual.trim() ||
       !Asistencia_Justificacion.trim() ||
-      !Asistencia_Tipo.trim() ||
-      !Matricula_Id ||
-      !Persona_Id
+      !Asistencia_Tipo.trim()
     ) {
       Swal.fire({
         icon: "warning",
@@ -115,26 +86,20 @@ const Asistencia = () => {
       return;
     }
 
-    try {
-      await Axios.put("http://localhost:3001/actualizarJustificacion", {
-        Asistencia_Id,
-        Asistencia_FActual,
-        Asistencia_Justificacion,
-        Asistencia_Tipo,
-        Matricula_Id,
-        Persona_Id,
-      });
+    Axios.put("http://localhost:3001/actualizarJustificacion", {
+      Asistencia_Id: Asistencia_Id,
+      Asistencia_FActual: Asistencia_FActual,
+      Asistencia_Justificacion: Asistencia_Justificacion,
+      Asistencia_Tipo: Asistencia_Tipo,
+    }).then(() => {
       getLista();
-      limpiarDatos();
-      Swal.fire({
-        title: "<strong>Editado exitoso</strong>",
-        html: `<i>La asistencia ha sido actualizada.</i>`,
-        icon: "success",
-        timer: 3000,
-      });
-    } catch (error) {
-      console.error("Error al actualizar:", error);
-    }
+    });
+    Swal.fire({
+      title: "<strong>Editado exitoso</strong>",
+      html: `<i>La asistencia ha sido actualizada.</i>`,
+      icon: "success",
+      timer: 3000,
+    });
   };
 
   const limpiarDatos = () => {
@@ -142,8 +107,6 @@ const Asistencia = () => {
     setFActual("");
     setJustificacion("");
     setTipo("");
-    setMatriculaId("");
-    setPersona_Id("");
     setEditar(false);
   };
 
@@ -156,22 +119,19 @@ const Asistencia = () => {
       confirmButtonColor: "green",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sí, eliminar",
-    }).then(async (res) => {
+    }).then((res) => {
       if (res.isConfirmed) {
-        try {
-          await Axios.delete(
-            "http://localhost:3001/deleteJustificacion/" + Asistencia_Id
-          );
+        Axios.delete(
+          "http://localhost:3001/deleteJustificacion/" + Asistencia_Id
+        ).then(() => {
           getLista();
           limpiarDatos();
-          Swal.fire(
-            "Eliminado",
-            "La asistencia ha sido eliminada exitosamente.",
-            "success"
-          );
-        } catch (error) {
-          console.error("Error al eliminar:", error);
-        }
+        });
+        Swal.fire(
+          "Eliminado",
+          "La asistencia ha sido eliminada exitosamente.",
+          "success"
+        );
       }
     });
   };
@@ -236,42 +196,6 @@ const Asistencia = () => {
           style={{ borderColor: Asistencia_Tipo.trim() === "" ? "red" : "" }}
         />
       </div>
-      <div className="form-group">
-        <label htmlFor="Matricula_Id">Matrícula ID:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="Matricula_Id"
-          value={Matricula_Id}
-          onChange={(e) => setMatriculaId(e.target.value)}
-          style={{ borderColor: Matricula_Id.trim() === "" ? "red" : "" }}
-        />
-      </div>
-      <div
-        className={`input-group mb-3 ${
-          Persona_Id === "" ? "border border-danger" : ""
-        }`}
-      >
-        <span className="input-group-text" id="basic-addon1">
-          Estudiante:
-        </span>
-        <select
-          className="form-select"
-          aria-label="Default select example"
-          value={Persona_Id}
-          onChange={(event) => setPersona_Id(event.target.value)}
-        >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-          {ObtenerPersona.map((option) => (
-            <option key={option.Persona_Id} value={option.Persona_Id}>
-              Nombre del estudiante: {option.Persona_Nombre}{" "}
-              {option.Persona_PApellido} {option.Persona_SApellido}
-            </option>
-          ))}
-        </select>
-      </div>
       <div>
         {editar ? (
           <div>
@@ -295,7 +219,7 @@ const Asistencia = () => {
             Registrar
           </button>
         )}
-        <Link to="/admindashboard" className="btn btn-secondary m-3">
+        <Link to="/ProfesorDashboard" className="btn btn-secondary m-3">
           Menú Principal
         </Link>
       </div>
@@ -308,7 +232,6 @@ const Asistencia = () => {
               <th scope="col">Fecha</th>
               <th scope="col">Justificación</th>
               <th scope="col">Tipo</th>
-              <th scope="col">Nombre</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
@@ -319,7 +242,6 @@ const Asistencia = () => {
                 <td>{val.Asistencia_FActual}</td>
                 <td>{val.Asistencia_Justificacion}</td>
                 <td>{val.Asistencia_Tipo}</td>
-                <td>{obtenerNombrePersonaPorId(val.Persona_Id)}</td>
                 <td>
                   <div className="btn-group" role="group">
                     <button
@@ -345,4 +267,4 @@ const Asistencia = () => {
   );
 };
 
-export default Asistencia;
+export default JustificacionProfesor;

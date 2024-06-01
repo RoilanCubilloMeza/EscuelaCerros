@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import EstudianteDashboard from './../Dashboard/EstudianteDashboard';
 
 const NotasEstudiante = () => {
     const [cedula, setCedula] = useState("");
@@ -101,7 +102,7 @@ const NotasEstudiante = () => {
                     </table>
                 </div>
             )}
-            <Link to="/" className="btn btn-secondary mt-3">Volver</Link>
+            <Link to="/EstudianteDashboard" className="btn btn-secondary mt-3">Volver</Link>
         </div>
     );
 };

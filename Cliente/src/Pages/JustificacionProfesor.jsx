@@ -1,0 +1,348 @@
+import React, { useState, useEffect } from "react";
+import Axios from "axios";
+import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
+import { useTheme } from "../components/Theme";
+
+const Asistencia = () => {
+  const { darkMode } = useTheme();
+
+  const [Asistencia_Id, setAsistenciaId] = useState("");
+  const [Asistencia_FActual, setFActual] = useState("");
+  const [Asistencia_Justificacion, setJustificacion] = useState("");
+  const [Asistencia_Tipo, setTipo] = useState("");
+  const [Matricula_Id, setMatriculaId] = useState("");
+  const [Persona_Id, setPersona_Id] = useState("");
+
+  const [Asistencia_List, setAsistenciaList] = useState([]);
+  const [editar, setEditar] = useState(false);
+  const [ObtenerPersona, setPersona] = useState([]);
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/obtenerPersonas")
+      .then((response) => {
+        setPersona(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener datos:", error);
+      });
+  }, []);
+
+  const obtenerNombrePersonaPorId = (personaId) => {
+    const persona = ObtenerPersona.find((p) => p.Persona_Id === personaId);
+    return persona
+      ? `${persona.Persona_Nombre} ${persona.Persona_PApellido} ${persona.Persona_SApellido}`
+      : "Nombre no encontrado";
+  };
+
+  const add = async () => {
+    if (
+      !Asistencia_FActual.trim() ||
+      !Asistencia_Justificacion.trim() ||
+      !Asistencia_Tipo.trim() ||
+      !Matricula_Id ||
+      !Persona_Id
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
+      });
+      return;
+    }
+
+    try {
+      await Axios.post("http://localhost:3001/createJustificacion", {
+        Asistencia_FActual,
+        Asistencia_Justificacion,
+        Asistencia_Tipo,
+        Matricula_Id,
+        Persona_Id,
+      });
+      getLista();
+      limpiarDatos();
+      Swal.fire({
+        title: "<strong>Guardado exitoso</strong>",
+        html: `<i>La asistencia ha sido registrada.</i>`,
+        icon: "success",
+        timer: 3000,
+      });
+    } catch (error) {
+      console.error("Error al guardar:", error);
+    }
+  };
+
+  const getLista = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/obtenerJustificion");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setAsistenciaList(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const editarAsistencia = (val) => {
+    setEditar(true);
+    setAsistenciaId(val.Asistencia_Id);
+    setFActual(val.Asistencia_FActual);
+    setJustificacion(val.Asistencia_Justificacion);
+    setTipo(val.Asistencia_Tipo);
+    setMatriculaId(val.Matricula_Id);
+    setPersona_Id(val.Persona_Id);
+  };
+
+  useEffect(() => {
+    getLista();
+  }, []);
+
+  const actualizar = async () => {
+    if (
+      !Asistencia_FActual.trim() ||
+      !Asistencia_Justificacion.trim() ||
+      !Asistencia_Tipo.trim() ||
+      !Matricula_Id ||
+      !Persona_Id
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos vacíos",
+        text: "Por favor, complete todos los campos.",
+      });
+      return;
+    }
+
+    try {
+      await Axios.put("http://localhost:3001/actualizarJustificacion", {
+        Asistencia_Id,
+        Asistencia_FActual,
+        Asistencia_Justificacion,
+        Asistencia_Tipo,
+        Matricula_Id,
+        Persona_Id,
+      });
+      getLista();
+      limpiarDatos();
+      Swal.fire({
+        title: "<strong>Editado exitoso</strong>",
+        html: `<i>La asistencia ha sido actualizada.</i>`,
+        icon: "success",
+        timer: 3000,
+      });
+    } catch (error) {
+      console.error("Error al actualizar:", error);
+    }
+  };
+
+  const limpiarDatos = () => {
+    setAsistenciaId("");
+    setFActual("");
+    setJustificacion("");
+    setTipo("");
+    setMatriculaId("");
+    setPersona_Id("");
+    setEditar(false);
+  };
+
+  const eliminar = (Asistencia_Id) => {
+    Swal.fire({
+      title: "<strong>Eliminar</strong>",
+      html: `<i>¿Realmente desea eliminar esta asistencia?</i>`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "green",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then(async (res) => {
+      if (res.isConfirmed) {
+        try {
+          await Axios.delete(
+            "http://localhost:3001/deleteJustificacion/" + Asistencia_Id
+          );
+          getLista();
+          limpiarDatos();
+          Swal.fire(
+            "Eliminado",
+            "La asistencia ha sido eliminada exitosamente.",
+            "success"
+          );
+        } catch (error) {
+          console.error("Error al eliminar:", error);
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("bg-dark");
+      document.body.classList.add("text-white");
+    } else {
+      document.body.classList.remove("bg-dark");
+      document.body.classList.remove("text-white");
+      document.body.classList.add("bg-light");
+      document.body.classList.add("text-dark");
+    }
+
+    return () => {
+      document.body.classList.remove(
+        "bg-dark",
+        "text-white",
+        "bg-light",
+        "text-dark"
+      );
+    };
+  }, [darkMode]);
+
+  return (
+    <div className="container">
+      <h1>Formulario de Asistencia</h1>
+      <h2>Datos sobre la asistencia</h2>
+      <div className="form-group">
+        <label htmlFor="Asistencia_FActual">Fecha Actual:</label>
+        <input
+          type="date"
+          className="form-control"
+          id="Asistencia_FActual"
+          value={Asistencia_FActual}
+          onChange={(e) => setFActual(e.target.value)}
+          style={{ borderColor: Asistencia_FActual.trim() === "" ? "red" : "" }}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="Asistencia_Justificacion">Justificación:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="Asistencia_Justificacion"
+          value={Asistencia_Justificacion}
+          onChange={(e) => setJustificacion(e.target.value)}
+          style={{
+            borderColor: Asistencia_Justificacion.trim() === "" ? "red" : "",
+          }}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="Asistencia_Tipo">Tipo:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="Asistencia_Tipo"
+          value={Asistencia_Tipo}
+          onChange={(e) => setTipo(e.target.value)}
+          style={{ borderColor: Asistencia_Tipo.trim() === "" ? "red" : "" }}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="Matricula_Id">Matrícula ID:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="Matricula_Id"
+          value={Matricula_Id}
+          onChange={(e) => setMatriculaId(e.target.value)}
+          style={{ borderColor: Matricula_Id.trim() === "" ? "red" : "" }}
+        />
+      </div>
+      <div
+        className={`input-group mb-3 ${
+          Persona_Id === "" ? "border border-danger" : ""
+        }`}
+      >
+        <span className="input-group-text" id="basic-addon1">
+          Estudiante:
+        </span>
+        <select
+          className="form-select"
+          aria-label="Default select example"
+          value={Persona_Id}
+          onChange={(event) => setPersona_Id(event.target.value)}
+        >
+          <option value="" disabled>
+            Seleccione una opción
+          </option>
+          {ObtenerPersona.map((option) => (
+            <option key={option.Persona_Id} value={option.Persona_Id}>
+              Nombre del estudiante: {option.Persona_Nombre}{" "}
+              {option.Persona_PApellido} {option.Persona_SApellido}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        {editar ? (
+          <div>
+            <button
+              type="submit"
+              className="btn btn-warning m-3"
+              onClick={actualizar}
+            >
+              Actualizar
+            </button>
+            <button
+              type="submit"
+              className="btn btn-danger m-3"
+              onClick={limpiarDatos}
+            >
+              Cancelar
+            </button>
+          </div>
+        ) : (
+          <button type="submit" className="btn btn-primary m-3" onClick={add}>
+            Registrar
+          </button>
+        )}
+        <Link to="/admindashboard" className="btn btn-secondary m-3">
+          Menú Principal
+        </Link>
+      </div>
+
+      <div className="form-group">
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Justificación</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Asistencia_List.map((val, key) => (
+              <tr key={key}>
+                <th>{val.Asistencia_Id}</th>
+                <td>{val.Asistencia_FActual}</td>
+                <td>{val.Asistencia_Justificacion}</td>
+                <td>{val.Asistencia_Tipo}</td>
+                <td>{obtenerNombrePersonaPorId(val.Persona_Id)}</td>
+                <td>
+                  <div className="btn-group" role="group">
+                    <button
+                      className="btn btn-info"
+                      onClick={() => editarAsistencia(val)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => eliminar(val.Asistencia_Id)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default Asistencia;

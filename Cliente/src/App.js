@@ -32,7 +32,7 @@ import Justificacion from "./Pages/Justificacion";
 import Notas from "./Pages/Notas";
 import NotasEstudiante from "./Pages/NotasEstudiante";
 import NotasFinales from "./Pages/NotasFinales";
-
+import JustificacionProfesor from "./Pages/JustificacionProfesor";
 function App() {
   const [refresh, setRefresh] = useState(false);
   const isAuthenticated = localStorage.getItem("token") !== null;
@@ -284,7 +284,17 @@ function App() {
                   <Navigate to="/NotasFinales" replace />
                 )
               }
+
             />
+             <Route
+              path="/JustificacionProfesor"
+              element={
+                isAuthenticated ? (
+                  <JustificacionProfesor />
+                ) : (
+                  <Navigate to="/JustificacionProfesor" replace />
+                )
+              }/>
           </Routes>
         </ThemeProvider>
       </UserProvider>

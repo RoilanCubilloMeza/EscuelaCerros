@@ -15,7 +15,6 @@ const Justificacion = () => {
   const [camposVacios, setCamposVacios] = useState(false);
 
   const add = () => {
-    // Validar campos obligatorios antes de enviar la solicitud
     if (
       Asistencia_FActual.trim() === "" ||
       Asistencia_justificacion.trim() === "" ||
@@ -40,12 +39,11 @@ const Justificacion = () => {
         icon: "success",
         timer: 3000,
       });
-      // Limpiar los campos después de registrar
       setFActual("");
       setJustificacion("");
       setTipo("");
       setReferidos("");
-      setCamposVacios(false); // Restablecer estado de campos vacíos
+      setCamposVacios(false); 
     });
   };
 
@@ -116,7 +114,7 @@ const Justificacion = () => {
       </div>
       <div className="form-group">
         <label htmlFor="Asistencia_justificacion">
-          Justificación de la ausencia:
+          Justificación de la ausencia Y nombre del estudiante:
         </label>
         <textarea
           className={

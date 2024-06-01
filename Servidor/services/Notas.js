@@ -265,4 +265,63 @@ app.delete("/eliminarNota/:id", (req, res) => {
   });
 });
 
+app.get("/notasCDetalladas", (req, res) => {
+  const { cedula } = req.query;
+
+  if (!cedula) {
+    return res.status(400).json({ error: "Debe proporcionar una cédula" });
+  }
+
+  const query = `
+    SELECT 
+      e.Estudiantes_id,
+      p.Persona_Nombre,
+      p.Persona_PApellido,
+      p.Persona_SApellido,
+      p.Persona_Cedula,
+      m.Materias_Nombre,
+      CASE 
+        WHEN nf.Nota_Periodo = 1 THEN 'I Periodo'
+        WHEN nf.Nota_Periodo = 2 THEN 'II Periodo'
+        WHEN nf.Nota_Periodo = 3 THEN 'III Periodo'
+        ELSE nf.Nota_Periodo
+      END AS Nota_Periodo,
+      nf.Nota_Total,
+      nf.Nota_Id,
+      ma.Matricula_Id
+    FROM 
+      Matricula ma
+    JOIN 
+      Estudiantes e ON ma.Estudiantes_id = e.Estudiantes_id
+    JOIN 
+      Personas p ON e.Persona_Id = p.Persona_Id
+    JOIN 
+      Materias m ON ma.Materias_id = m.Materias_id
+    LEFT JOIN 
+      Nota_Final nf ON ma.Nota_Id = nf.Nota_Id
+    WHERE 
+      p.Persona_Cedula = ?
+    ORDER BY
+      CASE 
+        WHEN nf.Nota_Periodo = 1 THEN 1
+        WHEN nf.Nota_Periodo = 2 THEN 2
+        WHEN nf.Nota_Periodo = 3 THEN 3
+        ELSE 4
+      END
+  `;
+
+  connection.query(query, [cedula], (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
+
+
+
 module.exports = app;

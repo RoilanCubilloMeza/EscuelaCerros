@@ -37,13 +37,13 @@ const ProfesorDashboard = () => {
   };
 
   const categoryColors = {
-    Asistencia: "#007bff", // Azul
-    Cotidiano: "#28a745", // Verde
-    Materias: "#ffc107", // Amarillo
-    Tarea: "#dc3545", // Rojo
-    Examen: "#17a2b8", // Cyan
-    NotasFinales: "#4610f2", // Purple
-    Notas: "#6610f2", // Morado
+    Asistencia: "#ff3333", // Rojo fuerte
+    Cotidiano: "#0066cc", // Azul fuerte
+    Materias: "#009933", // Verde fuerte
+    Tarea: "#ff9933", // Naranja fuerte
+    Examen: "#9933ff", // Morado fuerte
+    JustificacionProfesor: "#ffcc00", // Amarillo fuerte
+    Notas: "#6600cc", // Púrpura fuerte
   };
 
   return (
@@ -51,9 +51,7 @@ const ProfesorDashboard = () => {
       id="app-container-profesor"
       className={`container mt-5 ${darkMode ? "dark-mode" : "light-mode"}`}
     >
-      <h1
-        className={`text-center mb-4 ${darkMode ? "text-white" : "text-dark"}`}
-      >
+      <h1 className={`text-center mb-4 ${darkMode ? "text-white" : "text-dark"}`}>
         Panel para profesores(as)
       </h1>
       <div className="row justify-content-center">
@@ -80,9 +78,9 @@ const ProfesorDashboard = () => {
             path: "/Examen",
           },
           {
-            category: "NotasFinales",
+            category: "JustificacionProfesor",
             icon: <FaClipboardCheck size={40} />,
-            path: "/NotasFinales",
+            path: "/JustificacionProfesor",
           },
           {
             category: "Notas",
@@ -113,3 +111,4 @@ const ProfesorDashboard = () => {
 };
 
 export default ProfesorDashboard;
+

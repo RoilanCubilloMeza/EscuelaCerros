@@ -237,6 +237,8 @@ const Eventos = () => {
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Imagen</th>
+              <th>Funcionalidad</th>
+
             </tr>
           </thead>
           <tbody>

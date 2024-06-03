@@ -308,21 +308,25 @@ const Notas = () => {
           onChange={(event) => setNota_Total(event.target.value)}
         />
       </div>
-      <div>
-        <button className="btn btn-primary mt-3" onClick={buscarNotas}>
-          Buscar
-        </button>
-        
-        <button className="btn btn-success mt-3 ms-2" onClick={agregarNota}>
-          {editingNotaId ? "Actualizar Nota" : "Agregar Nota"}
-        </button>
-        <button className="btn btn-warning mt-3 ms-2" onClick={limpiarCampos}>
-          Limpiar
-        </button>
-        <Link to="/profesordashboard" className="btn btn-secondary m-3">
-          Menú Principal
-        </Link>
-      </div>
+      <div className="d-flex justify-content-start align-items-center">
+  <button className="btn btn-primary mt-3 me-2" onClick={buscarNotas}>
+    Buscar
+  </button>
+  
+  <button className="btn btn-success mt-3 me-2" onClick={agregarNota}>
+    {editingNotaId ? "Actualizar Nota" : "Agregar Nota"}
+  </button>
+  
+  <button className="btn btn-warning mt-3 me-2" onClick={limpiarCampos}>
+    Limpiar
+  </button>
+  
+  <Link to="/profesordashboard" className="btn btn-secondary mt-3">
+    Menú Principal
+  </Link>
+</div>
+
+
       {NotasFinales_List.length > 0 && (
         <table className="table mt-3">
           <thead>
@@ -331,7 +335,7 @@ const Notas = () => {
               <th>Materia</th>
               <th>Nota Final</th>
               <th>Nota Periodo</th>
-              <th>Acciones</th>
+              <th>Funcionalidad</th>
             </tr>
           </thead>
           <tbody>

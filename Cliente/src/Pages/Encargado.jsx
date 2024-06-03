@@ -269,7 +269,7 @@ const Encargado = () => {
           onChange={(e) => setEncargadosLugarTrabajo(e.target.value)}
         />
         {!Encargados_LugarTrabajo.trim() && (
-          <div className="invalid-feedback">Campo requerido</div>
+          <div className="invalid-feedback"></div>
         )}
       </div>
       <div className="form-group">
@@ -286,7 +286,7 @@ const Encargado = () => {
           onChange={(e) => setEncargadoViveEstudiante(e.target.value)}
         />
         {!Encargado_ViveEstudiante.trim() && (
-          <div className="invalid-feedback">Campo requerido</div>
+          <div className="invalid-feedback"></div>
         )}
       </div>
       <div className="form-group">
@@ -303,7 +303,7 @@ const Encargado = () => {
           onChange={(e) => setEncargadoTelefono(e.target.value)}
         />
         {!Encargado_Telefono.trim() && (
-          <div className="invalid-feedback">Campo requerido</div>
+          <div className="invalid-feedback"></div>
         )}
       </div>
 
@@ -319,7 +319,7 @@ const Encargado = () => {
           onChange={(e) => setEncargadoEstadoCivil(e.target.value)}
         />
         {!Encargado_EstadoCivil.trim() && (
-          <div className="invalid-feedback">Campo requerido</div>
+          <div className="invalid-feedback"></div>
         )}
       </div>
       <div>
@@ -335,7 +335,7 @@ const Encargado = () => {
             onChange={(event) => setEncargadoNombre(event.target.value)}
           />
           {!Encargados_Nombre && (
-            <div className="invalid-feedback">Campo requerido</div>
+            <div className="invalid-feedback"></div>
           )}
         </div>
         <div className="mb-3">
@@ -350,7 +350,7 @@ const Encargado = () => {
             onChange={(event) => setEncargadoNombre2(event.target.value)}
           />
           {!Encargado_Nombre2 && (
-            <div className="invalid-feedback">Campo requerido</div>
+            <div className="invalid-feedback"></div>
           )}
         </div>
         <div className="mb-3">
@@ -365,7 +365,7 @@ const Encargado = () => {
             onChange={(event) => setEncargadoApellido1(event.target.value)}
           />
           {!Encargado_Apellido1 && (
-            <div className="invalid-feedback">Campo requerido</div>
+            <div className="invalid-feedback"></div>
           )}
         </div>
         <div className="mb-3">
@@ -380,7 +380,7 @@ const Encargado = () => {
             onChange={(event) => setEncargadoApellido2(event.target.value)}
           />
           {!Encargado_Apellido2 && (
-            <div className="invalid-feedback">Campo requerido</div>
+            <div className="invalid-feedback"></div>
           )}
         </div>
       </div>
@@ -405,7 +405,7 @@ const Encargado = () => {
           ))}
         </select>
         {!Escolaridad_Id && (
-          <div className="invalid-feedback">Campo requerido</div>
+          <div className="invalid-feedback"></div>
         )}
       </div>
 
@@ -429,7 +429,7 @@ const Encargado = () => {
           ))}
         </select>
         {!Ocupacion_Id && (
-          <div className="invalid-feedback">Campo requerido</div>
+          <div className="invalid-feedback"></div>
         )}
       </div>
 
@@ -453,7 +453,7 @@ const Encargado = () => {
           ))}
         </select>
         {!Parentesco_Id && (
-          <div className="invalid-feedback">Campo requerido</div>
+          <div className="invalid-feedback"></div>
         )}
       </div>
 
@@ -495,6 +495,8 @@ const Encargado = () => {
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Apellido</th>
+              <th>Funcionalidad</th>
+
             </tr>
           </thead>
           <tbody>

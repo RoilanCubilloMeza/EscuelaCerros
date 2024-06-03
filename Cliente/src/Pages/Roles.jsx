@@ -205,6 +205,8 @@ const Roles = () => {
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
               <th scope="col">Descripción</th>
+              <th>Funcionalidad</th>
+
             </tr>
           </thead>
           <tbody>

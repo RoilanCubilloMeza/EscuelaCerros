@@ -268,6 +268,8 @@ const Enfermedades = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Nombre Enfermedad</th>
+              <th>Funcionalidad</th>
+
             </tr>
           </thead>
           <tbody>

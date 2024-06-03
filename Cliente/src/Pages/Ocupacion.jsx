@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+
 const Ocupacion = () => {
   const { darkMode } = useTheme();
 
@@ -10,8 +11,14 @@ const Ocupacion = () => {
   const [Ocupacion_Id, setId] = useState("");
   const [Ocupacion_List, setOcupacion_List] = useState([]);
   const [editar, setEditar] = useState(false);
+  const [error, setError] = useState(""); // Estado para manejar el mensaje de error
 
   const add = () => {
+    if (Ocupacion_Nombre.trim() === "") {
+      setError("El nombre del trabajo es obligatorio");
+      return;
+    }
+
     Axios.post("http://localhost:3001/createOcupacion", {
       Ocupacion_Nombre: Ocupacion_Nombre,
     }).then(() => {
@@ -44,7 +51,9 @@ const Ocupacion = () => {
     }
   };
 
-  getLista();
+  useEffect(() => {
+    getLista();
+  }, []);
 
   const editarEscolaridad = (val) => {
     setEditar(true);
@@ -53,6 +62,11 @@ const Ocupacion = () => {
   };
 
   const actualizar = () => {
+    if (Ocupacion_Nombre.trim() === "") {
+      setError("El nombre del trabajo es obligatorio");
+      return;
+    }
+
     Axios.put("http://localhost:3001/actualizarOcupacion", {
       Ocupacion_Nombre: Ocupacion_Nombre,
       Ocupacion_Id: Ocupacion_Id,
@@ -69,12 +83,14 @@ const Ocupacion = () => {
       timer: 3000,
     });
   };
+
   const limpiarDatos = () => {
     setId("");
     setNombre("");
-
+    setError(""); // Limpiar el mensaje de error también
     setEditar(false);
   };
+
   const eliminar = (Ocupacion_Id) => {
     Swal.fire({
       title: "<strong >Eliminar</strong>",
@@ -120,6 +136,7 @@ const Ocupacion = () => {
       );
     };
   }, [darkMode]);
+
   return (
     <div className="container">
       <h1>Formulario sobre ocupacion del encargado (a) del estudiante</h1>
@@ -128,11 +145,15 @@ const Ocupacion = () => {
         <label htmlFor="Ocupacion_Nombre">Nombre del trabajo:</label>
         <input
           type="text"
-          className="form-control"
+          className={`form-control ${error ? "is-invalid" : ""}`}
           id="Ocupacion_Nombre"
           value={Ocupacion_Nombre}
-          onChange={(e) => setNombre(e.target.value)}
+          onChange={(e) => {
+            setNombre(e.target.value);
+            setError(""); // Limpiar el mensaje de error al cambiar el valor del input
+          }}
         />
+        {error && <div className="invalid-feedback">{error}</div>} {/* Mostrar el mensaje de error */}
       </div>
 
       <div>
@@ -172,6 +193,8 @@ const Ocupacion = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
+              <th>Funcionalidad</th>
+
             </tr>
           </thead>
           <tbody>

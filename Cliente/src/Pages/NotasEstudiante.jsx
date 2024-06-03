@@ -102,7 +102,7 @@ const NotasEstudiante = () => {
                     </table>
                 </div>
             )}
-            <Link to="/EstudianteDashboard" className="btn btn-secondary mt-3">Volver</Link>
+            <Link to="/EstudianteDashboard" className="btn btn-secondary m-2">Volver</Link>
         </div>
     );
 };

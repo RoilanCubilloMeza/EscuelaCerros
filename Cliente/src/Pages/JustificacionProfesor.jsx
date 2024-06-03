@@ -186,25 +186,25 @@ const JustificacionProfesor = () => {
         />
       </div>
       <div className="form-group">
-      <label htmlFor="Asistencia_Tipo">Tipo:</label>
-      <select
-        className="form-control"
-        id="Asistencia_Tipo"
-        value={Asistencia_Tipo}
-        onChange={(e) => setTipo(e.target.value)}
-        style={{ borderColor: Asistencia_Tipo.trim() === "" ? "red" : "" }}
-      >
-        <option value="">Seleccione un tipo de ausencia</option>
-        <option value="justificada">Justificada</option>
-        <option value="injustificada">Injustificada</option>
-        <option value="enfermedad">Enfermedad</option>
-        <option value="personal">Personal</option>
-        <option value="vacaciones">Vacaciones</option>
-      </select>
-    </div>
-      <div>
+        <label htmlFor="Asistencia_Tipo">Tipo:</label>
+        <select
+          className="form-control"
+          id="Asistencia_Tipo"
+          value={Asistencia_Tipo}
+          onChange={(e) => setTipo(e.target.value)}
+          style={{ borderColor: Asistencia_Tipo.trim() === "" ? "red" : "" }}
+        >
+          <option value="">Seleccione un tipo de ausencia</option>
+          <option value="justificada">Justificada</option>
+          <option value="injustificada">Injustificada</option>
+          <option value="enfermedad">Enfermedad</option>
+          <option value="personal">Personal</option>
+          <option value="vacaciones">Vacaciones</option>
+        </select>
+      </div>
+      <div className="d-flex flex-wrap">
         {editar ? (
-          <div>
+          <div className="d-flex flex-wrap">
             <button
               type="submit"
               className="btn btn-warning m-3"
@@ -231,43 +231,45 @@ const JustificacionProfesor = () => {
       </div>
 
       <div className="form-group">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Justificación</th>
-              <th scope="col">Tipo</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Asistencia_List.map((val, key) => (
-              <tr key={key}>
-                <th>{val.Asistencia_Id}</th>
-                <td>{val.Asistencia_FActual}</td>
-                <td>{val.Asistencia_Justificacion}</td>
-                <td>{val.Asistencia_Tipo}</td>
-                <td>
-                  <div className="btn-group" role="group">
-                    <button
-                      className="btn btn-info"
-                      onClick={() => editarAsistencia(val)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => eliminar(val.Asistencia_Id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
+        <div className="table-responsive">
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Justificación</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Funcionalidad</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {Asistencia_List.map((val, key) => (
+                <tr key={key}>
+                  <th>{val.Asistencia_Id}</th>
+                  <td>{val.Asistencia_FActual}</td>
+                  <td>{val.Asistencia_Justificacion}</td>
+                  <td>{val.Asistencia_Tipo}</td>
+                  <td>
+                    <div className="btn-group" role="group">
+                      <button
+                        className="btn btn-info"
+                        onClick={() => editarAsistencia(val)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => eliminar(val.Asistencia_Id)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

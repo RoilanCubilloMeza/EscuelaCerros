@@ -214,7 +214,7 @@ const LugarResidencia = () => {
           rows="4"
         />
         {Residencia_Direccion.trim() === "" && (
-          <small className="text-danger">Este campo es requerido</small>
+          <small className="text-danger"></small>
         )}
       </div>
 
@@ -234,7 +234,7 @@ const LugarResidencia = () => {
           <option value="Alquilada">Alquilada</option>
         </select>
         {Residencia_EstadoCasa.trim() === "" && (
-          <small className="text-danger">Este campo es requerido</small>
+          <small className="text-danger"></small>
         )}
       </div>
 
@@ -255,7 +255,7 @@ const LugarResidencia = () => {
           <option value="No">No</option>
         </select>
         {Residencia_Internet.trim() === "" && (
-          <small className="text-danger">Este campo es requerido</small>
+          <small className="text-danger"></small>
         )}
       </div>
 
@@ -271,7 +271,7 @@ const LugarResidencia = () => {
           onChange={(e) => setResidencia_Provincia(e.target.value)}
         />
         {Residencia_Provincia.trim() === "" && (
-          <small className="text-danger">Este campo es requerido</small>
+          <small className="text-danger"></small>
         )}
       </div>
 
@@ -287,7 +287,7 @@ const LugarResidencia = () => {
           onChange={(e) => setResidencia_Canton(e.target.value)}
         />
         {Residencia_Canton.trim() === "" && (
-          <small className="text-danger">Este campo es requerido</small>
+          <small className="text-danger"></small>
         )}
       </div>
 
@@ -303,7 +303,7 @@ const LugarResidencia = () => {
           onChange={(e) => setResidencia_Distrito(e.target.value)}
         />
         {Residencia_Distrito.trim() === "" && (
-          <small className="text-danger">Este campo es requerido</small>
+          <small className="text-danger"></small>
         )}
       </div>
 
@@ -319,7 +319,7 @@ const LugarResidencia = () => {
           onChange={(e) => setResidencia_Comunidad(e.target.value)}
         />
         {Residencia_Comunidad.trim() === "" && (
-          <small className="text-danger">Este campo es requerido</small>
+          <small className="text-danger"></small>
         )}
       </div>
 

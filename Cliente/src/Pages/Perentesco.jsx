@@ -197,6 +197,8 @@ const Parentesco = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Nombre</th>
+              <th>Funcionalidad</th>
+
             </tr>
           </thead>
           <tbody>

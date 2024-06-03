@@ -199,7 +199,9 @@ const Adecuacion = () => {
           <thead>
             <tr>
               <th scope="col">ID</th>
-              <th scope="col">Nombre</th>
+              <th scope="col">Nombre</th>              
+              <th>Funcionalidad</th>
+
             </tr>
           </thead>
           <tbody>

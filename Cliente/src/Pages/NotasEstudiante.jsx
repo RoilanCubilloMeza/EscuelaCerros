@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 import EstudianteDashboard from './../Dashboard/EstudianteDashboard';
+import API_BASE_URL from "../config/api";
 
 const NotasEstudiante = () => {
     const [cedula, setCedula] = useState("");
@@ -32,7 +33,7 @@ const NotasEstudiante = () => {
     }, [darkMode]);
     const obtenerNotas = async () => {
         try {
-            const response = await Axios.get(`http://localhost:3001/notasCDetalladas?cedula=${cedula}`);
+            const response = await Axios.get(`${API_BASE_URL}/notasCDetalladas?cedula=${cedula}`);
             // Ordenar las notas por periodo antes de establecerlas en el estado
             const notasOrdenadas = response.data.sort((a, b) => {
                 // Convertir el periodo a números para comparar

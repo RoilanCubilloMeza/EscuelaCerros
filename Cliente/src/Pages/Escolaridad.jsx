@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 const Escolaridad = () => {
   const { darkMode } = useTheme();
@@ -22,7 +23,7 @@ const Escolaridad = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createEscolaridad", {
+    Axios.post(`${API_BASE_URL}/createEscolaridad`, {
       Escolaridad_Nombre: Escolaridad_Nombre,
     }).then(() => {
       getLista();
@@ -41,7 +42,7 @@ const Escolaridad = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerEscolaridad");
+      const response = await fetch(`${API_BASE_URL}/obtenerEscolaridad`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -72,7 +73,7 @@ const Escolaridad = () => {
     }
 
     getLista();
-    Axios.put("http://localhost:3001/actualizarEscolaridad", {
+    Axios.put(`${API_BASE_URL}/actualizarEscolaridad`, {
       Escolaridad_Nombre: Escolaridad_Nombre,
       Escolaridad_Id: Escolaridad_Id,
     }).then(() => {});
@@ -108,7 +109,7 @@ const Escolaridad = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteEscolaridad/" + Escolaridad_Id
+          `${API_BASE_URL}/deleteEscolaridad/${Escolaridad_Id}`
         ).then(() => {
           getLista();
           limpiarDatos();

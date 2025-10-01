@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Cotidiano = () => {
   const { darkMode } = useTheme();
@@ -26,7 +27,7 @@ const Cotidiano = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createCotidiano", {
+    Axios.post(`${API_BASE_URL}/createCotidiano`, {
       Cotidiano_Puntos: Cotidiano_Puntos,
       Cotidiano_Porcentaje: Cotidiano_Porcentaje,
     }).then(() => {
@@ -44,7 +45,7 @@ const Cotidiano = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerCotidiano");
+      const response = await fetch(`${API_BASE_URL}/obtenerCotidiano`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -66,7 +67,7 @@ const Cotidiano = () => {
 
   getLista();
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarCotidiano", {
+    Axios.put(`${API_BASE_URL}/actualizarCotidiano`, {
       Cotidiano_Puntos: Cotidiano_Puntos,
       Cotidiano_Porcentaje: Cotidiano_Porcentaje,
       Cotidiano_Id: Cotidiano_Id,
@@ -103,7 +104,7 @@ const Cotidiano = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteCotidiano/" + Cotidiano_Id
+          `${API_BASE_URL}/deleteCotidiano/${Cotidiano_Id}`
         ).then(() => {
           getLista();
           limpiarDatos();

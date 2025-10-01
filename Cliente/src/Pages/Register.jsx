@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Registration = () => {
   const [Usuarios_Nombre, setUsuarios_Nombre] = useState("");
@@ -24,7 +25,7 @@ const Registration = () => {
     try {
       // Primero, registra la información de la persona
       const responsePersona = await Axios.post(
-        `http://localhost:3001/createRegistroPersona`,
+        `${API_BASE_URL}/createRegistroPersona`,
         {
           Persona_Nombre,
           Persona_PApellido,
@@ -42,7 +43,7 @@ const Registration = () => {
 
       // Luego, registra el usuario asociado a la persona
       const responseUsuario = await Axios.post(
-        `http://localhost:3001/createRegistroUsuario`,
+        `${API_BASE_URL}/createRegistroUsuario`,
         {
           Usuarios_Nombre,
           Usuarios_contraseña,

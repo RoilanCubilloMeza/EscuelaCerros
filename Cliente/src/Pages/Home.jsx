@@ -4,6 +4,7 @@ import { FaFacebook, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTheme } from "../components/Theme";
 import Carousel from "react-bootstrap/Carousel";
 import "animate.css/animate.min.css";
+import API_BASE_URL from "../config/api";
 
 const Home = () => {
   const { darkMode } = useTheme();
@@ -21,7 +22,7 @@ const Home = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerEventos");
+      const response = await fetch(`${API_BASE_URL}/obtenerEventos`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -49,7 +50,7 @@ const Home = () => {
       const imagePromises = materiasList.map((val) =>
         new Promise((resolve) => {
           const img = new Image();
-          img.src = `http://localhost:3001/getImage/${val.Evento_id}`;
+          img.src = `${API_BASE_URL}/getImage/${val.Evento_id}`;
           img.onload = () => {
             resolve(val.Evento_id);
           };
@@ -72,7 +73,7 @@ const Home = () => {
                 <Carousel.Item key={key}>
                   <img
                     className="d-block w-100"
-                    src={`http://localhost:3001/getImage/${val.Evento_id}`}
+                    src={`${API_BASE_URL}/getImage/${val.Evento_id}`}
                     alt={val.Eventos_Nombre}
                     loading="lazy"
                     onLoad={(e) => e.target.classList.add("loaded")}

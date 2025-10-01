@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Grado = () => {
   const { darkMode } = useTheme();
@@ -23,7 +24,7 @@ const Grado = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createGrado", {
+    Axios.post(`${API_BASE_URL}/createGrado`, {
       Grado_Nombre: Grado_Nombre,
       Grado_Aula: Grado_Aula,
     }).then(() => {
@@ -43,7 +44,7 @@ const Grado = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerGrado");
+      const response = await fetch(`${API_BASE_URL}/obtenerGrado`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -63,7 +64,7 @@ const Grado = () => {
   };
 
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarGrado", {
+    Axios.put(`${API_BASE_URL}/actualizarGrado`, {
       Grado_Nombre: Grado_Nombre,
       Grado_Aula: Grado_Aula,
       Grado_Id: Grado_Id,
@@ -103,7 +104,7 @@ const Grado = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteGrado/" + Grado_Id).then(
+        Axios.delete(`${API_BASE_URL}/deleteGrado/${Grado_Id}`).then(
           () => {
             getLista();
             limpiarDatos();

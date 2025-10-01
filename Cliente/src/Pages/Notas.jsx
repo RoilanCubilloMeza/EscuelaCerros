@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 const Notas = () => {
   const [Estudiantes_id, setEstudiante_id] = useState("");
@@ -38,7 +39,7 @@ const Notas = () => {
   const getListaMatricula = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3001/obtenerMatriculaNombre"
+        `${API_BASE_URL}/obtenerMatriculaNombre`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -52,7 +53,7 @@ const Notas = () => {
 
   const getListaMaterias = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerMaterias");
+      const response = await fetch(`${API_BASE_URL}/obtenerMaterias`);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -67,7 +68,7 @@ const Notas = () => {
   const buscarNotas = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/notasDetalladas?Estudiantes_id=${Estudiantes_id}&Materias_id=${Materias_id}&Nota_Periodo=${Nota_Periodo}`
+        `${API_BASE_URL}/notasDetalladas?Estudiantes_id=${Estudiantes_id}&Materias_id=${Materias_id}&Nota_Periodo=${Nota_Periodo}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -104,7 +105,7 @@ const Notas = () => {
       actualizarNota();
     } else {
       try {
-        const response = await fetch("http://localhost:3001/agregarNota", {
+        const response = await fetch(`${API_BASE_URL}/agregarNota`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -162,7 +163,7 @@ const Notas = () => {
   const actualizarNota = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/actualizarNota/${editingNotaId}`,
+        `${API_BASE_URL}/actualizarNota/${editingNotaId}`,
         {
           method: "PUT",
           headers: {
@@ -205,7 +206,7 @@ const Notas = () => {
   const eliminarNota = async (notaId) => {
     try {
       const deleteResponse = await fetch(
-        `http://localhost:3001/eliminarNota/${notaId}`,
+        `${API_BASE_URL}/eliminarNota/${notaId}`,
         {
           method: "DELETE",
         }

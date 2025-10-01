@@ -3,6 +3,7 @@ import Axios from "axios";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Persona = () => {
   const { darkMode } = useTheme();
@@ -34,7 +35,7 @@ const Persona = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createPersona", {
+    Axios.post(`${API_BASE_URL}/createPersona`, {
       Persona_Edad: Persona_Edad,
       Persona_Nombre: Persona_Nombre,
       Persona_PApellido: Persona_PApellido,
@@ -62,7 +63,7 @@ const Persona = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerPersonas");
+      const response = await fetch(`${API_BASE_URL}/obtenerPersonas`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -107,7 +108,7 @@ const Persona = () => {
       return;
     }
 
-    Axios.put("http://localhost:3001/actualizarPersona", {
+    Axios.put(`${API_BASE_URL}/actualizarPersona`, {
       Persona_Edad: Persona_Edad,
       Persona_Nombre: Persona_Nombre,
       Persona_PApellido: Persona_PApellido,
@@ -162,7 +163,7 @@ const Persona = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deletePersona/" + Persona_Id).then(
+        Axios.delete(`${API_BASE_URL}/deletePersona/${Persona_Id}`).then(
           () => {
             getLista();
             limpiarDatos();

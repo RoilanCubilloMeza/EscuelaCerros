@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 const Justificacion = () => {
   const { darkMode } = useTheme();
@@ -24,7 +25,7 @@ const Justificacion = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createJustificacion", {
+    Axios.post(`${API_BASE_URL}/createJustificacion`, {
       Asistencia_FActual: Asistencia_FActual,
       Asistencia_justificacion: Asistencia_justificacion,
       Asistencia_Tipo: Asistencia_Tipo,

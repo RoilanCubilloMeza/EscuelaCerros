@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 import Parentesco from './Perentesco';
+import API_BASE_URL from "../config/api";
 
 const Enfermedades = () => {
   const { darkMode } = useTheme();
@@ -31,7 +32,7 @@ const Enfermedades = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createEnfermedades", {
+    Axios.post(`${API_BASE_URL}/createEnfermedades`, {
       Enfermedades_Nombre,
       Enfermedades_PresentaEnfermedad,
       Enfermedades_Medicamento,
@@ -53,7 +54,7 @@ const Enfermedades = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerEnfermedades");
+      const response = await fetch(`${API_BASE_URL}/obtenerEnfermedades`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -90,7 +91,7 @@ const Enfermedades = () => {
       return;
     }
 
-    Axios.put("http://localhost:3001/actualizarEnfermedades", {
+    Axios.put(`${API_BASE_URL}/actualizarEnfermedades`, {
       Enfermedades_Nombre,
       Enfermedades_Alergia,
       Enfermedades_PresentaEnfermedad,
@@ -134,7 +135,7 @@ const Enfermedades = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/delete/" + Enfermedades_Id).then(
+        Axios.delete(`${API_BASE_URL}/delete/${Enfermedades_Id}`).then(
           () => {
             getLista();
             limpiarDatos();

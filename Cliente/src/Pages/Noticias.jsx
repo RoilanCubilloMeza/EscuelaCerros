@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Eventos = () => {
   const { darkMode } = useTheme();
@@ -28,7 +29,7 @@ const Eventos = () => {
     formData.append("Eventos_Nombre", Eventos_Nombre);
     formData.append("Eventos_Imagen", Eventos_Imagen);
 
-    Axios.post("http://localhost:3001/createEventos", formData, {
+    Axios.post(`${API_BASE_URL}/createEventos`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -56,7 +57,7 @@ const Eventos = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerEventos");
+      const response = await fetch(`${API_BASE_URL}/obtenerEventos`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -85,7 +86,7 @@ const Eventos = () => {
     formData.append("Eventos_Imagen", Eventos_Imagen);
     formData.append("Evento_id", Evento_id);
 
-    Axios.put("http://localhost:3001/actualizarEventos", formData, {
+    Axios.put(`${API_BASE_URL}/actualizarEventos`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -126,7 +127,7 @@ const Eventos = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteEvento/" + Evento_id).then(
+        Axios.delete(`${API_BASE_URL}/deleteEvento/${Evento_id}`).then(
           () => {
             getLista();
             limpiarDatos();
@@ -248,7 +249,7 @@ const Eventos = () => {
                 <td>{val.Eventos_Nombre}</td>
                 <td>
                   <img
-                    src={`http://localhost:3001/getImage/${val.Evento_id}`}
+                    src={`${API_BASE_URL}/getImage/${val.Evento_id}`}
                     alt="Evento"
                     style={{ width: "80px", height: "80px" }}
                   />

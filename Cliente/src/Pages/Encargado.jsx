@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 const Encargado = () => {
   const { darkMode } = useTheme();
@@ -48,7 +49,7 @@ const Encargado = () => {
   }, [darkMode]);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerPersonas")
+    Axios.get(`${API_BASE_URL}/obtenerPersonas`)
       .then((response) => {
         setEncargadoList(response.data);
       })
@@ -58,7 +59,7 @@ const Encargado = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerEscolaridad")
+    Axios.get(`${API_BASE_URL}/obtenerEscolaridad`)
       .then((response) => {
         setEscolaridadList(response.data);
       })
@@ -68,7 +69,7 @@ const Encargado = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerOcupacion")
+    Axios.get(`${API_BASE_URL}/obtenerOcupacion`)
       .then((response) => {
         setOcupacionList(response.data);
       })
@@ -78,7 +79,7 @@ const Encargado = () => {
   }, []);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerParentesco")
+    Axios.get(`${API_BASE_URL}/obtenerParentesco`)
       .then((response) => {
         setParentescoList(response.data);
       })
@@ -105,7 +106,7 @@ const Encargado = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createEncargado", {
+    Axios.post(`${API_BASE_URL}/createEncargado`, {
       Encargados_Nombre: Encargados_Nombre,
       Encargado_Nombre2: Encargado_Nombre2,
       Encargado_Apellido1: Encargado_Apellido1,
@@ -135,7 +136,7 @@ const Encargado = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerEncargados");
+      const response = await fetch(`${API_BASE_URL}/obtenerEncargados`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -179,7 +180,7 @@ const Encargado = () => {
       return;
     }
 
-    Axios.put("http://localhost:3001/actualizarEncargados", {
+    Axios.put(`${API_BASE_URL}/actualizarEncargados`, {
       Encargados_Nombre: Encargados_Nombre,
       Encargado_Nombre2: Encargado_Nombre2,
       Encargado_Apellido1: Encargado_Apellido1,
@@ -240,7 +241,7 @@ const Encargado = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteEncargados/" + Encargados_Id
+          `${API_BASE_URL}/deleteEncargados/${Encargados_Id}`
         ).then(() => {
           getLista();
           limpiarDatos();

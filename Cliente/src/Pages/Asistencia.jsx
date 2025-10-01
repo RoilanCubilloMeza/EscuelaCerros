@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Asistencia = () => {
   const { darkMode } = useTheme();
@@ -20,7 +21,7 @@ const Asistencia = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createAsistencia", {
+    Axios.post(`${API_BASE_URL}/createAsistencia`, {
       VA_Valor: VA_Valor,
     }).then(() => {
       getLista();
@@ -36,7 +37,7 @@ const Asistencia = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerAsistencia");
+      const response = await fetch(`${API_BASE_URL}/obtenerAsistencia`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -57,7 +58,7 @@ const Asistencia = () => {
   };
 
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarAsistencia", {
+    Axios.put(`${API_BASE_URL}/actualizarAsistencia`, {
       VA_Valor: VA_Valor,
       VA_Id: VA_Id,
     }).then(() => {
@@ -89,7 +90,7 @@ const Asistencia = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteAsistencia/" + VA_Id).then(
+        Axios.delete(`${API_BASE_URL}/deleteAsistencia/${VA_Id}`).then(
           () => {
             getLista();
             limpiarDatos();

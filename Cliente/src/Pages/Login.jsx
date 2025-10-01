@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import { useNavigate, Link, Outlet, useLocation } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 import Axios from "axios";
+import API_BASE_URL from "../config/api";
 
 const Login = () => {
   const [Usuarios_Nombre, setUsuarios_Nombre] = useState("");
@@ -19,7 +20,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await Axios.post(`http://localhost:3001/login`, {
+      const response = await Axios.post(`${API_BASE_URL}/login`, {
         Usuarios_Nombre,
         Usuarios_contraseña,
       });

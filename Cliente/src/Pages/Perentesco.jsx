@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Parentesco = () => {
   const { darkMode } = useTheme();
@@ -22,7 +23,7 @@ const Parentesco = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createParentesco", {
+    Axios.post(`${API_BASE_URL}/createParentesco`, {
       Parentesco_Nombre: Parentesco_Nombre,
     }).then(() => {
       getLista();
@@ -41,7 +42,7 @@ const Parentesco = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerParentesco");
+      const response = await fetch(`${API_BASE_URL}/obtenerParentesco`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -70,7 +71,7 @@ const Parentesco = () => {
       return;
     }
 
-    Axios.put("http://localhost:3001/actualizarParentesco", {
+    Axios.put(`${API_BASE_URL}/actualizarParentesco`, {
       Parentesco_Nombre: Parentesco_Nombre,
       Parentesco_Id: Parentesco_Id,
     }).then(() => {
@@ -109,7 +110,7 @@ const Parentesco = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteParentesco/" + Parentesco_Id
+          `${API_BASE_URL}/deleteParentesco/${Parentesco_Id}`
         ).then(() => {
           getLista();
           limpiarDatos();

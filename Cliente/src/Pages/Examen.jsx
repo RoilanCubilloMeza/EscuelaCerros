@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 const Examen = () => {
   const { darkMode } = useTheme();
@@ -26,7 +27,7 @@ const Examen = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createExamen", {
+    Axios.post(`${API_BASE_URL}/createExamen`, {
       Examen_Puntos: Examen_Puntos,
       Examen_Porcentaje: Examen_Porcentaje,
     }).then(() => {
@@ -43,7 +44,7 @@ const Examen = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerExamen");
+      const response = await fetch(`${API_BASE_URL}/obtenerExamen`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -64,7 +65,7 @@ const Examen = () => {
   };
 
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarExamen", {
+    Axios.put(`${API_BASE_URL}/actualizarExamen`, {
       Examen_Puntos: Examen_Puntos,
       Examen_Porcentaje: Examen_Porcentaje,
       Examen_Id: Examen_Id,
@@ -105,7 +106,7 @@ const Examen = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteExamen/" + Examen_Id).then(
+        Axios.delete(`${API_BASE_URL}/deleteExamen/${Examen_Id}`).then(
           () => {
             getLista();
             limpiarDatos();

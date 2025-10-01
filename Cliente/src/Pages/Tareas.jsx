@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 const Tareas = () => {
   const { darkMode } = useTheme();
 
@@ -15,7 +16,7 @@ const Tareas = () => {
   const [editar, setEditar] = useState(false);
 
   const add = () => {
-    Axios.post("http://localhost:3001/createTarea", {
+    Axios.post(`${API_BASE_URL}/createTarea`, {
       Tareas_Puntos: Tareas_Puntos,
       Tareas_Porcentaje: Tareas_Porcentaje,
     }).then(() => {
@@ -32,7 +33,7 @@ const Tareas = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerTarea");
+      const response = await fetch(`${API_BASE_URL}/obtenerTarea`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -55,7 +56,7 @@ const Tareas = () => {
   };
 
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarTarea", {
+    Axios.put(`${API_BASE_URL}/actualizarTarea`, {
       Tareas_Puntos: Tareas_Puntos,
       Tareas_Porcentaje: Tareas_Porcentaje,
       Tareas_Id: Tareas_Id,
@@ -93,7 +94,7 @@ const Tareas = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteTarea/" + tareas_Id).then(
+        Axios.delete(`${API_BASE_URL}/deleteTarea/${tareas_Id}`).then(
           () => {
             getLista();
             limpiarDatos();

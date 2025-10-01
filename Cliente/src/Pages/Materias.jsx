@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Materias = () => {
   const { darkMode } = useTheme();
@@ -25,7 +26,7 @@ const Materias = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createMaterias", {
+    Axios.post(`${API_BASE_URL}/createMaterias`, {
       Materias_Nombre: Materias_Nombre,
       Materias_Tipo: Materias_Tipo,
     }).then(() => {
@@ -45,7 +46,7 @@ const Materias = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerMaterias");
+      const response = await fetch(`${API_BASE_URL}/obtenerMaterias`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -66,7 +67,7 @@ const Materias = () => {
   };
 
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarMaterias", {
+    Axios.put(`${API_BASE_URL}/actualizarMaterias`, {
       Materias_Nombre: Materias_Nombre,
       Materias_Tipo: Materias_Tipo,
       Materias_id: Materias_id,
@@ -108,7 +109,7 @@ const Materias = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteMaterias/" + Materias_id
+          `${API_BASE_URL}/deleteMaterias/${Materias_id}`
         ).then(() => {
           getLista();
           limpiarDatos();

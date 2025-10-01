@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 import ProfesorDashboard from './../Dashboard/ProfesorDashboard';
+import API_BASE_URL from "../config/api";
 
 const JustificacionProfesor = () => {
   const { darkMode } = useTheme();
@@ -29,7 +30,7 @@ const JustificacionProfesor = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createJustificacion", {
+    Axios.post(`${API_BASE_URL}/createJustificacion`, {
       Asistencia_FActual: Asistencia_FActual,
       Asistencia_Justificacion: Asistencia_Justificacion,
       Asistencia_Tipo: Asistencia_Tipo,
@@ -47,7 +48,7 @@ const JustificacionProfesor = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerJustificion");
+      const response = await fetch(`${API_BASE_URL}/obtenerJustificion`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -86,7 +87,7 @@ const JustificacionProfesor = () => {
       return;
     }
 
-    Axios.put("http://localhost:3001/actualizarJustificacion", {
+    Axios.put(`${API_BASE_URL}/actualizarJustificacion`, {
       Asistencia_Id: Asistencia_Id,
       Asistencia_FActual: Asistencia_FActual,
       Asistencia_Justificacion: Asistencia_Justificacion,
@@ -122,7 +123,7 @@ const JustificacionProfesor = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteJustificacion/" + Asistencia_Id
+          `${API_BASE_URL}/deleteJustificacion/${Asistencia_Id}`
         ).then(() => {
           getLista();
           limpiarDatos();

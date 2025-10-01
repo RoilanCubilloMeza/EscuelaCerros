@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Adecuacion = () => {
   const { darkMode } = useTheme();
@@ -22,7 +23,7 @@ const Adecuacion = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createAdecuacion", {
+    Axios.post(`${API_BASE_URL}/createAdecuacion`, {
       Adecuacion_Nombre: Adecuacion_Nombre,
     }).then(() => {
       getLista();
@@ -41,7 +42,7 @@ const Adecuacion = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerAdecuacion");
+      const response = await fetch(`${API_BASE_URL}/obtenerAdecuacion`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -72,7 +73,7 @@ const Adecuacion = () => {
       return;
     }
 
-    Axios.put("http://localhost:3001/actualizarAdecuacion", {
+    Axios.put(`${API_BASE_URL}/actualizarAdecuacion`, {
       Adecuacion_Nombre: Adecuacion_Nombre,
       Adecuacion_Id: Adecuacion_Id,
     }).then(() => {
@@ -110,7 +111,7 @@ const Adecuacion = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteAdecuacion/" + Adecuacion_Id
+          `${API_BASE_URL}/deleteAdecuacion/${Adecuacion_Id}`
         ).then(() => {
           getLista();
           limpiarDatos();

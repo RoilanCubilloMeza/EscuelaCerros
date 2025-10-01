@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 const Ocupacion = () => {
   const { darkMode } = useTheme();
@@ -19,7 +20,7 @@ const Ocupacion = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createOcupacion", {
+    Axios.post(`${API_BASE_URL}/createOcupacion`, {
       Ocupacion_Nombre: Ocupacion_Nombre,
     }).then(() => {
       getLista();
@@ -38,7 +39,7 @@ const Ocupacion = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerOcupacion");
+      const response = await fetch(`${API_BASE_URL}/obtenerOcupacion`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -67,7 +68,7 @@ const Ocupacion = () => {
       return;
     }
 
-    Axios.put("http://localhost:3001/actualizarOcupacion", {
+    Axios.put(`${API_BASE_URL}/actualizarOcupacion`, {
       Ocupacion_Nombre: Ocupacion_Nombre,
       Ocupacion_Id: Ocupacion_Id,
     }).then(() => {
@@ -106,7 +107,7 @@ const Ocupacion = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteOcupacion/" + Ocupacion_Id
+          `${API_BASE_URL}/deleteOcupacion/${Ocupacion_Id}`
         ).then(() => {
           getLista();
           limpiarDatos();

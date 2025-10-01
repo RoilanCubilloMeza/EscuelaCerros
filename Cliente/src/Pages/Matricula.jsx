@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 function Matricula() {
   const { darkMode } = useTheme();
@@ -27,7 +28,7 @@ function Matricula() {
   const [Matricula, setMatricula] = useState([]);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerPersonas")
+    Axios.get(`${API_BASE_URL}/obtenerPersonas`)
       .then((response) => {
         setPersona(response.data);
       })
@@ -37,7 +38,7 @@ function Matricula() {
   }, []);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerEnfermedades")
+    Axios.get(`${API_BASE_URL}/obtenerEnfermedades`)
       .then((response) => {
         setObtenerEnfermedad(response.data);
       })
@@ -47,7 +48,7 @@ function Matricula() {
   }, []);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerEncargados")
+    Axios.get(`${API_BASE_URL}/obtenerEncargados`)
       .then((response) => {
         setObtenerEncargado(response.data);
       })
@@ -57,7 +58,7 @@ function Matricula() {
   }, []);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerAdecuacion")
+    Axios.get(`${API_BASE_URL}/obtenerAdecuacion`)
       .then((response) => {
         setObtenerAdecuacion(response.data);
       })
@@ -67,7 +68,7 @@ function Matricula() {
   }, []);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/obtenerResidente")
+    Axios.get(`${API_BASE_URL}/obtenerResidente`)
       .then((response) => {
         setObtenerResidencia(response.data);
       })
@@ -95,7 +96,7 @@ function Matricula() {
       return; 
     }
 
-    Axios.post("http://localhost:3001/createMatricula", {
+    Axios.post(`${API_BASE_URL}/createMatricula`, {
       Persona_Id: Persona_Id,
       Encargados_Id: Encargados_Id,
       Enfermedades_Id: Enfermedades_Id,
@@ -120,7 +121,7 @@ function Matricula() {
 
   const getListaMatricula = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerMatricula");
+      const response = await fetch(`${API_BASE_URL}/obtenerMatricula`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -147,7 +148,7 @@ function Matricula() {
     setEstudiante_id(val.Estudiantes_id);
   };
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarMatricula", {
+    Axios.put(`${API_BASE_URL}/actualizarMatricula`, {
       Persona_Id:Persona_Id,
       Encargados_Id: Encargados_Id,
       Enfermedades_Id: Enfermedades_Id,
@@ -189,7 +190,7 @@ function Matricula() {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(
-          "http://localhost:3001/deleteMatricula/" + Estudiantes_id
+          `${API_BASE_URL}/deleteMatricula/${Estudiantes_id}`
         ).then(() => {
           getListaMatricula();
           limpiarDatos();

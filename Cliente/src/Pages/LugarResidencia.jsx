@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const LugarResidencia = () => {
   const { darkMode } = useTheme();
@@ -25,7 +26,7 @@ const LugarResidencia = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerResidente");
+      const response = await fetch(`${API_BASE_URL}/obtenerResidente`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -56,7 +57,7 @@ const LugarResidencia = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createResidente", {
+    Axios.post(`${API_BASE_URL}/createResidente`, {
       Residencia_Direccion,
       Residencia_EstadoCasa,
       Residencia_Internet,
@@ -108,7 +109,7 @@ const LugarResidencia = () => {
   };
 
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarResidente", {
+    Axios.put(`${API_BASE_URL}/actualizarResidente`, {
       Residencia_Id,
       Residencia_Direccion,
       Residencia_EstadoCasa,
@@ -158,7 +159,7 @@ const LugarResidencia = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteResidente/" + Residencia_Id)
+        Axios.delete(`${API_BASE_URL}/deleteResidente/${Residencia_Id}`)
           .then(() => {
             getLista();
             limpiarDatos();

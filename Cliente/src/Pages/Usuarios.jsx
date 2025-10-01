@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
+import API_BASE_URL from "../config/api";
 
 const Usuarios = () => {
   const { darkMode } = useTheme();
@@ -20,13 +21,13 @@ const Usuarios = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const personaResponse = await Axios.get("http://localhost:3001/obtenerPersonas");
+        const personaResponse = await Axios.get(`${API_BASE_URL}/obtenerPersonas`);
         setPersona(personaResponse.data);
 
-        const rolResponse = await Axios.get("http://localhost:3001/obtenerRoles");
+        const rolResponse = await Axios.get(`${API_BASE_URL}/obtenerRoles`);
         setRol(rolResponse.data);
 
-        const usuariosResponse = await Axios.get("http://localhost:3001/obtenerUsuariosLogin");
+        const usuariosResponse = await Axios.get(`${API_BASE_URL}/obtenerUsuariosLogin`);
         setAdecuacion_List(usuariosResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -46,7 +47,7 @@ const Usuarios = () => {
       return;
     }
 
-    Axios.post("http://localhost:3001/createUsuariosLogin", {
+    Axios.post(`${API_BASE_URL}/createUsuariosLogin`, {
       usuarios_Nombre: usuarios_Nombre,
       Usuarios_contraseña: Usuarios_contraseña,
       Roles_Id: Roles_Id,
@@ -67,7 +68,7 @@ const Usuarios = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerUsuariosLogin");
+      const response = await fetch(`${API_BASE_URL}/obtenerUsuariosLogin`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -99,7 +100,7 @@ const Usuarios = () => {
       return;
     }
 
-    Axios.put("http://localhost:3001/actualizarUsuariosLogin", {
+    Axios.put(`${API_BASE_URL}/actualizarUsuariosLogin`, {
       usuarios_Nombre: usuarios_Nombre,
       Usuarios_contraseña: Usuarios_contraseña,
       Roles_Id: Roles_Id,
@@ -138,7 +139,7 @@ const Usuarios = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(`http://localhost:3001/deleteUsuariosLogin/${Usuarios_Id}`)
+        Axios.delete(`${API_BASE_URL}/deleteUsuariosLogin/${Usuarios_Id}`)
           .then(() => {
             getLista();
             limpiarDatos();

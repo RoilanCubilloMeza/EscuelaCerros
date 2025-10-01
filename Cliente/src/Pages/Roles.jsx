@@ -3,6 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 const Roles = () => {
   const { darkMode } = useTheme();
@@ -26,7 +27,7 @@ const Roles = () => {
       return; // Salir de la función si hay campos vacíos
     }
 
-    Axios.post("http://localhost:3001/createRoles", {
+    Axios.post(`${API_BASE_URL}/createRoles`, {
       Roles_Descripcion: Roles_Descripcion,
       Roles_Nombre: Roles_Nombre,
     }).then(() => {
@@ -43,7 +44,7 @@ const Roles = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch("http://localhost:3001/obtenerRoles");
+      const response = await fetch(`${API_BASE_URL}/obtenerRoles`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -66,7 +67,7 @@ const Roles = () => {
   };
 
   const actualizar = () => {
-    Axios.put("http://localhost:3001/actualizarRoles", {
+    Axios.put(`${API_BASE_URL}/actualizarRoles`, {
       Roles_Descripcion: Roles_Descripcion,
       Roles_Nombre: Roles_Nombre,
       Roles_Id: Roles_Id,
@@ -100,7 +101,7 @@ const Roles = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete("http://localhost:3001/deleteRoles/" + Roles_Id).then(
+        Axios.delete(`${API_BASE_URL}/deleteRoles/${Roles_Id}`).then(
           () => {
             getLista();
             limpiarDatos();

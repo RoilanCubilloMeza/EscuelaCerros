@@ -38,3 +38,6 @@ build/
 config.local.js
 secrets.json
 credentials.json
+Cliente/.env.example
+Servidor/.env
+

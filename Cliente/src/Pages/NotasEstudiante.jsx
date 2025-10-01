@@ -3,7 +3,6 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
-import EstudianteDashboard from './../Dashboard/EstudianteDashboard';
 import API_BASE_URL from "../config/api";
 
 const NotasEstudiante = () => {

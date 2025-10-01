@@ -133,13 +133,7 @@ const Roles = () => {
     };
   }, [darkMode]);
 
-  const inputNombreStyle = {
-    borderColor: Roles_Nombre.trim() === "" ? "red" : "",
-  };
-
-  const inputDescripcionStyle = {
-    borderColor: Roles_Descripcion.trim() === "" ? "red" : "",
-  };
+ 
 
   return (
     <div className="container">

@@ -41,16 +41,7 @@ const Registration = () => {
       // Obtiene el ID de la persona registrada
       const personaId = responsePersona.data.personaId;
 
-      // Luego, registra el usuario asociado a la persona
-      const responseUsuario = await Axios.post(
-        `${API_BASE_URL}/createRegistroUsuario`,
-        {
-          Usuarios_Nombre,
-          Usuarios_contraseña,
-          Roles_Id,
-          Persona_Id: personaId, // Asocia el ID de la persona al usuario
-        }
-      );
+      
 
       Swal.fire({
         title: "Registro exitoso",

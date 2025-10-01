@@ -8,7 +8,7 @@ const Notas = () => {
   const [Estudiantes_id, setEstudiante_id] = useState("");
   const [Materias_id, setMaterias_id] = useState("");
   const [Nota_Total, setNota_Total] = useState("");
-  const[Nota_Id,setNota_Id]=useState("")
+  const[Nota_Id]=useState("")
   const [Nota_Periodo, setNota_Periodo] = useState("");
   const [Materias_List, setMaterias_List] = useState([]);
   const [Matricula, setMatricula] = useState([]);

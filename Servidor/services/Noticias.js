@@ -105,16 +105,39 @@ app.get("/getImage/:id", (req, res) => {
 
   connection.query(
     "SELECT Eventos_Imagen FROM EventosEscolares WHERE Evento_id = ?",
-    id,
+    [id],
     (err, result) => {
       if (err) {
         console.error("Error al obtener la imagen:", err);
         return res.status(500).send("Error al obtener la imagen.");
-      } else {
-        const imagen = result[0].Eventos_Imagen;
-        res.setHeader("Content-Type", "image/jpeg"); 
-        res.send(imagen);
       }
+
+      if (!result || result.length === 0 || !result[0].Eventos_Imagen) {
+        return res.status(404).send("Imagen no encontrada.");
+      }
+
+      const imagen = result[0].Eventos_Imagen;
+
+      // Detectar tipo de imagen por cabecera mágica
+      let mime = "image/jpeg";
+      if (imagen && imagen.length >= 8) {
+        const b0 = imagen[0];
+        const b1 = imagen[1];
+        const b2 = imagen[2];
+        const b3 = imagen[3];
+        
+        if (b0 === 0xFF && b1 === 0xD8 && b2 === 0xFF) {
+          mime = "image/jpeg";
+        } else if (b0 === 0x89 && b1 === 0x50 && b2 === 0x4E && b3 === 0x47) {
+          mime = "image/png";
+        } else if (b0 === 0x47 && b1 === 0x49 && b2 === 0x46 && b3 === 0x38) {
+          mime = "image/gif";
+        }
+      }
+
+      res.setHeader("Content-Type", mime);
+      res.setHeader("Cache-Control", "public, max-age=300");
+      return res.send(imagen);
     }
   );
 });

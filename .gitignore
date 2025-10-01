@@ -1,0 +1,40 @@
+# Dependencias
+node_modules/
+package-lock.json
+
+# Variables de entorno - NUNCA subir al repositorio
+.env
+.env.local
+.env.production
+Servidor/.env
+Cliente/.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Archivos temporales
+tmp/
+temp/
+*.tmp
+
+# Build
+dist/
+build/
+
+# Archivos sensibles
+config.local.js
+secrets.json
+credentials.json

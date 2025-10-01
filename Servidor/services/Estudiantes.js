@@ -10,7 +10,7 @@ app.post("/createMatricula", (req, res) => {
   const { Persona_Id, Estudiantes_Estado, Adecuacion_Id, Residencia_ID, Enfermedades_Id, Estudiantes_Grado, Encargados_Id } = req.body;
 
   connection.query(
-    "INSERT INTO estudiantes(Persona_Id, Estudiantes_Estado, Adecuacion_Id, Residencia_ID, Enfermedades_Id, Estudiantes_Grado, Encargados_Id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO Estudiantes(Persona_Id, Estudiantes_Estado, Adecuacion_Id, Residencia_ID, Enfermedades_Id, Estudiantes_Grado, Encargados_Id) VALUES (?, ?, ?, ?, ?, ?, ?)",
     [
       Persona_Id,
       Estudiantes_Estado,
@@ -32,7 +32,7 @@ app.post("/createMatricula", (req, res) => {
 });
 app.get("/obtenerMatriculaNombre", (req, res) => {
   connection.query(
-    "SELECT estudiantes.*, personas.Persona_nombre, personas.Persona_PApellido, personas.Persona_SApellido FROM estudiantes JOIN personas ON estudiantes.Persona_Id = personas.Persona_Id",
+    "SELECT estudiantes.*, personas.Persona_nombre, personas.Persona_PApellido, personas.Persona_SApellido FROM Estudiantes JOIN Personas ON estudiantes.Persona_Id = personas.Persona_Id",
     (err, result) => {
       if (err) {
         console.log(err);
@@ -45,7 +45,7 @@ app.get("/obtenerMatriculaNombre", (req, res) => {
 });
 
 app.get("/obtenerMatricula", (req, res) => {
-  connection.query("SELECT * FROM estudiantes", (err, result) => {
+  connection.query("SELECT * FROM Estudiantes", (err, result) => {
     if (err) {
       console.log(err);
       res.status(500).send("Error al obtener las matrículas");
@@ -59,7 +59,7 @@ app.put("/actualizarMatricula", (req, res) => {
   const { Persona_Id, Estudiantes_Estado, Adecuacion_Id, Residencia_ID, Enfermedades_Id, Estudiantes_Grado, Encargados_Id, Estudiantes_id } = req.body;
 
   connection.query(
-    "UPDATE estudiantes SET Persona_Id=?, Estudiantes_Estado=?, Adecuacion_Id=?, Residencia_ID=?, Enfermedades_Id=?, Estudiantes_Grado=?, Encargados_Id=? WHERE Estudiantes_id=?",
+    "UPDATE Estudiantes SET Persona_Id=?, Estudiantes_Estado=?, Adecuacion_Id=?, Residencia_ID=?, Enfermedades_Id=?, Estudiantes_Grado=?, Encargados_Id=? WHERE Estudiantes_id=?",
     [
       Persona_Id,
       Estudiantes_Estado,
@@ -88,7 +88,7 @@ app.put("/actualizarMatricula", (req, res) => {
 app.delete("/deleteMatricula/:Estudiantes_id", (req, res) => {
   const Estudiantes_id = req.params.Estudiantes_id;
   connection.query(
-    "DELETE FROM estudiantes WHERE Estudiantes_id=?",
+    "DELETE FROM Estudiantes WHERE Estudiantes_id=?",
     [Estudiantes_id],
     (err, result) => {
       if (err) {

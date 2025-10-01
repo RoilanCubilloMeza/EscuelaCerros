@@ -12,7 +12,7 @@ app.post("/login", (req, res) => {
   const Usuarios_contraseña = req.body.Usuarios_contraseña;
 
   const query =
-    "SELECT Roles_Id FROM usuarios WHERE Usuarios_Nombre = ? AND Usuarios_contraseña = ?";
+    "SELECT Roles_Id FROM Usuarios WHERE Usuarios_Nombre = ? AND Usuarios_contraseña = ?";
 
   connection.query(
     query,

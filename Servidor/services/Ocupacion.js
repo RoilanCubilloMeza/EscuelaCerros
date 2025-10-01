@@ -10,7 +10,7 @@ app.post("/createOcupacion", (req, res) => {
   const Ocupacion_Nombre = req.body.Ocupacion_Nombre;
  
   connection.query(
-    "INSERT INTO ocupacion(Ocupacion_Nombre) VALUES (?)",
+    "INSERT INTO Ocupacion(Ocupacion_Nombre) VALUES (?)",
     [
       Ocupacion_Nombre,
     
@@ -37,7 +37,7 @@ app.post("/createOcupacion", (req, res) => {
 //});
 
 app.get("/obtenerOcupacion", (req, res) => {
-  connection.query("SELECT * FROM ocupacion", (err, result) => {
+  connection.query("SELECT * FROM Ocupacion", (err, result) => {
     if (err) {
       console.log(err);
     } else {

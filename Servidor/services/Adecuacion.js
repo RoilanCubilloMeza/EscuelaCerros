@@ -10,7 +10,7 @@ app.post("/createAdecuacion", (req, res) => {
   const Adecuacion_Nombre = req.body.Adecuacion_Nombre;
  
   connection.query(
-    "INSERT INTO adecuacion(Adecuacion_Nombre) VALUES (?)",
+    "INSERT INTO Adecuacion(Adecuacion_Nombre) VALUES (?)",
     [
         Adecuacion_Nombre,
     
@@ -37,7 +37,7 @@ app.post("/createAdecuacion", (req, res) => {
 //});
 
 app.get("/obtenerAdecuacion", (req, res) => {
-  connection.query("SELECT * FROM adecuacion", (err, result) => {
+  connection.query("SELECT * FROM Adecuacion", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -51,7 +51,7 @@ app.put("/actualizarAdecuacion", (req, res) => {
   const Adecuacion_Nombre= req.body.Adecuacion_Nombre;
   
   connection.query(
-    "UPDATE adecuacion SET Adecuacion_Nombre=? WHERE Adecuacion_Id=?",
+    "UPDATE Adecuacion SET Adecuacion_Nombre=? WHERE Adecuacion_Id=?",
     [
         Adecuacion_Nombre,
         Adecuacion_Id,
@@ -70,7 +70,7 @@ app.put("/actualizarAdecuacion", (req, res) => {
 app.delete("/deleteAdecuacion/:Adecuacion_Id", (req, res) => {
   const Adecuacion_Id = req.params.Adecuacion_Id;
   connection.query(
-    "DELETE FROM adecuacion WHERE Adecuacion_Id=?",
+    "DELETE FROM Adecuacion WHERE Adecuacion_Id=?",
     Adecuacion_Id,
     (err, result) => {
       if (err) {

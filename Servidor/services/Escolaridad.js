@@ -10,7 +10,7 @@ app.post("/createEscolaridad", (req, res) => {
   const Escolaridad_Nombre = req.body.Escolaridad_Nombre;
  
   connection.query(
-    "INSERT INTO escolaridad(Escolaridad_Nombre) VALUES (?)",
+    "INSERT INTO Escolaridad(Escolaridad_Nombre) VALUES (?)",
     [
       Escolaridad_Nombre,
     
@@ -37,7 +37,7 @@ app.post("/createEscolaridad", (req, res) => {
 //});
 
 app.get("/obtenerEscolaridad", (req, res) => {
-  connection.query("SELECT * FROM escolaridad", (err, result) => {
+  connection.query("SELECT * FROM Escolaridad", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -51,7 +51,7 @@ app.put("/actualizarEscolaridad", (req, res) => {
   const Escolaridad_Nombre= req.body.Escolaridad_Nombre;
   
   connection.query(
-    "UPDATE escolaridad SET Escolaridad_Nombre=? WHERE Escolaridad_Id=?",
+    "UPDATE Escolaridad SET Escolaridad_Nombre=? WHERE Escolaridad_Id=?",
     [
     Escolaridad_Nombre,
       Escolaridad_Id,
@@ -70,7 +70,7 @@ app.put("/actualizarEscolaridad", (req, res) => {
 app.delete("/deleteEscolaridad/:Escolaridad_Id", (req, res) => {
   const Escolaridad_Id = req.params.Escolaridad_Id;
   connection.query(
-    "DELETE FROM escolaridad WHERE Escolaridad_Id=?",
+    "DELETE FROM Escolaridad WHERE Escolaridad_Id=?",
     Escolaridad_Id,
     (err, result) => {
       if (err) {

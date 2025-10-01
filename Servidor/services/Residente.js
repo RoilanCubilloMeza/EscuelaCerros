@@ -15,7 +15,7 @@ app.post("/createResidente", (req, res) => {
   const Residencia_Distrito= req.body.Residencia_Distrito;
   const Residencia_Comunidad = req.body.Residencia_Comunidad;
   connection.query(
-    "INSERT INTO residente(Residencia_Direccion, Residencia_EstadoCasa, Residencia_Internet, Residencia_Provincia, Residencia_Canton, Residencia_Distrito, Residencia_Comunidad) VALUES (?,?,?,?,?,?,?)",
+    "INSERT INTO Residente(Residencia_Direccion, Residencia_EstadoCasa, Residencia_Internet, Residencia_Provincia, Residencia_Canton, Residencia_Distrito, Residencia_Comunidad) VALUES (?,?,?,?,?,?,?)",
     [
         Residencia_Direccion,
         Residencia_EstadoCasa,
@@ -48,7 +48,7 @@ app.post("/createResidente", (req, res) => {
 //});
 
 app.get("/obtenerResidente", (req, res) => {
-  connection.query("SELECT * FROM residente", (err, result) => {
+  connection.query("SELECT * FROM Residente", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -68,7 +68,7 @@ app.put("/actualizarResidente", (req, res) => {
     const Residencia_Id =req.body.Residencia_Id;
   
   connection.query(
-    "UPDATE residente SET Residencia_Direccion=?,Residencia_EstadoCasa=?, Residencia_Internet=?, Residencia_Provincia=?, Residencia_Canton=?, Residencia_Distrito=?, Residencia_Comunidad=? WHERE Residencia_Id=?",
+    "UPDATE Residente SET Residencia_Direccion=?,Residencia_EstadoCasa=?, Residencia_Internet=?, Residencia_Provincia=?, Residencia_Canton=?, Residencia_Distrito=?, Residencia_Comunidad=? WHERE Residencia_Id=?",
     [
         Residencia_Direccion,
         Residencia_EstadoCasa,
@@ -93,7 +93,7 @@ app.put("/actualizarResidente", (req, res) => {
 app.delete("/deleteResidente/:Residencia_Id", (req, res) => {
   const Residencia_Id = req.params.Residencia_Id;
   connection.query(
-    "DELETE FROM residente WHERE Residencia_Id=?",
+    "DELETE FROM Residente WHERE Residencia_Id=?",
     Residencia_Id,
     (err, result) => {
       if (err) {

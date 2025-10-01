@@ -37,7 +37,7 @@ app.post("/createEventos", upload.single("Eventos_Imagen"), (req, res) => {
   }
 
   const sql =
-    "INSERT INTO eventosescolares (Eventos_Nombre, Eventos_Imagen) VALUES (?, ?)";
+    "INSERT INTO EventosEscolares (Eventos_Nombre, Eventos_Imagen) VALUES (?, ?)";
 
   connection.query(sql, [Eventos_Nombre, Eventos_Imagen], (err, result) => {
     if (err) {
@@ -51,7 +51,7 @@ app.post("/createEventos", upload.single("Eventos_Imagen"), (req, res) => {
 });
 
 app.get("/obtenerEventos", (req, res) => {
-  connection.query("SELECT * FROM eventosescolares", (err, result) => {
+  connection.query("SELECT * FROM EventosEscolares", (err, result) => {
     if (err) {
       console.error("Error al obtener eventos:", err);
       return res.status(500).send("Error al obtener eventos.");
@@ -65,7 +65,7 @@ app.put("/actualizarEventos", (req, res) => {
   const { Evento_id, Eventos_Nombre, Eventos_Imagen } = req.body;
 
   const sql =
-    "UPDATE eventosescolares SET Eventos_Nombre=?, Eventos_Imagen=? WHERE Evento_id=?";
+    "UPDATE EventosEscolares SET Eventos_Nombre=?, Eventos_Imagen=? WHERE Evento_id=?";
 
   connection.query(
     sql,
@@ -86,7 +86,7 @@ app.delete("/deleteEvento/:Evento_id", (req, res) => {
   const Evento_id = req.params.Evento_id;
 
   connection.query(
-    "DELETE FROM eventosescolares WHERE Evento_id=?",
+    "DELETE FROM EventosEscolares WHERE Evento_id=?",
     Evento_id,
     (err, result) => {
       if (err) {
@@ -104,7 +104,7 @@ app.get("/getImage/:id", (req, res) => {
   const id = req.params.id;
 
   connection.query(
-    "SELECT Eventos_Imagen FROM eventosescolares WHERE Evento_id = ?",
+    "SELECT Eventos_Imagen FROM EventosEscolares WHERE Evento_id = ?",
     id,
     (err, result) => {
       if (err) {

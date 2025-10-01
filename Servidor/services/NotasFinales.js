@@ -8,7 +8,7 @@ const { connection } = require("../config");
 app.post("/createNotasFinales", (req, res) => {
   const Nota_Total = req.body.Nota_Total;
   connection.query(
-    "INSERT INTO nota_final(Nota_Total) VALUES (?)",
+    "INSERT INTO Nota_Final(Nota_Total) VALUES (?)",
     [Nota_Total],
     (err, result) => {
       if (err) {
@@ -22,7 +22,7 @@ app.post("/createNotasFinales", (req, res) => {
 });
 
 app.get("/obtenerNotaFinales", (req, res) => {
-  connection.query("SELECT * FROM nota_final", (err, result) => {
+  connection.query("SELECT * FROM Nota_Final", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -36,7 +36,7 @@ app.put("/actualizarNotaFinales", (req, res) => {
   const Nota_Id = req.body.Nota_Id;
 
   connection.query(
-    "UPDATE nota_final SET Nota_Total=? WHERE Nota_Id=?",
+    "UPDATE Nota_Final SET Nota_Total=? WHERE Nota_Id=?",
     [Nota_Total, Nota_Id],
     (err, result) => {
       if (err) {
@@ -52,7 +52,7 @@ app.put("/actualizarNotaFinales", (req, res) => {
 app.delete("/deleteAsistencia/:Nota_Id", (req, res) => {
   const Nota_Id = req.params.Nota_Id;
   connection.query(
-    "DELETE FROM nota_final WHERE Nota_Id=?",
+    "DELETE FROM Nota_Final WHERE Nota_Id=?",
     Nota_Id,
     (err, result) => {
       if (err) {

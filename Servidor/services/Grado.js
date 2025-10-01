@@ -11,7 +11,7 @@ app.post("/createGrado", (req, res) => {
   const Grado_Aula = req.body.Grado_Aula;
  
   connection.query(
-    "INSERT INTO grado(Grado_Nombre, Grado_Aula ) VALUES (?,?)",
+    "INSERT INTO Grado(Grado_Nombre, Grado_Aula ) VALUES (?,?)",
     [
         Grado_Nombre,
         Grado_Aula,
@@ -29,7 +29,7 @@ app.post("/createGrado", (req, res) => {
 
 
 app.get("/obtenerGrado", (req, res) => {
-  connection.query("SELECT * FROM grado", (err, result) => {
+  connection.query("SELECT * FROM Grado", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -45,7 +45,7 @@ app.put("/actualizarGrado", (req, res) => {
    
   
   connection.query(
-    "UPDATE grado SET Grado_Nombre=?,Grado_Aula=? WHERE Grado_Id=?",
+    "UPDATE Grado SET Grado_Nombre=?,Grado_Aula=? WHERE Grado_Id=?",
     [
     Grado_Nombre,
     Grado_Aula,
@@ -65,7 +65,7 @@ app.put("/actualizarGrado", (req, res) => {
 app.delete("/deleteGrado/:Grado_Id", (req, res) => {
   const Grado_Id = req.params.Grado_Id;
   connection.query(
-    "DELETE FROM grado WHERE Grado_Id=?",
+    "DELETE FROM Grado WHERE Grado_Id=?",
     Grado_Id,
     (err, result) => {
       if (err) {

@@ -13,7 +13,7 @@ app.post("/createEnfermedades", (req, res) => {
   const Enfermedades_Alergia = req.body.Enfermedades_Alergia;
 
   connection.query(
-    "INSERT INTO enfermedades(Enfermedades_Nombre,Enfermedades_PresentaEnfermedad,Enfermedades_Medicamento,Enfermedades_Alergia) VALUES(?,?,?,?)",
+    "INSERT INTO Enfermedades(Enfermedades_Nombre,Enfermedades_PresentaEnfermedad,Enfermedades_Medicamento,Enfermedades_Alergia) VALUES(?,?,?,?)",
     [
       Enfermedades_Nombre,
       Enfermedades_PresentaEnfermedad,
@@ -31,7 +31,7 @@ app.post("/createEnfermedades", (req, res) => {
 });
 
 app.get("/obtenerEnfermedades", (req, res) => {
-  connection.query("SELECT * FROM enfermedades", (err, result) => {
+  connection.query("SELECT * FROM Enfermedades", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -47,7 +47,7 @@ app.put("/actualizarEnfermedades", (req, res) => {
   const Enfermedades_Alergia = req.body.Enfermedades_Alergia;
   const Enfermedades_Id = req.body.Enfermedades_Id;
   connection.query(
-    "UPDATE enfermedades SET Enfermedades_Nombre=?,Enfermedades_PresentaEnfermedad=?, Enfermedades_Medicamento=?,Enfermedades_Alergia=? WHERE Enfermedades_Id=?",
+    "UPDATE Enfermedades SET Enfermedades_Nombre=?,Enfermedades_PresentaEnfermedad=?, Enfermedades_Medicamento=?,Enfermedades_Alergia=? WHERE Enfermedades_Id=?",
     [
       Enfermedades_Nombre,
       Enfermedades_PresentaEnfermedad,
@@ -68,7 +68,7 @@ app.put("/actualizarEnfermedades", (req, res) => {
 app.delete("/delete/:Enfermedades_Id", (req, res) => {
   const Enfermedades_Id = req.params.Enfermedades_Id;
   connection.query(
-    "DELETE FROM enfermedades WHERE Enfermedades_Id=?",
+    "DELETE FROM Enfermedades WHERE Enfermedades_Id=?",
     Enfermedades_Id,
     (err, result) => {
       if (err) {

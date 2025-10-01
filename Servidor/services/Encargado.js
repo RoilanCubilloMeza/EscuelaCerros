@@ -20,7 +20,7 @@ app.post("/createEncargado", (req, res) => {
   const Encargado_EstadoCivil = req.body.Encargado_EstadoCivil;
 
   connection.query(
-    "INSERT INTO encargados ( Encargados_Nombre,  Encargado_Nombre2, Encargado_Apellido1,Encargado_Apellido2, Encargados_LugarTrabajo, Escolaridad_Id, Ocupacion_Id, Parentesco_Id, Encargado_ViveEstudiante, Encargado_Telefono, Encargado_EstadoCivil) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)",
+    "INSERT INTO Encargados ( Encargados_Nombre,  Encargado_Nombre2, Encargado_Apellido1,Encargado_Apellido2, Encargados_LugarTrabajo, Escolaridad_Id, Ocupacion_Id, Parentesco_Id, Encargado_ViveEstudiante, Encargado_Telefono, Encargado_EstadoCivil) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)",
     [
       Encargados_Nombre,
       Encargado_Nombre2,
@@ -47,7 +47,7 @@ app.post("/createEncargado", (req, res) => {
 
 
 app.get("/obtenerEncargados", (req, res) => {
-  connection.query("SELECT * FROM encargados", (err, result) => {
+  connection.query("SELECT * FROM Encargados", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -72,7 +72,7 @@ app.put("/actualizarEncargados", (req, res) => {
   const Encargados_Id = req.body.Encargados_Id; 
 
   connection.query(
-    "UPDATE encargados SET  Encargados_Nombre=?,Encargado_Nombre2=?,Encargado_Apellido1=?,Encargado_Apellido2=?, Encargados_LugarTrabajo=?,  Escolaridad_Id=?,  Ocupacion_Id=?,  Parentesco_Id=?,  Encargado_ViveEstudiante=?, Encargado_Telefono=?, Encargado_EstadoCivil=? WHERE Encargados_Id=?",
+    "UPDATE Encargados SET  Encargados_Nombre=?,Encargado_Nombre2=?,Encargado_Apellido1=?,Encargado_Apellido2=?, Encargados_LugarTrabajo=?,  Escolaridad_Id=?,  Ocupacion_Id=?,  Parentesco_Id=?,  Encargado_ViveEstudiante=?, Encargado_Telefono=?, Encargado_EstadoCivil=? WHERE Encargados_Id=?",
     [ 
       Encargados_Nombre,
       Encargado_Nombre2,
@@ -101,7 +101,7 @@ app.put("/actualizarEncargados", (req, res) => {
 app.delete("/deleteEncargados/:Encargados_Id", (req, res) => {
   const Encargados_Id = req.params.Encargados_Id;
   connection.query(
-    "DELETE FROM encargados WHERE Encargados_Id=?",
+    "DELETE FROM Encargados WHERE Encargados_Id=?",
     Encargados_Id,
     (err, result) => {
       if (err) {

@@ -14,7 +14,7 @@ app.post("/createUsuarioslogin", (req, res) => {
  
  
   connection.query(
-    "INSERT INTO usuarios(usuarios_Nombre,Usuarios_contraseña,Roles_Id,Persona_Id) VALUES (?,?,?,?)",
+    "INSERT INTO Usuarios(usuarios_Nombre,Usuarios_contraseña,Roles_Id,Persona_Id) VALUES (?,?,?,?)",
     [
       usuarios_Nombre,
       Usuarios_contraseña,
@@ -34,7 +34,7 @@ app.post("/createUsuarioslogin", (req, res) => {
 
 
 app.get("/obtenerUsuariosLogin", (req, res) => {
-  connection.query("SELECT * FROM usuarios", (err, result) => {
+  connection.query("SELECT * FROM Usuarios", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -51,7 +51,7 @@ app.put("/actualizarUsuariosLogin", (req, res) => {
   const Persona_Id= req.body.Persona_Id;
   
   connection.query(
-    "UPDATE usuarios SET usuarios_Nombre=?,Usuarios_contraseña=?,Roles_Id=? , Persona_Id=? WHERE Usuarios_Id=?",
+    "UPDATE Usuarios SET usuarios_Nombre=?,Usuarios_contraseña=?,Roles_Id=? , Persona_Id=? WHERE Usuarios_Id=?",
     [
         usuarios_Nombre,
         Usuarios_contraseña,
@@ -74,7 +74,7 @@ app.put("/actualizarUsuariosLogin", (req, res) => {
 app.delete("/deleteUsuariosLogin/:Usuarios_Id", (req, res) => {
   const Usuarios_Id = req.params.Usuarios_Id;
   connection.query(
-    "DELETE FROM usuarios WHERE Usuarios_Id=?",
+    "DELETE FROM Usuarios WHERE Usuarios_Id=?",
     Usuarios_Id,
     (err, result) => {
       if (err) {

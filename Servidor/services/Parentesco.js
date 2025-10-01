@@ -11,7 +11,7 @@ app.post("/createParentesco", (req, res) => {
   const Parentesco_Nombre = req.body.Parentesco_Nombre;
 
   connection.query(
-    "INSERT INTO parentesco(Parentesco_Nombre) VALUES (?)",
+    "INSERT INTO Parentesco(Parentesco_Nombre) VALUES (?)",
     [
       Parentesco_Nombre
     ],
@@ -29,7 +29,7 @@ app.post("/createParentesco", (req, res) => {
 
 
 app.get("/obtenerParentesco", (req, res) => {
-  connection.query("SELECT * FROM parentesco", (err, result) => {
+  connection.query("SELECT * FROM Parentesco", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -42,7 +42,7 @@ app.put("/actualizarParentesco", (req, res) => {
   const Parentesco_Id = req.body.Parentesco_Id;
   const Parentesco_Nombre = req.body.Parentesco_Nombre; // Added 'const' here
   connection.query(
-    "UPDATE parentesco SET Parentesco_Nombre=? WHERE Parentesco_Id=?",
+    "UPDATE Parentesco SET Parentesco_Nombre=? WHERE Parentesco_Id=?",
     [
       Parentesco_Nombre, 
       Parentesco_Id,
@@ -62,7 +62,7 @@ app.put("/actualizarParentesco", (req, res) => {
 app.delete("/deleteParentesco/:Parentesco_Id", (req, res) => {
   const Parentesco_Id = req.params.Parentesco_Id;
   connection.query(
-    "DELETE FROM parentesco WHERE Parentesco_Id=?",
+    "DELETE FROM Parentesco WHERE Parentesco_Id=?",
     Parentesco_Id,
     (err, result) => {
       if (err) {

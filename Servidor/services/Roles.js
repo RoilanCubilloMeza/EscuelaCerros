@@ -13,7 +13,7 @@ app.post("/createRoles", (req, res) => {
  
  
   connection.query(
-    "INSERT INTO roles(Roles_Descripcion,Roles_Nombre) VALUES (?,?)",
+    "INSERT INTO Roles(Roles_Descripcion,Roles_Nombre) VALUES (?,?)",
     [
         Roles_Descripcion,
         Roles_Nombre,
@@ -41,7 +41,7 @@ app.post("/createRoles", (req, res) => {
 //});
 
 app.get("/obtenerRoles", (req, res) => {
-  connection.query("SELECT * FROM roles", (err, result) => {
+  connection.query("SELECT * FROM Roles", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -56,7 +56,7 @@ app.put("/actualizarRoles", (req, res) => {
     const Roles_Id= req.body.Roles_Id;
   
   connection.query(
-    "UPDATE roles SET Roles_Descripcion=?,Roles_Nombre=? WHERE Roles_Id=?",
+    "UPDATE Roles SET Roles_Descripcion=?,Roles_Nombre=? WHERE Roles_Id=?",
     [
         Roles_Descripcion,
         Roles_Nombre,
@@ -76,7 +76,7 @@ app.put("/actualizarRoles", (req, res) => {
 app.delete("/deleteRoles/:Roles_Id", (req, res) => {
   const Roles_Id = req.params.Roles_Id;
   connection.query(
-    "DELETE FROM roles WHERE Roles_Id=?",
+    "DELETE FROM Roles WHERE Roles_Id=?",
     Roles_Id,
     (err, result) => {
       if (err) {

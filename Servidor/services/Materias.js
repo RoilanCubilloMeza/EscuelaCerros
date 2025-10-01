@@ -11,7 +11,7 @@ app.post("/createMaterias", (req, res) => {
   const Materias_Tipo = req.body.Materias_Tipo;
 
   connection.query(
-    "INSERT INTO materias(Materias_Nombre, Materias_Tipo) VALUES (?,?)",
+    "INSERT INTO Materias(Materias_Nombre, Materias_Tipo) VALUES (?,?)",
     [Materias_Nombre, Materias_Tipo,],
     (err, result) => {
       if (err) {
@@ -25,7 +25,7 @@ app.post("/createMaterias", (req, res) => {
 });
 
 app.get("/obtenerMaterias", (req, res) => {
-  connection.query("SELECT * FROM materias", (err, result) => {
+  connection.query("SELECT * FROM Materias", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -39,7 +39,7 @@ app.put("/actualizarMaterias", (req, res) => {
   const Materias_Tipo = req.body.Materias_Tipo;
   const Materias_id = req.body.Materias_id;
   connection.query(
-    "UPDATE materias SET Materias_Nombre=?,Materias_Tipo=? WHERE Materias_id=?",
+    "UPDATE Materias SET Materias_Nombre=?,Materias_Tipo=? WHERE Materias_id=?",
     [Materias_Nombre, Materias_Tipo, Materias_id],
     (err, result) => {
       if (err) {
@@ -55,7 +55,7 @@ app.put("/actualizarMaterias", (req, res) => {
 app.delete("/deleteMaterias/:Materias_id", (req, res) => {
   const Materias_id = req.params.Materias_id;
   connection.query(
-    "DELETE FROM materias WHERE Materias_id=?",
+    "DELETE FROM Materias WHERE Materias_id=?",
     Materias_id,
     (err, result) => {
       if (err) {

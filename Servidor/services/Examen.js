@@ -10,7 +10,7 @@ app.post("/createExamen", (req, res) => {
   const Examen_Porcentaje = req.body.Examen_Porcentaje;
   const Examen_Puntos = req.body.Examen_Puntos;
   connection.query(
-    "INSERT INTO valor_examen(Examen_Puntos , Examen_Porcentaje) VALUES (?,?)",
+    "INSERT INTO Valor_Examen(Examen_Puntos , Examen_Porcentaje) VALUES (?,?)",
     [Examen_Porcentaje, Examen_Puntos],
     (err, result) => {
       if (err) {
@@ -24,7 +24,7 @@ app.post("/createExamen", (req, res) => {
 });
 
 app.get("/obtenerExamen", (req, res) => {
-  connection.query("SELECT * FROM valor_examen", (err, result) => {
+  connection.query("SELECT * FROM Valor_Examen", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -39,7 +39,7 @@ app.put("/actualizarExamen", (req, res) => {
   const Examen_Id = req.body.Examen_Id;
 
   connection.query(
-    "UPDATE valor_examen SET Examen_Porcentaje=? ,Examen_Puntos=? WHERE Examen_Id=?",
+    "UPDATE Valor_Examen SET Examen_Porcentaje=? ,Examen_Puntos=? WHERE Examen_Id=?",
     [Examen_Porcentaje, Examen_Puntos, Examen_Id],
     (err, result) => {
       if (err) {
@@ -55,7 +55,7 @@ app.put("/actualizarExamen", (req, res) => {
 app.delete("/deleteExamen/:Examen_Id", (req, res) => {
   const Examen_Id = req.params.Examen_Id;
   connection.query(
-    "DELETE FROM valor_examen WHERE Examen_Id=?",
+    "DELETE FROM Valor_Examen WHERE Examen_Id=?",
     Examen_Id,
     (err, result) => {
       if (err) {

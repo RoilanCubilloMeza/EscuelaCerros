@@ -161,13 +161,19 @@ code {
   min-height: 600px;
   max-height: 900px;
   overflow: hidden;
-  background: #000;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
 }
 
 .slider-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  max-width: 1600px;
+  height: 90%;
+  margin: 0 auto;
 }
 
 .slide {
@@ -192,14 +198,19 @@ code {
   position: relative;
   width: 100%;
   height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  background: #000;
 }
 
 .slide-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   animation: kenBurns 20s ease-in-out infinite;
+  background: #000;
 }
 
 @keyframes kenBurns {
@@ -222,10 +233,11 @@ code {
   width: 100%;
   height: 100%;
   background: linear-gradient(to bottom,
-    rgba(0, 0, 0, 0.3) 0%,
-    rgba(0, 0, 0, 0.5) 50%,
-    rgba(0, 0, 0, 0.8) 100%);
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.7) 100%);
   z-index: 1;
+  border-radius: 20px;
 }
 
 .slide-content {
@@ -234,7 +246,9 @@ code {
   left: 0;
   right: 0;
   z-index: 2;
-  padding: 4rem 0 6rem;
+  padding: 3rem 2rem 2rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+  border-radius: 0 0 20px 20px;
 }
 
 .slide-text {
@@ -297,23 +311,24 @@ code {
   transform: translateY(-50%);
   width: 60px;
   height: 60px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   cursor: pointer;
-  z-index: 10;
+  z-index: 20;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slider-control:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-50%) scale(1.1);
+  background: rgba(40, 167, 69, 0.9);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 10px 30px rgba(40, 167, 69, 0.5);
 }
 
 .slider-control-prev {
@@ -327,12 +342,12 @@ code {
 /* Indicadores */
 .slider-indicators {
   position: absolute;
-  bottom: 2rem;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 0.8rem;
-  z-index: 10;
+  z-index: 20;
 }
 
 .indicator {
@@ -367,12 +382,12 @@ code {
   display: flex;
   align-items: baseline;
   gap: 0.3rem;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px);
   padding: 0.8rem 1.5rem;
   border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(40, 167, 69, 0.5);
 }
 
 .counter-current {
@@ -397,6 +412,12 @@ code {
   .news-slider {
     height: 80vh;
     min-height: 550px;
+    padding: 1.5rem;
+  }
+  
+  .slider-container {
+    height: 90%;
+    max-width: 1300px;
   }
   
   .slide-title {
@@ -412,6 +433,15 @@ code {
   .news-slider {
     height: 70vh;
     min-height: 500px;
+    padding: 1rem;
+  }
+  
+  .slider-container {
+    height: 90%;
+  }
+  
+  .slide-image-wrapper {
+    border-radius: 15px;
   }
   
   .slide-title {
@@ -456,8 +486,21 @@ code {
 
 @media (max-width: 767px) {
   .news-slider {
-    height: 60vh;
+    height: 65vh;
     min-height: 450px;
+    padding: 0.8rem;
+  }
+  
+  .slider-container {
+    height: 92%;
+  }
+  
+  .slide-image-wrapper {
+    border-radius: 12px;
+  }
+  
+  .slide-image {
+    object-fit: cover;
   }
   
   .slide-title {
@@ -511,8 +554,21 @@ code {
 
 @media (max-width: 575px) {
   .news-slider {
-    height: 55vh;
+    height: 60vh;
     min-height: 400px;
+    padding: 0.5rem;
+  }
+  
+  .slider-container {
+    height: 94%;
+  }
+  
+  .slide-image-wrapper {
+    border-radius: 10px;
+  }
+  
+  .slide-image {
+    object-fit: cover;
   }
   
   .slide-title {

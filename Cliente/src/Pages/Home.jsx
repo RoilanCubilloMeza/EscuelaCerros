@@ -64,29 +64,63 @@ const Home = () => {
   }, [materiasList]);
 
   return (
-    <div className={`container-fluid ${darkMode ? "bg-dark text-white" : "bg-light text-dark"}`}>
-      <div className={`row justify-content-center align-items-center min-vh-100 ${showCarousel ? "animate__animated animate__fadeIn" : ""}`}>
-        {showCarousel && imagesLoaded && (
-          <div className="col-12">
-            <Carousel interval={5000} pause={false}>
-              {materiasList.map((val, key) => (
-                <Carousel.Item key={key}>
+    <div className={`${darkMode ? "bg-dark text-white" : "bg-light text-dark"}`} style={{ paddingTop: "76px" }}>
+      {/* Hero/Carrusel de Noticias */}
+      {showCarousel && imagesLoaded && materiasList.length > 0 ? (
+        <section className="hero-carousel-section">
+          <Carousel interval={5000} pause={false} fade indicators touch>
+            {materiasList.map((val, key) => (
+              <Carousel.Item key={key}>
+                <div className="carousel-image-wrapper">
                   <img
                     className="d-block w-100"
                     src={`${API_BASE_URL}/getImage/${val.Evento_id}`}
                     alt={val.Eventos_Nombre}
                     loading="lazy"
                     onLoad={(e) => e.target.classList.add("loaded")}
-                    style={{ width: "100%", height: "auto", backgroundColor: "#333" }}
+                    onError={(e) => {
+                      e.currentTarget.src = "/EscuelaHome.jpg";
+                    }}
                   />
-                  <Carousel.Caption>
-                    <h3>{val.Eventos_Nombre}</h3>
-                  </Carousel.Caption>
-                </Carousel.Item>
-              ))}
-            </Carousel>
-          </div>
-        )}
+                  <div className="carousel-overlay"></div>
+                </div>
+                <Carousel.Caption className="carousel-caption-custom">
+                  <h2 className="display-6 fw-bold mb-3 animate__animated animate__fadeInUp">{val.Eventos_Nombre}</h2>
+                </Carousel.Caption>
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        </section>
+      ) : (
+        <section className="hero-fallback" style={{
+          minHeight: "60vh",
+          background: darkMode 
+            ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" 
+            : "linear-gradient(135deg, #28a745 0%, #20c997 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+          overflow: "hidden",
+        }}>
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            background: `url('/EscuelaHome.jpg')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.2,
+          }}></div>
+          <Container className="position-relative text-center text-white">
+            <h1 className="display-4 fw-bold mb-4 animate__animated animate__fadeInDown">
+              Bienvenidos a Escuela Cerros
+            </h1>
+            <p className="lead mb-4 animate__animated animate__fadeInUp">
+              Formación integral, comunidad unida y aprendizaje con propósito
+            </p>
+          </Container>
+        </section>
+      )}
 
         {/* Sección de Features/Valores */}
         <Container className="py-5">
@@ -333,7 +367,6 @@ const Home = () => {
             </Row>
           </Container>
         </footer>
-      </div>
     </div>
   );
 };

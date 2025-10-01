@@ -38,6 +38,43 @@ app.post("/createPersona", (req, res) => {
   });
 });
 
+// Endpoint específico para registro de nuevos usuarios
+app.post("/createRegistroPersona", (req, res) => {
+  const {
+    Persona_Nombre,
+    Persona_PApellido,
+    Persona_SApellido,
+    Persona_Cedula,
+    Persona_Edad,
+    Persona_Sexo,
+    Persona_FNAciomiento,
+    Persona_Correo,
+  } = req.body;
+
+  if (!Persona_Nombre || !Persona_Cedula || !Persona_Sexo) {
+    return res.status(400).send("Por favor completa todos los campos obligatorios");
+  }
+
+  // Valores por defecto para campos no proporcionados en el registro
+  const Persona_LuNacimiento = "";
+  const Persona_Nacionalidad = "Costarricense"; // Valor por defecto
+
+  const sql = "INSERT INTO Personas (Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_LuNacimiento, Persona_FNAciomiento, Persona_Nacionalidad, Persona_Correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+  connection.query(sql, [Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_LuNacimiento, Persona_FNAciomiento, Persona_Nacionalidad, Persona_Correo], (err, result) => {
+    if (err) {
+      console.error("Error al crear la persona:", err);
+      return res.status(500).send("Error al crear la persona");
+    } else {
+      console.log("Persona registrada exitosamente con ID:", result.insertId);
+      return res.json({ 
+        message: "Persona registrada exitosamente",
+        personaId: result.insertId 
+      });
+    }
+  });
+});
+
 app.get("/obtenerPersonas", (req, res) => {
   connection.query("SELECT * FROM Personas", (err, result) => {
     if (err) {

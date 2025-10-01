@@ -41,7 +41,16 @@ const Registration = () => {
       // Obtiene el ID de la persona registrada
       const personaId = responsePersona.data.personaId;
 
-      
+      // Luego, registra el usuario con el ID de la persona
+      const responseUsuario = await Axios.post(
+        `${API_BASE_URL}/createRegistroUsuario`,
+        {
+          usuarios_Nombre: Usuarios_Nombre,
+          Usuarios_contraseña: Usuarios_contraseña,
+          Roles_Id: Roles_Id,
+          Persona_Id: personaId,
+        }
+      );
 
       Swal.fire({
         title: "Registro exitoso",
@@ -53,7 +62,7 @@ const Registration = () => {
     } catch (error) {
       Swal.fire({
         title: "<strong >Registro Fallido</strong>",
-        html: `<i>Usuario <strong>${Usuarios_Nombre}</strong></i>`,
+        html: `<i>Error: ${error.response?.data?.error || error.message}</i>`,
         icon: "error",
         timer: 3000,
       });

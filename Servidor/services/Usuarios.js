@@ -32,6 +32,40 @@ app.post("/createUsuarioslogin", (req, res) => {
   );
 });
 
+// Endpoint específico para registro de nuevos usuarios
+app.post("/createRegistroUsuario", (req, res) => {
+  const { usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id } = req.body;
+
+  if (!usuarios_Nombre || !Usuarios_contraseña || !Persona_Id) {
+    return res.status(400).json({ 
+      error: "Por favor completa todos los campos obligatorios" 
+    });
+  }
+
+  // Si no se proporciona Roles_Id, usar 3 (rol de estudiante por defecto)
+  const rolId = Roles_Id || 3;
+
+  connection.query(
+    "INSERT INTO Usuarios(usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id) VALUES (?,?,?,?)",
+    [usuarios_Nombre, Usuarios_contraseña, rolId, Persona_Id],
+    (err, result) => {
+      if (err) {
+        console.error("Error al crear el usuario:", err);
+        return res.status(500).json({ 
+          error: "Error al crear el usuario",
+          details: err.message 
+        });
+      } else {
+        console.log("Usuario registrado exitosamente con ID:", result.insertId);
+        return res.json({ 
+          message: "Usuario registrado exitosamente",
+          usuarioId: result.insertId 
+        });
+      }
+    }
+  );
+});
+
 
 app.get("/obtenerUsuariosLogin", (req, res) => {
   connection.query("SELECT * FROM Usuarios", (err, result) => {

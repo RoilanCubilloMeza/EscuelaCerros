@@ -37,6 +37,15 @@ const CustomNavbar = () => {
       if (isScrolled !== scrolled) {
         setScrolled(isScrolled);
       }
+      // Opacidad dinámica
+      const navbar = document.querySelector('.navbar-custom');
+      if (navbar) {
+        if (window.scrollY > 50) {
+          navbar.style.opacity = '0.85';
+        } else {
+          navbar.style.opacity = '1';
+        }
+      }
     };
 
     window.addEventListener("scroll", handleScroll);

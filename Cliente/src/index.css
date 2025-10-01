@@ -388,8 +388,13 @@ img.rounded {
   backdrop-filter: blur(10px);
   padding: 0.35rem 0;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
   overflow: hidden;
+}
+
+.navbar-custom.sticky-top {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1030 !important;
 }
 
 .navbar-custom::before {

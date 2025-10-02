@@ -32,7 +32,7 @@ app.post("/createMatricula", (req, res) => {
 });
 app.get("/obtenerMatriculaNombre", (req, res) => {
   connection.query(
-    "SELECT estudiantes.*, personas.Persona_nombre, personas.Persona_PApellido, personas.Persona_SApellido FROM Estudiantes JOIN Personas ON estudiantes.Persona_Id = personas.Persona_Id",
+    "SELECT Estudiantes.*, Personas.Persona_nombre, Personas.Persona_PApellido, Personas.Persona_SApellido FROM Estudiantes JOIN Personas ON Estudiantes.Persona_Id = Personas.Persona_Id",
     (err, result) => {
       if (err) {
         console.log(err);
@@ -103,17 +103,17 @@ app.delete("/deleteMatricula/:Estudiantes_id", (req, res) => {
 
 app.get("/matricula", (req, res) => {
   connection.query(
-    `SELECT estudiantes.*, personas.Persona_Nombre as nombreEstudiante,
-                           estudiantes.Estudiantes_Estado,
-                           adecuacion.Adecuacion_Nombre as nombreAdecuacion,
-                           residente.Residencia_Direccion as nombreDireccion,
-                           enfermedades.Enfermedades_Nombre as nombreEnfermedad
+    `SELECT Estudiantes.*, Personas.Persona_Nombre as nombreEstudiante,
+                           Estudiantes.Estudiantes_Estado,
+                           Adecuacion.Adecuacion_Nombre as nombreAdecuacion,
+                           Residente.Residencia_Direccion as nombreDireccion,
+                           Enfermedades.Enfermedades_Nombre as nombreEnfermedad
 
-      FROM estudiantes
-      JOIN personas ON estudiantes.Persona_Id = personas.Persona_Id
-      JOIN adecuacion ON estudiantes.Adecuacion_Id = adecuacion.Adecuacion_Id
-      JOIN residente ON estudiantes.Residencia_ID = residente.Residencia_ID
-      JOIN enfermedades ON estudiantes.Enfermedades_Id = enfermedades.Enfermedades_Id`,
+      FROM Estudiantes
+      JOIN Personas ON Estudiantes.Persona_Id = Personas.Persona_Id
+      JOIN Adecuacion ON Estudiantes.Adecuacion_Id = Adecuacion.Adecuacion_Id
+      JOIN Residente ON Estudiantes.Residencia_ID = Residente.Residencia_ID
+      JOIN Enfermedades ON Estudiantes.Enfermedades_Id = Enfermedades.Enfermedades_Id`,
 
     (err, result) => {
       if (err) {

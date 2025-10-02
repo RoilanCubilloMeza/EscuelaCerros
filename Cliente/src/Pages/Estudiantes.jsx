@@ -196,199 +196,328 @@ const Persona = () => {
   }, [darkMode]);
 
   return (
-    <div className="container">
-      <h1>Formulario del estudiante</h1>
-      <h2>Datos personales del estudiante</h2>
-      <div className="form-group">
-        <label htmlFor="nPersona_Nombre">Nombre:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="Persona_Nombre"
-          value={Persona_Nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
-
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="Persona_PApellido">Primer apellido:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="Persona_PApellido"
-          value={Persona_PApellido}
-          onChange={(e) => setPApellido(e.target.value)}
-          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="Persona_SApellido">Segundo apellido:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="Persona_SApellido"
-          value={Persona_SApellido}
-          onChange={(e) => setSApellido(e.target.value)}
-          style={{ borderColor: Persona_SApellido.trim() === "" ? "red" : "" }}
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="cedula">Cédula:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="cedula"
-          value={Persona_Cedula}
-          onChange={(e) => setCedula(e.target.value)}
-          style={{ borderColor: Persona_Cedula.trim() === "" ? "red" : "" }}
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="Persona_Edad">Edad:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="Persona_Edad"
-          value={Persona_Edad}
-          onChange={(e) => setEdad(e.target.value)}
-          style={{
-            border: `${
-              String(Persona_Edad).trim() === "" ? "1px solid red" : ""
-            }`,
-          }}
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="sexo">Sexo:</label>
-        <select
-          className="form-control"
-          id="sexo"
-          value={Persona_Sexo}
-          onChange={(e) => setSexo(e.target.value)}
-          style={{ borderColor: Persona_Sexo.trim() === "" ? "red" : "" }}
-        >
-          <option value="">Seleccione</option>
-          <option value="Hombre">Hombre</option>
-          <option value="Mujer">Mujer</option>
-        </select>
-      </div>
-      <div className="form-group">
-        <label htmlFor="nacionalidad">Nacionalidad:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="nacionalidad"
-          value={Persona_Nacionalidad}
-          onChange={(e) => setNacionalidad(e.target.value)}
-          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="lugarNacimiento">Lugar de nacimiento:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="lugarNacimiento"
-          value={Persona_LuNacimiento}
-          onChange={(e) => setLugarNacimiento(e.target.value)}
-          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="Persona_FNAciomiento">Fecha de nacimiento:</label>
-        <input
-          type="date"
-          className="form-control"
-          id="Persona_FNAciomiento"
-          value={Persona_FNAciomiento}
-          onChange={(e) => setFNAciomiento(e.target.value)}
-          style={{
-            borderColor: Persona_FNAciomiento.trim() === "" ? "red" : "",
-          }}
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="Persona_Correo">Correo electrónico:</label>
-        <input
-          type="email"
-          className="form-control"
-          id="Persona_Correo"
-          value={Persona_Correo}
-          onChange={(e) => setCorreoElectronico(e.target.value)}
-          style={{ borderColor: Persona_Nombre.trim() === "" ? "red" : "" }}
-        />
-      </div>
-      <div>
-        {editar ? (
-          <div>
-            <button
-              type="submit"
-              className="btn btn-warning m-3"
-              onClick={actualizar}
-            >
-              Actualizar
-            </button>
-            <button
-              type="submit"
-              className="btn btn-danger m-3"
-              onClick={limpiarDatos}
-            >
-              Cancelar
-            </button>
+    <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+      <div className="container py-4">
+        {/* Header */}
+        <div className="noticias-header mb-5">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div className="d-flex align-items-center gap-3">
+              <div className="title-icon">
+                👨‍🎓
+              </div>
+              <div>
+                <h1 className="noticias-title mb-1">Gestión de Estudiantes</h1>
+                <p className="noticias-subtitle mb-0">Datos personales de estudiantes</p>
+              </div>
+            </div>
+            <div className="d-flex gap-2">
+              <Link to="/Adecuacion" className="btn-back">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M5 7L10 2L15 7M3 9H17V17H3V9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Adecuación
+              </Link>
+              <Link to="/admindashboard" className="btn-back">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Menú Principal
+              </Link>
+            </div>
           </div>
-        ) : (
-          <button type="submit" className="btn btn-primary m-3" onClick={add}>
-            Registrar
-          </button>
-        )}
-        <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menú Principal
-        </Link>
+        </div>
 
-        <Link to="/Adecuacion" className="btn btn-warning m-3">
-          Adecuación
-        </Link>
-      </div>
+        {/* Form Card */}
+        <div className="noticias-form-card mb-5">
+          <div className="card-header-custom">
+            <h5 className="mb-0">
+              {editar ? '✏️ Editar Estudiante' : '➕ Registrar Estudiante'}
+            </h5>
+          </div>
+          <div className="card-body-custom">
+            <div className="row">
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="Persona_Nombre" className="form-label-modern">
+                    <span className="label-icon">👤</span>
+                    Nombre
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Persona_Nombre"
+                    value={Persona_Nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    placeholder="Nombre del estudiante"
+                  />
+                </div>
+              </div>
 
-      <div className="form-group">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Edad</th>
-              <th scope="col">Cédula</th>
-              <th scope="col">Funcionalidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            {estudiantesList.map((val, key) => (
-              <tr key={key}>
-                <th>{val.Persona_Id}</th>
-                <td>{val.Persona_Nombre}</td>
-                <td>{val.Persona_Edad}</td>
-                <td>{val.Persona_Cedula}</td>
-                <td>
-                    <button
-                      className="btn btn-info"
-                      onClick={() => editarEstudiante(val)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => eliminar(val.Persona_Id)}
-                    >
-                      Eliminar
-                    </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="Persona_PApellido" className="form-label-modern">
+                    <span className="label-icon">👤</span>
+                    Primer Apellido
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Persona_PApellido"
+                    value={Persona_PApellido}
+                    onChange={(e) => setPApellido(e.target.value)}
+                    placeholder="Primer apellido"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="Persona_SApellido" className="form-label-modern">
+                    <span className="label-icon">👤</span>
+                    Segundo Apellido
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Persona_SApellido"
+                    value={Persona_SApellido}
+                    onChange={(e) => setSApellido(e.target.value)}
+                    placeholder="Segundo apellido"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="cedula" className="form-label-modern">
+                    <span className="label-icon">🪪</span>
+                    Cédula
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="cedula"
+                    value={Persona_Cedula}
+                    onChange={(e) => setCedula(e.target.value)}
+                    placeholder="Número de cédula"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="Persona_Edad" className="form-label-modern">
+                    <span className="label-icon">🎂</span>
+                    Edad
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Persona_Edad"
+                    value={Persona_Edad}
+                    onChange={(e) => setEdad(e.target.value)}
+                    placeholder="Edad"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="sexo" className="form-label-modern">
+                    <span className="label-icon">⚧</span>
+                    Sexo
+                  </label>
+                  <select
+                    className="form-control-modern"
+                    id="sexo"
+                    value={Persona_Sexo}
+                    onChange={(e) => setSexo(e.target.value)}
+                  >
+                    <option value="">Seleccione</option>
+                    <option value="Hombre">Hombre</option>
+                    <option value="Mujer">Mujer</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="nacionalidad" className="form-label-modern">
+                    <span className="label-icon">🌎</span>
+                    Nacionalidad
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="nacionalidad"
+                    value={Persona_Nacionalidad}
+                    onChange={(e) => setNacionalidad(e.target.value)}
+                    placeholder="Nacionalidad"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="lugarNacimiento" className="form-label-modern">
+                    <span className="label-icon">📍</span>
+                    Lugar de Nacimiento
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="lugarNacimiento"
+                    value={Persona_LuNacimiento}
+                    onChange={(e) => setLugarNacimiento(e.target.value)}
+                    placeholder="Lugar de nacimiento"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Persona_FNAciomiento" className="form-label-modern">
+                    <span className="label-icon">📅</span>
+                    Fecha de Nacimiento
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control-modern"
+                    id="Persona_FNAciomiento"
+                    value={Persona_FNAciomiento}
+                    onChange={(e) => setFNAciomiento(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Persona_Correo" className="form-label-modern">
+                    <span className="label-icon">📧</span>
+                    Correo Electrónico
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control-modern"
+                    id="Persona_Correo"
+                    value={Persona_Correo}
+                    onChange={(e) => setCorreoElectronico(e.target.value)}
+                    placeholder="correo@ejemplo.com"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="action-buttons">
+              {editar ? (
+                <>
+                  <button
+                    type="button"
+                    className="btn-action btn-update"
+                    onClick={actualizar}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M15 6L9 12L5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Actualizar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-action btn-cancel"
+                    onClick={limpiarDatos}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M6 6L14 14M6 14L14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-action btn-register"
+                  onClick={add}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 5V15M5 10H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Registrar
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Table Card */}
+        <div className="noticias-table-card">
+          <div className="card-header-custom">
+            <h5 className="mb-0">📋 Lista de Estudiantes</h5>
+          </div>
+          <div className="card-body-custom">
+            {estudiantesList.length > 0 ? (
+              <div className="table-responsive">
+                <table className="table-modern">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Edad</th>
+                      <th>Cédula</th>
+                      <th className="text-end">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {estudiantesList.map((val, key) => (
+                      <tr key={key} className="table-row-hover">
+                        <td className="td-id">
+                          <span className="badge-id">{val.Persona_Id}</span>
+                        </td>
+                        <td className="td-nombre">
+                          <div className="nombre-wrapper">
+                            <span className="nombre-text">{val.Persona_Nombre}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="badge bg-info text-dark">{val.Persona_Edad} años</span>
+                        </td>
+                        <td>{val.Persona_Cedula}</td>
+                        <td>
+                          <div className="action-buttons-table">
+                            <button
+                              className="btn-table btn-edit"
+                              onClick={() => editarEstudiante(val)}
+                              title="Editar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M12.5 2.5L15.5 5.5L6 15H3V12L12.5 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Editar
+                            </button>
+                            <button
+                              className="btn-table btn-delete"
+                              onClick={() => eliminar(val.Persona_Id)}
+                              title="Eliminar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M3 5H15M7 8V13M11 8V13M4 5L5 15H13L14 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon">📭</div>
+                <p>No hay estudiantes registrados</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

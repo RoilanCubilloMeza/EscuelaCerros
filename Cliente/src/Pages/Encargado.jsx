@@ -253,280 +253,362 @@ const Encargado = () => {
 
   getLista();
   return (
-    <div className="container">
-      <h1>Formulario del encargado (a) del niño (a)</h1>
-      <h2>Datos del encargado (a)</h2>
-      <div className="form-group">
-        <label htmlFor="Encargados_LugarTrabajo">
-          Lugar de trabajo del encargado(a):
-        </label>
-        <input
-          type="text"
-          className={`form-control ${
-            !Encargados_LugarTrabajo.trim() && "is-invalid"
-          }`}
-          id="Encargados_LugarTrabajo"
-          value={Encargados_LugarTrabajo}
-          onChange={(e) => setEncargadosLugarTrabajo(e.target.value)}
-        />
-        {!Encargados_LugarTrabajo.trim() && (
-          <div className="invalid-feedback"></div>
-        )}
-      </div>
-      <div className="form-group">
-        <label htmlFor="Encargado_ViveEstudiante">
-          ¿El encargado(a) vive con el o la estudiante?
-        </label>
-        <input
-          type="text"
-          className={`form-control ${
-            !Encargado_ViveEstudiante.trim() && "is-invalid"
-          }`}
-          id="Encargado_ViveEstudiante"
-          value={Encargado_ViveEstudiante}
-          onChange={(e) => setEncargadoViveEstudiante(e.target.value)}
-        />
-        {!Encargado_ViveEstudiante.trim() && (
-          <div className="invalid-feedback"></div>
-        )}
-      </div>
-      <div className="form-group">
-        <label htmlFor="Encargado_Telefono">
-          Número telefónico del encargado(a):
-        </label>
-        <input
-          type="text"
-          className={`form-control ${
-            !Encargado_Telefono.trim() && "is-invalid"
-          }`}
-          id="Encargado_Telefono"
-          value={Encargado_Telefono}
-          onChange={(e) => setEncargadoTelefono(e.target.value)}
-        />
-        {!Encargado_Telefono.trim() && (
-          <div className="invalid-feedback"></div>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="Encargado_EstadoCivil">Estado civil:</label>
-        <input
-          type="text"
-          className={`form-control ${
-            !Encargado_EstadoCivil.trim() && "is-invalid"
-          }`}
-          id="Encargado_EstadoCivil"
-          value={Encargado_EstadoCivil}
-          onChange={(e) => setEncargadoEstadoCivil(e.target.value)}
-        />
-        {!Encargado_EstadoCivil.trim() && (
-          <div className="invalid-feedback"></div>
-        )}
-      </div>
-      <div>
-        <div className="mb-3">
-          <label htmlFor="Encargados_Nombre" className="form-label">
-            Nombre del encargado(a):
-          </label>
-          <input
-            type="text"
-            className={`form-control ${!Encargados_Nombre && "is-invalid"}`}
-            id="Encargados_Nombre"
-            value={Encargados_Nombre}
-            onChange={(event) => setEncargadoNombre(event.target.value)}
-          />
-          {!Encargados_Nombre && (
-            <div className="invalid-feedback"></div>
-          )}
-        </div>
-        <div className="mb-3">
-          <label htmlFor="Encargado_Nombre2" className="form-label">
-            Segundo nombre del encargado(a):
-          </label>
-          <input
-            type="text"
-            className={`form-control ${!Encargado_Nombre2 && "is-invalid"}`}
-            id="Encargado_Nombre2"
-            value={Encargado_Nombre2}
-            onChange={(event) => setEncargadoNombre2(event.target.value)}
-          />
-          {!Encargado_Nombre2 && (
-            <div className="invalid-feedback"></div>
-          )}
-        </div>
-        <div className="mb-3">
-          <label htmlFor="Encargado_Apellido1" className="form-label">
-            Primer apellido del encargado(a):
-          </label>
-          <input
-            type="text"
-            className={`form-control ${!Encargado_Apellido1 && "is-invalid"}`}
-            id="Encargado_Apellido1"
-            value={Encargado_Apellido1}
-            onChange={(event) => setEncargadoApellido1(event.target.value)}
-          />
-          {!Encargado_Apellido1 && (
-            <div className="invalid-feedback"></div>
-          )}
-        </div>
-        <div className="mb-3">
-          <label htmlFor="Encargado_Apellido2" className="form-label">
-            Segundo apellido del encargado(a):
-          </label>
-          <input
-            type="text"
-            className={`form-control ${!Encargado_Apellido2 && "is-invalid"}`}
-            id="Encargado_Apellido2"
-            value={Encargado_Apellido2}
-            onChange={(event) => setEncargadoApellido2(event.target.value)}
-          />
-          {!Encargado_Apellido2 && (
-            <div className="invalid-feedback"></div>
-          )}
-        </div>
-      </div>
-
-      <div className="input-group mb-3">
-        <span className="input-group-text" id="basic-addon1">
-          Escolaridad de la persona:
-        </span>
-        <select
-          className={`form-select ${!Escolaridad_Id && "is-invalid"}`}
-          aria-label="Default select example"
-          value={Escolaridad_Id}
-          onChange={(event) => setEscolaridadId(event.target.value)}
-        >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-          {EscolaridadList.map((option) => (
-            <option key={option.Escolaridad_Id} value={option.Escolaridad_Id}>
-              {option.Escolaridad_Nombre}
-            </option>
-          ))}
-        </select>
-        {!Escolaridad_Id && (
-          <div className="invalid-feedback"></div>
-        )}
-      </div>
-
-      <div className="input-group mb-3">
-        <span className="input-group-text" id="basic-addon1">
-          Ocupación de la persona:
-        </span>
-        <select
-          className={`form-select ${!Ocupacion_Id && "is-invalid"}`}
-          aria-label="Default select example"
-          value={Ocupacion_Id}
-          onChange={(event) => setOcupacionId(event.target.value)}
-        >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-          {OcupacionList.map((option) => (
-            <option key={option.Ocupacion_Id} value={option.Ocupacion_Id}>
-              {option.Ocupacion_Nombre}
-            </option>
-          ))}
-        </select>
-        {!Ocupacion_Id && (
-          <div className="invalid-feedback"></div>
-        )}
-      </div>
-
-      <div className="input-group mb-3">
-        <span className="input-group-text" id="basic-addon1">
-          Parentesco con el o la estudiante:
-        </span>
-        <select
-          className={`form-select ${!Parentesco_Id && "is-invalid"}`}
-          aria-label="Default select example"
-          value={Parentesco_Id}
-          onChange={(event) => setParentescoId(event.target.value)}
-        >
-          <option value="" disabled>
-            Seleccione una opción
-          </option>
-          {ParentescoList.map((option) => (
-            <option key={option.Parentesco_Id} value={option.Parentesco_Id}>
-              {option.Parentesco_Nombre}
-            </option>
-          ))}
-        </select>
-        {!Parentesco_Id && (
-          <div className="invalid-feedback"></div>
-        )}
-      </div>
-
-      <div>
-        {editar ? (
-          <div>
-            <button
-              type="submit"
-              className="btn btn-warning m-3"
-              onClick={actualizar}
-            >
-              Actualizar
-            </button>
-            <button
-              type="submit"
-              className="btn btn-danger m-3"
-              onClick={limpiarDatos}
-            >
-              Cancelar
-            </button>
+    <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+      <div className="container py-4">
+        {/* Header */}
+        <div className="noticias-header mb-5">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div className="d-flex align-items-center gap-3">
+              <div className="title-icon">
+                👨‍👩‍👧‍👦
+              </div>
+              <div>
+                <h1 className="noticias-title mb-1">Gestión de Encargados</h1>
+                <p className="noticias-subtitle mb-0">Datos de los encargados de estudiantes</p>
+              </div>
+            </div>
+            <div className="d-flex gap-2">
+              <Link to="/Grado" className="btn-back">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M5 7L10 2L15 7M3 9H17V17H3V9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Grado
+              </Link>
+              <Link to="/admindashboard" className="btn-back">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Menú Principal
+              </Link>
+            </div>
           </div>
-        ) : (
-          <button type="submit" className="btn btn-primary m-3" onClick={add}>
-            Registrar
-          </button>
-        )}
-        <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menú Principal
-        </Link>
-        <Link to="/Grado" className="btn btn-warning m-3">
-          Grado
-        </Link>
-      </div>
+        </div>
 
-      <div className="form-group">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Apellido</th>
-              <th>Funcionalidad</th>
+        {/* Form Card */}
+        <div className="noticias-form-card mb-5">
+          <div className="card-header-custom">
+            <h5 className="mb-0">
+              {editar ? '✏️ Editar Encargado' : '➕ Registrar Encargado'}
+            </h5>
+          </div>
+          <div className="card-body-custom">
+            <h6 className="mb-3 text-primary">📝 Información Personal</h6>
+            <div className="row">
+              <div className="col-md-3">
+                <div className="form-group-modern">
+                  <label htmlFor="Encargados_Nombre" className="form-label-modern">
+                    <span className="label-icon">👤</span>
+                    Primer Nombre
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Encargados_Nombre"
+                    value={Encargados_Nombre}
+                    onChange={(e) => setEncargadoNombre(e.target.value)}
+                    placeholder="Primer nombre"
+                  />
+                </div>
+              </div>
 
-            </tr>
-          </thead>
-          <tbody>
-            {EncargadoList.map((val, key) => (
-              <tr key={key}>
-                <th>{val.Encargados_Id}</th>
-                <td>{val.Encargados_Nombre}</td>
-                <td>{val.Encargado_Apellido1}</td>
+              <div className="col-md-3">
+                <div className="form-group-modern">
+                  <label htmlFor="Encargado_Nombre2" className="form-label-modern">
+                    <span className="label-icon">👤</span>
+                    Segundo Nombre
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Encargado_Nombre2"
+                    value={Encargado_Nombre2}
+                    onChange={(e) => setEncargadoNombre2(e.target.value)}
+                    placeholder="Segundo nombre"
+                  />
+                </div>
+              </div>
 
-                <td>
-                  <div className="btn-group" role="group">
-                    <button
-                      className="btn btn-info"
-                      onClick={() => editarEstudiante(val)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => eliminar(val.Encargados_Id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              <div className="col-md-3">
+                <div className="form-group-modern">
+                  <label htmlFor="Encargado_Apellido1" className="form-label-modern">
+                    <span className="label-icon">👤</span>
+                    Primer Apellido
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Encargado_Apellido1"
+                    value={Encargado_Apellido1}
+                    onChange={(e) => setEncargadoApellido1(e.target.value)}
+                    placeholder="Primer apellido"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-3">
+                <div className="form-group-modern">
+                  <label htmlFor="Encargado_Apellido2" className="form-label-modern">
+                    <span className="label-icon">👤</span>
+                    Segundo Apellido
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Encargado_Apellido2"
+                    value={Encargado_Apellido2}
+                    onChange={(e) => setEncargadoApellido2(e.target.value)}
+                    placeholder="Segundo apellido"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <h6 className="mb-3 mt-4 text-primary">💼 Información Laboral y Contacto</h6>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Encargados_LugarTrabajo" className="form-label-modern">
+                    <span className="label-icon">🏢</span>
+                    Lugar de Trabajo
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Encargados_LugarTrabajo"
+                    value={Encargados_LugarTrabajo}
+                    onChange={(e) => setEncargadosLugarTrabajo(e.target.value)}
+                    placeholder="Empresa o institución"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Encargado_Telefono" className="form-label-modern">
+                    <span className="label-icon">📱</span>
+                    Teléfono
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Encargado_Telefono"
+                    value={Encargado_Telefono}
+                    onChange={(e) => setEncargadoTelefono(e.target.value)}
+                    placeholder="Número telefónico"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Encargado_EstadoCivil" className="form-label-modern">
+                    <span className="label-icon">💑</span>
+                    Estado Civil
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Encargado_EstadoCivil"
+                    value={Encargado_EstadoCivil}
+                    onChange={(e) => setEncargadoEstadoCivil(e.target.value)}
+                    placeholder="Ej: Soltero, Casado, Divorciado..."
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Encargado_ViveEstudiante" className="form-label-modern">
+                    <span className="label-icon">🏠</span>
+                    ¿Vive con el estudiante?
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Encargado_ViveEstudiante"
+                    value={Encargado_ViveEstudiante}
+                    onChange={(e) => setEncargadoViveEstudiante(e.target.value)}
+                    placeholder="Sí / No"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <h6 className="mb-3 mt-4 text-primary">🎓 Información Adicional</h6>
+            <div className="row">
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="Escolaridad_Id" className="form-label-modern">
+                    <span className="label-icon">📚</span>
+                    Escolaridad
+                  </label>
+                  <select
+                    className="form-control-modern"
+                    id="Escolaridad_Id"
+                    value={Escolaridad_Id}
+                    onChange={(e) => setEscolaridadId(e.target.value)}
+                  >
+                    <option value="">Seleccione una opción</option>
+                    {EscolaridadList.map((option) => (
+                      <option key={option.Escolaridad_Id} value={option.Escolaridad_Id}>
+                        {option.Escolaridad_Nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="Ocupacion_Id" className="form-label-modern">
+                    <span className="label-icon">💼</span>
+                    Ocupación
+                  </label>
+                  <select
+                    className="form-control-modern"
+                    id="Ocupacion_Id"
+                    value={Ocupacion_Id}
+                    onChange={(e) => setOcupacionId(e.target.value)}
+                  >
+                    <option value="">Seleccione una opción</option>
+                    {OcupacionList.map((option) => (
+                      <option key={option.Ocupacion_Id} value={option.Ocupacion_Id}>
+                        {option.Ocupacion_Nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="Parentesco_Id" className="form-label-modern">
+                    <span className="label-icon">👨‍👩‍👧</span>
+                    Parentesco
+                  </label>
+                  <select
+                    className="form-control-modern"
+                    id="Parentesco_Id"
+                    value={Parentesco_Id}
+                    onChange={(e) => setParentescoId(e.target.value)}
+                  >
+                    <option value="">Seleccione una opción</option>
+                    {ParentescoList.map((option) => (
+                      <option key={option.Parentesco_Id} value={option.Parentesco_Id}>
+                        {option.Parentesco_Nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="action-buttons">
+              {editar ? (
+                <>
+                  <button
+                    type="button"
+                    className="btn-action btn-update"
+                    onClick={actualizar}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M15 6L9 12L5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Actualizar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-action btn-cancel"
+                    onClick={limpiarDatos}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M6 6L14 14M6 14L14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-action btn-register"
+                  onClick={add}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 5V15M5 10H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Registrar
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Table Card */}
+        <div className="noticias-table-card">
+          <div className="card-header-custom">
+            <h5 className="mb-0">📋 Lista de Encargados</h5>
+          </div>
+          <div className="card-body-custom">
+            {EncargadoList.length > 0 ? (
+              <div className="table-responsive">
+                <table className="table-modern">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                      <th className="text-end">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {EncargadoList.map((val, key) => (
+                      <tr key={key} className="table-row-hover">
+                        <td className="td-id">
+                          <span className="badge-id">{val.Encargados_Id}</span>
+                        </td>
+                        <td className="td-nombre">
+                          <div className="nombre-wrapper">
+                            <span className="nombre-text">{val.Encargados_Nombre}</span>
+                          </div>
+                        </td>
+                        <td>{val.Encargado_Apellido1}</td>
+                        <td>
+                          <div className="action-buttons-table">
+                            <button
+                              className="btn-table btn-edit"
+                              onClick={() => editarEstudiante(val)}
+                              title="Editar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M12.5 2.5L15.5 5.5L6 15H3V12L12.5 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Editar
+                            </button>
+                            <button
+                              className="btn-table btn-delete"
+                              onClick={() => eliminar(val.Encargados_Id)}
+                              title="Eliminar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M3 5H15M7 8V13M11 8V13M4 5L5 15H13L14 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon">📭</div>
+                <p>No hay encargados registrados</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

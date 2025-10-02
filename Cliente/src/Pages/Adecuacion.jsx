@@ -147,90 +147,158 @@ const Adecuacion = () => {
   }, [darkMode]);
 
   return (
-    <div className="container">
-      <h1>Formulario de adecuación</h1>
-      <h2>Datos sobre la adecuación</h2>
-      <div className="form-group">
-        <label htmlFor="Adecuacion_Nombre">Nombre de la adecuación:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="Adecuacion_Nombre"
-          value={Adecuacion_Nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          style={{
-            borderColor: Adecuacion_Nombre.trim() === "" ? "red" : "",
-          }}
-        />
-      </div>
-
-      <div>
-        {editar ? (
-          <div>
-            <button
-              type="submit"
-              className="btn btn-warning m-3"
-              onClick={actualizar}
-            >
-              Actualizar
-            </button>
-            <button
-              type="submit"
-              className="btn btn-danger m-3"
-              onClick={limpiarDatos}
-            >
-              Cancelar
-            </button>
+    <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+      <div className="container py-4">
+        {/* Header Moderno */}
+        <div className="noticias-header mb-5">
+          <div className="row align-items-center">
+            <div className="col-md-8">
+              <h1 className="noticias-title">
+                <span className="title-icon">📋</span>
+                Gestión de Adecuaciones
+              </h1>
+              <p className="noticias-subtitle">Administra las adecuaciones curriculares</p>
+            </div>
+            <div className="col-md-4 text-md-end">
+              <Link to="/admindashboard" className="btn-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Menú Principal
+              </Link>
+            </div>
           </div>
-        ) : (
-          <button type="submit" className="btn btn-primary m-3" onClick={add}>
-            Registrar
-          </button>
-        )}
-        <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menú Principal
-        </Link>
-        <Link to="/LugarResidencia" className="btn btn-warning m-3">
-          Lugar Residencia
-        </Link>
-      </div>
+        </div>
 
-      <div className="form-group">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Nombre</th>              
-              <th>Funcionalidad</th>
+        {/* Formulario Mejorado */}
+        <div className="noticias-form-card mb-5">
+          <div className="card-header-custom">
+            <h2 className="form-title">
+              {editar ? '✏️ Editar Adecuación' : '➕ Nueva Adecuación'}
+            </h2>
+          </div>
+          <div className="card-body-custom">
+            <div className="row g-4">
+              <div className="col-12">
+                <div className="form-group-modern">
+                  <label htmlFor="Adecuacion_Nombre" className="form-label-modern">
+                    <span className="label-icon">📝</span>
+                    Nombre de la Adecuación
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Adecuacion_Nombre"
+                    value={Adecuacion_Nombre}
+                    placeholder="Ej: Adecuación Significativa"
+                    onChange={(e) => setNombre(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
 
-            </tr>
-          </thead>
-          <tbody>
-            {Adecuacion_List.map((val, key) => (
-              <tr key={key}>
-                <th>{val.Adecuacion_Id}</th>
-                <td>{val.Adecuacion_Nombre}</td>
+            {/* Botones de Acción */}
+            <div className="action-buttons mt-4">
+              {editar ? (
+                <>
+                  <button className="btn-action btn-update" onClick={actualizar}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                      <polyline points="17 21 17 13 7 13 7 21"/>
+                      <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Actualizar
+                  </button>
+                  <button className="btn-action btn-cancel" onClick={limpiarDatos}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18"/>
+                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <button className="btn-action btn-register" onClick={add}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 5v14M5 12h14"/>
+                  </svg>
+                  Registrar Adecuación
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
 
-                <td>
-                  <div className="btn-group" role="group">
-                    <button
-                      className="btn btn-info"
-                      onClick={() => editarAdecuacion(val)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => eliminar(val.Adecuacion_Id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {/* Tabla Mejorada */}
+        <div className="noticias-table-card">
+          <div className="card-header-custom">
+            <h2 className="form-title">
+              📋 Lista de Adecuaciones ({Adecuacion_List.length})
+            </h2>
+          </div>
+          <div className="table-responsive">
+            <table className="table-modern">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre de la Adecuación</th>
+                  <th className="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Adecuacion_List.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="text-center py-5">
+                      <div className="empty-state">
+                        <span className="empty-icon">📭</span>
+                        <p>No hay adecuaciones registradas</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  Adecuacion_List.map((val, key) => (
+                    <tr key={key} className="table-row-hover">
+                      <td className="td-id">
+                        <span className="badge-id">{val.Adecuacion_Id}</span>
+                      </td>
+                      <td className="td-nombre">
+                        <div className="nombre-wrapper">
+                          <span className="nombre-text">{val.Adecuacion_Nombre}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="action-buttons-table">
+                          <button
+                            className="btn-table btn-edit"
+                            onClick={() => editarAdecuacion(val)}
+                            title="Editar"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            Editar
+                          </button>
+                          <button
+                            className="btn-table btn-delete"
+                            onClick={() => eliminar(val.Adecuacion_Id)}
+                            title="Eliminar"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <polyline points="3 6 5 6 21 6"/>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );

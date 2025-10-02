@@ -87,6 +87,18 @@ const Home = () => {
 
   return (
     <div className={`home-container ${darkMode ? "bg-dark text-white" : "bg-light text-dark"}`} style={{minHeight: '100vh'}}>
+      
+      {/* Banner de Bienvenida Flotante */}
+      <div className="welcome-banner">
+        <div className="welcome-content">
+          <span className="welcome-icon">🎓</span>
+          <div className="welcome-text">
+            <h3 className="welcome-title">Bienvenidos a Escuela Cerros</h3>
+            <p className="welcome-subtitle">Educación de calidad desde 1958</p>
+          </div>
+        </div>
+      </div>
+
       {/* Slider de Noticias/Eventos */}
       {imagesLoaded && materiasList.length > 0 && (
         <div className={`news-slider ${darkMode ? 'slider-dark' : 'slider-light'}`}>
@@ -149,7 +161,9 @@ const Home = () => {
                 className={`indicator ${index === currentSlide ? 'active' : ''}`}
                 onClick={() => goToSlide(index)}
                 aria-label={`Ir a slide ${index + 1}`}
-              />
+              >
+                {index === currentSlide && <span className="progress-ring"></span>}
+              </button>
             ))}
           </div>
 
@@ -170,6 +184,42 @@ const Home = () => {
             className="divider-path"
           />
         </svg>
+      </div>
+
+      {/* Sección de Estadísticas */}
+      <div className={`stats-section ${darkMode ? 'stats-dark' : 'stats-light'}`}>
+        <div className="container">
+          <div className="row g-4">
+            <div className="col-6 col-md-3">
+              <div className="stat-card">
+                <div className="stat-icon">📚</div>
+                <div className="stat-number">65+</div>
+                <div className="stat-label">Años de Historia</div>
+              </div>
+            </div>
+            <div className="col-6 col-md-3">
+              <div className="stat-card">
+                <div className="stat-icon">👨‍🎓</div>
+                <div className="stat-number">250+</div>
+                <div className="stat-label">Estudiantes</div>
+              </div>
+            </div>
+            <div className="col-6 col-md-3">
+              <div className="stat-card">
+                <div className="stat-icon">👨‍🏫</div>
+                <div className="stat-number">15+</div>
+                <div className="stat-label">Docentes</div>
+              </div>
+            </div>
+            <div className="col-6 col-md-3">
+              <div className="stat-card">
+                <div className="stat-icon">🏆</div>
+                <div className="stat-number">100%</div>
+                <div className="stat-label">Compromiso</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
         <div id="historia" className="container-fluid px-3 px-md-4">
@@ -267,16 +317,82 @@ const Home = () => {
                   </div>
                 </div>
 
-                <button 
-                  className={`btn-ver-mas ${darkMode ? 'btn-dark-mode' : 'btn-light-mode'}`}
-                  onClick={() => setShowFullHistory(!showFullHistory)}
-                >
-                  {showFullHistory ? '▲ Ver menos' : '▼ Ver más historia'}
-                </button>
+                <div className="text-center">
+                  <button 
+                    className={`btn-ver-mas ${darkMode ? 'btn-dark-mode' : 'btn-light-mode'}`}
+                    onClick={() => setShowFullHistory(!showFullHistory)}
+                  >
+                    {showFullHistory ? (
+                      <>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="me-2">
+                          <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+                        </svg>
+                        Ver menos
+                      </>
+                    ) : (
+                      <>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="me-2">
+                          <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                        </svg>
+                        Ver más historia
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
           
+          {/* Sección de Valores */}
+          <div className={`valores-section my-5 ${darkMode ? 'valores-dark' : 'valores-light'}`}>
+            <div className="text-center mb-5">
+              <h2 className="valores-title">
+                ✨ Nuestros Valores
+              </h2>
+              <p className="valores-subtitle">
+                Formando el futuro con principios sólidos
+              </p>
+            </div>
+            <div className="row g-4">
+              <div className="col-md-6 col-lg-3">
+                <div className="valor-card">
+                  <div className="valor-icon-bg">
+                    <span className="valor-icon">🎯</span>
+                  </div>
+                  <h4 className="valor-title">Excelencia</h4>
+                  <p className="valor-text">Búsqueda constante de la calidad educativa</p>
+                </div>
+              </div>
+              <div className="col-md-6 col-lg-3">
+                <div className="valor-card">
+                  <div className="valor-icon-bg">
+                    <span className="valor-icon">🤝</span>
+                  </div>
+                  <h4 className="valor-title">Respeto</h4>
+                  <p className="valor-text">Valoramos la diversidad y la dignidad</p>
+                </div>
+              </div>
+              <div className="col-md-6 col-lg-3">
+                <div className="valor-card">
+                  <div className="valor-icon-bg">
+                    <span className="valor-icon">💡</span>
+                  </div>
+                  <h4 className="valor-title">Innovación</h4>
+                  <p className="valor-text">Adaptándonos a los nuevos tiempos</p>
+                </div>
+              </div>
+              <div className="col-md-6 col-lg-3">
+                <div className="valor-card">
+                  <div className="valor-icon-bg">
+                    <span className="valor-icon">❤️</span>
+                  </div>
+                  <h4 className="valor-title">Solidaridad</h4>
+                  <p className="valor-text">Construyendo comunidad juntos</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div id="ubicacion" className="my-4 my-md-5 py-3 py-md-5 text-center animate__animated animate__fadeIn ubicacion-section">
             <h2 className="animate__animated animate__bounceIn mb-3 mb-md-4 ubicacion-title">
               📍 Ubicación
@@ -295,62 +411,95 @@ const Home = () => {
               ></iframe>
             </div>
           </div>
-          <footer className={`footer-improved text-center py-5 mt-5 animate__animated animate__fadeIn ${darkMode ? 'footer-dark' : 'footer-light'}`}>
+          <footer className={`footer-improved py-5 mt-5 animate__animated animate__fadeIn ${darkMode ? 'footer-dark' : 'footer-light'}`}>
             <div className="container">
-              <div className="row g-4">
-                <div className="col-12 col-md-6 animate__animated animate__flipInX">
-                  <div className="footer-section p-4 rounded shadow-sm h-100">
-                    <h3 className="mb-3" style={{fontWeight: 'bold', fontSize: '1.8rem'}}>
-                      <i className="fas fa-info-circle me-2"></i>Información
-                    </h3>
-                    <p style={{fontSize: '1.1rem', fontStyle: 'italic', lineHeight: '1.6'}}>
+              <div className="row g-4 justify-content-center">
+                {/* Sección de Información */}
+                <div className="col-12 col-lg-4 animate__animated animate__fadeInUp">
+                  <div className="footer-card p-4 rounded-4 shadow h-100">
+                    <div className="footer-icon-wrapper mb-3">
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" className="footer-icon">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                      </svg>
+                    </div>
+                    <h3 className="footer-heading mb-3">Información</h3>
+                    <p className="footer-text mb-0">
                       Ante el apagón educativo, encendamos juntos la luz.
                     </p>
                   </div>
                 </div>
-                <div className="col-12 col-md-6 animate__animated animate__flipInX">
-                  <div className="footer-section p-4 rounded shadow-sm h-100">
-                    <h3 className="mb-4" style={{fontWeight: 'bold', fontSize: '1.8rem'}}>
-                      <i className="fas fa-share-alt me-2"></i>Redes Sociales
-                    </h3>
-                    <ul className="list-unstyled">
-                      <li className="mb-3">
-                        <a
-                          href="https://www.facebook.com/profile.php?id=100082943875959"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="footer-link d-inline-flex align-items-center"
-                          style={{fontSize: '1.1rem', textDecoration: 'none', transition: 'all 0.3s ease'}}
-                        >
-                          <FaFacebook className="me-2" size={24} /> Facebook
-                        </a>
-                      </li>
+
+                {/* Sección de Contacto */}
+                <div className="col-12 col-lg-4 animate__animated animate__fadeInUp animate__delay-1s">
+                  <div className="footer-card p-4 rounded-4 shadow h-100">
+                    <div className="footer-icon-wrapper mb-3">
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" className="footer-icon">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                      </svg>
+                    </div>
+                    <h3 className="footer-heading mb-4">Contacto</h3>
+                    <ul className="list-unstyled footer-links">
                       <li className="mb-3">
                         <a 
                           href="mailto:esc.cerros@mep.go.cr"
-                          className="footer-link d-inline-flex align-items-center"
-                          style={{fontSize: '1.1rem', textDecoration: 'none', transition: 'all 0.3s ease'}}
+                          className="footer-link"
                         >
-                          <FaEnvelope className="me-2" size={24} /> Enviar correo
+                          <FaEnvelope className="me-2" size={20} />
+                          esc.cerros@mep.go.cr
                         </a>
                       </li>
                       <li className="mb-3">
                         <a 
                           href="tel:277761113"
-                          className="footer-link d-inline-flex align-items-center"
-                          style={{fontSize: '1.1rem', textDecoration: 'none', transition: 'all 0.3s ease'}}
+                          className="footer-link"
                         >
-                          <FaPhone className="me-2" size={24} /> Llamar
+                          <FaPhone className="me-2" size={20} />
+                          2777-61113
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Sección de Redes Sociales */}
+                <div className="col-12 col-lg-4 animate__animated animate__fadeInUp animate__delay-2s">
+                  <div className="footer-card p-4 rounded-4 shadow h-100">
+                    <div className="footer-icon-wrapper mb-3">
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" className="footer-icon">
+                        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                      </svg>
+                    </div>
+                    <h3 className="footer-heading mb-4">Síguenos</h3>
+                    <ul className="list-unstyled footer-links">
+                      <li className="mb-3">
+                        <a
+                          href="https://www.facebook.com/profile.php?id=100082943875959"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-link"
+                        >
+                          <FaFacebook className="me-2" size={20} />
+                          Facebook
                         </a>
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
-              <div className="mt-4 pt-4 border-top">
-                <p className="mb-0" style={{fontSize: '0.95rem', opacity: '0.8'}}>
-                  © {new Date().getFullYear()} Escuela Cerros. Todos los derechos reservados.
-                </p>
+
+              {/* Copyright y Créditos */}
+              <div className="footer-bottom mt-5 pt-4">
+                <div className="text-center">
+                  <p className="copyright-text mb-2">
+                    © {new Date().getFullYear()} Escuela Cerros. Todos los derechos reservados.
+                  </p>
+                  <p className="developer-credit">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="me-1">
+                      <path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/>
+                    </svg>
+                    Desarrollado por <span className="developer-name">Roilan Cubillo</span>
+                  </p>
+                </div>
               </div>
             </div>
           </footer>

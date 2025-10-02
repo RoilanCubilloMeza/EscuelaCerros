@@ -164,117 +164,213 @@ const Eventos = () => {
   }, [darkMode]);
 
   return (
-    <div className="container">
-      <h1>Formulario de eventos (noticias)</h1>
-
-      <h2>Datos del evento</h2>
-      <div className="form-group">
-        <label htmlFor="Eventos_Nombre">Nombre del evento:</label>
-        <input
-          type="text"
-          className={`form-control ${!campoValidoNombre ? "is-invalid" : ""}`}
-          id="Eventos_Nombre"
-          value={Eventos_Nombre}
-          onChange={(e) => {
-            setNombre(e.target.value);
-            setCampoValidoNombre(true);
-          }}
-        />
-        {!campoValidoNombre && (
-          <div className="invalid-feedback">Este campo es obligatorio</div>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="Eventos_Imagen">Imagen:</label>
-        <input
-          type="file"
-          className={`form-control ${!campoValidoTipo ? "is-invalid" : ""}`}
-          id="Eventos_Imagen"
-          accept=".jpg, .jpeg, .png, .gif"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            setImagen(file);
-            setCampoValidoTipo(true);
-          }}
-        />
-        {!campoValidoTipo && (
-          <div className="invalid-feedback">Este campo es obligatorio</div>
-        )}
-      </div>
-
-      <div>
-        {editar ? (
-          <div>
-            <button
-              type="submit"
-              className="btn btn-warning m-3"
-              onClick={actualizar}
-            >
-              Actualizar
-            </button>
-            <button
-              type="submit"
-              className="btn btn-danger m-3"
-              onClick={limpiarDatos}
-            >
-              Cancelar
-            </button>
+    <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+      <div className="container py-4">
+        {/* Header Moderno */}
+        <div className="noticias-header mb-5">
+          <div className="row align-items-center">
+            <div className="col-md-8">
+              <h1 className="noticias-title">
+                <span className="title-icon">📰</span>
+                Gestión de Eventos
+              </h1>
+              <p className="noticias-subtitle">Administra las noticias y eventos escolares</p>
+            </div>
+            <div className="col-md-4 text-md-end">
+              <Link to="/AdminDashboard" className="btn-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Volver al Menú
+              </Link>
+            </div>
           </div>
-        ) : (
-          <button type="submit" className="btn btn-primary m-3" onClick={add}>
-            Registrar
-          </button>
-        )}
-        <Link to="/AdminDashboard" className="btn btn-secondary m-3">
-          Menú Principal
-        </Link>
-      </div>
+        </div>
 
-      <div className="form-group">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Imagen</th>
-              <th>Funcionalidad</th>
-
-            </tr>
-          </thead>
-          <tbody>
-            {Materias_List.map((val, key) => (
-              <tr key={key}>
-                <th>{val.Evento_id}</th>
-                <td>{val.Eventos_Nombre}</td>
-                <td>
-                  <img
-                    src={`${API_BASE_URL}/getImage/${val.Evento_id}`}
-                    alt="Evento"
-                    style={{ width: "80px", height: "80px" }}
+        {/* Formulario Mejorado */}
+        <div className="noticias-form-card mb-5">
+          <div className="card-header-custom">
+            <h2 className="form-title">
+              {editar ? '✏️ Editar Evento' : '➕ Nuevo Evento'}
+            </h2>
+          </div>
+          <div className="card-body-custom">
+            <div className="row g-4">
+              <div className="col-md-8">
+                <div className="form-group-modern">
+                  <label htmlFor="Eventos_Nombre" className="form-label-modern">
+                    <span className="label-icon">📝</span>
+                    Nombre del Evento
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control-modern ${!campoValidoNombre ? "is-invalid" : ""}`}
+                    id="Eventos_Nombre"
+                    value={Eventos_Nombre}
+                    maxLength={255}
+                    placeholder="Ej: Semana Cívica 2025"
+                    onChange={(e) => {
+                      setNombre(e.target.value);
+                      setCampoValidoNombre(true);
+                    }}
                   />
-                </td>
-
-                <td>
-                  <div className="btn-group" role="group">
-                    <button
-                      className="btn btn-info"
-                      onClick={() => editarGrado(val)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => eliminar(val.Evento_id)}
-                    >
-                      Eliminar
-                    </button>
+                  <div className="char-counter">
+                    {Eventos_Nombre.length}/255 caracteres
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  {!campoValidoNombre && (
+                    <div className="invalid-feedback">
+                      ⚠️ Este campo es obligatorio
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div className="form-group-modern">
+                  <label htmlFor="Eventos_Imagen" className="form-label-modern">
+                    <span className="label-icon">🖼️</span>
+                    Imagen del Evento
+                  </label>
+                  <div className="file-input-wrapper">
+                    <input
+                      type="file"
+                      className="file-input-modern"
+                      id="Eventos_Imagen"
+                      accept=".jpg, .jpeg, .png, .gif"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        setImagen(file);
+                        setCampoValidoTipo(true);
+                      }}
+                    />
+                    <label htmlFor="Eventos_Imagen" className="file-label-modern">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                      </svg>
+                      <span>{Eventos_Imagen ? Eventos_Imagen.name : 'Seleccionar imagen'}</span>
+                    </label>
+                  </div>
+                  {!campoValidoTipo && (
+                    <div className="invalid-feedback d-block">
+                      ⚠️ Debes seleccionar una imagen
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Botones de Acción */}
+            <div className="action-buttons mt-4">
+              {editar ? (
+                <>
+                  <button className="btn-action btn-update" onClick={actualizar}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                      <polyline points="17 21 17 13 7 13 7 21"/>
+                      <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Actualizar
+                  </button>
+                  <button className="btn-action btn-cancel" onClick={limpiarDatos}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18"/>
+                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <button className="btn-action btn-register" onClick={add}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 5v14M5 12h14"/>
+                  </svg>
+                  Registrar Evento
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Tabla Mejorada */}
+        <div className="noticias-table-card">
+          <div className="card-header-custom">
+            <h2 className="form-title">
+              📋 Lista de Eventos ({Materias_List.length})
+            </h2>
+          </div>
+          <div className="table-responsive">
+            <table className="table-modern">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Imagen</th>
+                  <th>Nombre del Evento</th>
+                  <th className="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Materias_List.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-5">
+                      <div className="empty-state">
+                        <span className="empty-icon">📭</span>
+                        <p>No hay eventos registrados</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  Materias_List.map((val, key) => (
+                    <tr key={key} className="table-row-hover">
+                      <td className="td-id">
+                        <span className="badge-id">{val.Evento_id}</span>
+                      </td>
+                      <td>
+                        <div className="imagen-preview">
+                          <img
+                            src={`${API_BASE_URL}/getImage/${val.Evento_id}`}
+                            alt={val.Eventos_Nombre}
+                            className="evento-imagen"
+                          />
+                        </div>
+                      </td>
+                      <td className="td-nombre">
+                        <div className="nombre-wrapper">
+                          <span className="nombre-text">{val.Eventos_Nombre}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="action-buttons-table">
+                          <button
+                            className="btn-table btn-edit"
+                            onClick={() => editarGrado(val)}
+                            title="Editar"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            Editar
+                          </button>
+                          <button
+                            className="btn-table btn-delete"
+                            onClick={() => eliminar(val.Evento_id)}
+                            title="Eliminar"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <polyline points="3 6 5 6 21 6"/>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );

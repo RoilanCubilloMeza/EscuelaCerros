@@ -36,13 +36,20 @@ app.post("/createEventos", upload.single("Eventos_Imagen"), (req, res) => {
       .send("Por favor completa todos los campos obligatorios");
   }
 
+  // Validar longitud del nombre (máximo 255 caracteres)
+  if (Eventos_Nombre.length > 255) {
+    return res
+      .status(400)
+      .send("El nombre del evento no puede exceder 255 caracteres");
+  }
+
   const sql =
     "INSERT INTO EventosEscolares (Eventos_Nombre, Eventos_Imagen) VALUES (?, ?)";
 
   connection.query(sql, [Eventos_Nombre, Eventos_Imagen], (err, result) => {
     if (err) {
       console.error("Error al crear el evento:", err);
-      return res.status(500).send("Error al crear el evento.");
+      return res.status(500).send("Error al crear el evento: " + err.message);
     } else {
       console.log("Evento creado exitosamente.");
       return res.send("Evento creado exitosamente.");
@@ -61,25 +68,36 @@ app.get("/obtenerEventos", (req, res) => {
   });
 });
 
-app.put("/actualizarEventos", (req, res) => {
-  const { Evento_id, Eventos_Nombre, Eventos_Imagen } = req.body;
+app.put("/actualizarEventos", upload.single("Eventos_Imagen"), (req, res) => {
+  const { Evento_id, Eventos_Nombre } = req.body;
+  const Eventos_Imagen = req.file ? req.file.buffer : null;
 
-  const sql =
-    "UPDATE EventosEscolares SET Eventos_Nombre=?, Eventos_Imagen=? WHERE Evento_id=?";
+  // Validar longitud del nombre
+  if (Eventos_Nombre && Eventos_Nombre.length > 255) {
+    return res
+      .status(400)
+      .send("El nombre del evento no puede exceder 255 caracteres");
+  }
 
-  connection.query(
-    sql,
-    [Eventos_Nombre, Eventos_Imagen, Evento_id],
-    (err, result) => {
-      if (err) {
-        console.error("Error al actualizar el evento:", err);
-        return res.status(500).send("Error al actualizar el evento.");
-      } else {
-        console.log("Evento actualizado exitosamente.");
-        return res.send("Evento actualizado exitosamente.");
-      }
+  let sql, params;
+  
+  if (Eventos_Imagen) {
+    sql = "UPDATE EventosEscolares SET Eventos_Nombre=?, Eventos_Imagen=? WHERE Evento_id=?";
+    params = [Eventos_Nombre, Eventos_Imagen, Evento_id];
+  } else {
+    sql = "UPDATE EventosEscolares SET Eventos_Nombre=? WHERE Evento_id=?";
+    params = [Eventos_Nombre, Evento_id];
+  }
+
+  connection.query(sql, params, (err, result) => {
+    if (err) {
+      console.error("Error al actualizar el evento:", err);
+      return res.status(500).send("Error al actualizar el evento: " + err.message);
+    } else {
+      console.log("Evento actualizado exitosamente.");
+      return res.send("Evento actualizado exitosamente.");
     }
-  );
+  });
 });
 
 app.delete("/deleteEvento/:Evento_id", (req, res) => {
@@ -105,39 +123,16 @@ app.get("/getImage/:id", (req, res) => {
 
   connection.query(
     "SELECT Eventos_Imagen FROM EventosEscolares WHERE Evento_id = ?",
-    [id],
+    id,
     (err, result) => {
       if (err) {
         console.error("Error al obtener la imagen:", err);
         return res.status(500).send("Error al obtener la imagen.");
+      } else {
+        const imagen = result[0].Eventos_Imagen;
+        res.setHeader("Content-Type", "image/jpeg"); 
+        res.send(imagen);
       }
-
-      if (!result || result.length === 0 || !result[0].Eventos_Imagen) {
-        return res.status(404).send("Imagen no encontrada.");
-      }
-
-      const imagen = result[0].Eventos_Imagen;
-
-      // Detectar tipo de imagen por cabecera mágica
-      let mime = "image/jpeg";
-      if (imagen && imagen.length >= 8) {
-        const b0 = imagen[0];
-        const b1 = imagen[1];
-        const b2 = imagen[2];
-        const b3 = imagen[3];
-        
-        if (b0 === 0xFF && b1 === 0xD8 && b2 === 0xFF) {
-          mime = "image/jpeg";
-        } else if (b0 === 0x89 && b1 === 0x50 && b2 === 0x4E && b3 === 0x47) {
-          mime = "image/png";
-        } else if (b0 === 0x47 && b1 === 0x49 && b2 === 0x46 && b3 === 0x38) {
-          mime = "image/gif";
-        }
-      }
-
-      res.setHeader("Content-Type", mime);
-      res.setHeader("Cache-Control", "public, max-age=300");
-      return res.send(imagen);
     }
   );
 });

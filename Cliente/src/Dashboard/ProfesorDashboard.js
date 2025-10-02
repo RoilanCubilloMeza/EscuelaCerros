@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
-import Swal from "sweetalert2";
 import {
   FaClipboardCheck,
   FaCalendarAlt,
@@ -9,9 +8,31 @@ import {
   FaTasks,
   FaClipboardList,
   FaStickyNote,
+  FaChalkboardTeacher,
 } from "react-icons/fa";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+const CategoryCard = ({ category, icon, path, gradient }) => {
+  return (
+    <Link 
+      to={path} 
+      className="dashboard-card"
+      style={{
+        background: gradient,
+        textDecoration: 'none'
+      }}
+    >
+      <div className="dashboard-card-icon">
+        {icon}
+      </div>
+      <div className="dashboard-card-title">
+        {category}
+      </div>
+      <div className="dashboard-card-arrow">
+        →
+      </div>
+    </Link>
+  );
+};
 
 const ProfesorDashboard = () => {
   const { darkMode } = useTheme();
@@ -32,79 +53,95 @@ const ProfesorDashboard = () => {
     };
   }, [darkMode]);
 
-  const handleButtonClick = (category) => {
-    Swal.fire(` ${category}`, "", "success");
-  };
-
-  const categoryColors = {
-    Asistencia: "#ff3333", // Rojo fuerte
-    Cotidiano: "#0066cc", // Azul fuerte
-    Materias: "#009933", // Verde fuerte
-    Tarea: "#ff9933", // Naranja fuerte
-    Examen: "#9933ff", // Morado fuerte
-    JustificacionProfesor: "#ffcc00", // Amarillo fuerte
-    Notas: "#6600cc", // Púrpura fuerte
-  };
+  const teacherItems = [
+    {
+      category: "Asistencia",
+      icon: <FaClipboardCheck size={32} />,
+      path: "/Asistencia",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)"
+        : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    },
+    {
+      category: "Cotidiano",
+      icon: <FaCalendarAlt size={32} />,
+      path: "/Cotidiano",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #ec4899 0%, #be123c 100%)"
+        : "linear-gradient(135deg, #f857a6 0%, #ff5858 100%)",
+    },
+    {
+      category: "Materias",
+      icon: <FaBook size={32} />,
+      path: "/Materias",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #06b6d4 0%, #0284c7 100%)"
+        : "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    },
+    {
+      category: "Tareas",
+      icon: <FaTasks size={32} />,
+      path: "/Tareas",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
+        : "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+    },
+    {
+      category: "Examen",
+      icon: <FaClipboardList size={32} />,
+      path: "/Examen",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
+        : "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    },
+    {
+      category: "Justificaciones",
+      icon: <FaClipboardCheck size={32} />,
+      path: "/JustificacionProfesor",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #8b5cf6 0%, #1e3a8a 100%)"
+        : "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+    },
+    {
+      category: "Notas",
+      icon: <FaStickyNote size={32} />,
+      path: "/Notas",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)"
+        : "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    },
+  ];
 
   return (
-    <div
-      id="app-container-profesor"
-      className={`container mt-5 ${darkMode ? "dark-mode" : "light-mode"}`}
-    >
-      <h1 className={`text-center mb-4 ${darkMode ? "text-white" : "text-dark"}`}>
-        Panel para profesores(as)
-      </h1>
-      <div className="row justify-content-center">
-        {[
-          {
-            category: "Asistencia",
-            icon: <FaClipboardCheck size={40} />,
-            path: "/Asistencia",
-          },
-          {
-            category: "Cotidiano",
-            icon: <FaCalendarAlt size={40} />,
-            path: "/Cotidiano",
-          },
-          {
-            category: "Materias",
-            icon: <FaBook size={40} />,
-            path: "/Materias",
-          },
-          { category: "Tarea", icon: <FaTasks size={40} />, path: "/Tareas" },
-          {
-            category: "Examen",
-            icon: <FaClipboardList size={40} />,
-            path: "/Examen",
-          },
-          {
-            category: "JustificacionProfesor",
-            icon: <FaClipboardCheck size={40} />,
-            path: "/JustificacionProfesor",
-          },
-          {
-            category: "Notas",
-            icon: <FaStickyNote size={40} />,
-            path: "/Notas",
-          }, 
-        ].map((item, index) => (
-          <div
-            key={index}
-            className="col-12 col-md-4 col-lg-3 text-center mb-3"
-          >
-            <Link
-              to={item.path}
-              className="btn btn-lg w-100"
-              style={{
-                backgroundColor: categoryColors[item.category],
-                color: "white",
-              }}
-              onClick={() => handleButtonClick(item.category)}
-            >
-              {item.icon} <br /> {item.category}
-            </Link>
+    <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+      <div className="container py-4">
+        {/* Header */}
+        <div className="dashboard-header text-center mb-5">
+          <div className="title-icon mx-auto mb-3" style={{ fontSize: '3rem' }}>
+            👨‍🏫
           </div>
-        ))}
+          <h1 className="dashboard-title mb-2">Panel de Profesor(a)</h1>
+          <p className="dashboard-subtitle">Gestión académica y evaluación</p>
+        </div>
+
+        {/* Teacher Tools Section */}
+        <div className="dashboard-section">
+          <h2 className="dashboard-section-title">
+            <FaChalkboardTeacher className="me-2" />
+            Herramientas de Enseñanza
+          </h2>
+          <div className="dashboard-grid dashboard-grid-symmetric">
+            {teacherItems.map((item) => (
+              <CategoryCard
+                key={item.category}
+                category={item.category}
+                icon={item.icon}
+                path={item.path}
+                gradient={item.gradient}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

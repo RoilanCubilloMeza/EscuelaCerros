@@ -1,10 +1,30 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
-import Swal from "sweetalert2";
-import { FaClipboardCheck, FaInfoCircle } from "react-icons/fa";
+import { FaClipboardCheck, FaInfoCircle, FaUserGraduate } from "react-icons/fa";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+const CategoryCard = ({ category, icon, path, gradient }) => {
+  return (
+    <Link 
+      to={path} 
+      className="dashboard-card dashboard-card-large"
+      style={{
+        background: gradient,
+        textDecoration: 'none'
+      }}
+    >
+      <div className="dashboard-card-icon" style={{ fontSize: '3rem' }}>
+        {icon}
+      </div>
+      <div className="dashboard-card-title" style={{ fontSize: '1.5rem', marginTop: '1rem' }}>
+        {category}
+      </div>
+      <div className="dashboard-card-arrow" style={{ fontSize: '2rem' }}>
+        →
+      </div>
+    </Link>
+  );
+};
 
 const EstudianteDashboard = () => {
   const { darkMode } = useTheme();
@@ -25,49 +45,55 @@ const EstudianteDashboard = () => {
     };
   }, [darkMode]);
 
-  const handleButtonClick = (category) => {
-    Swal.fire(` ${category}`, "", "success");
-  };
+  const studentItems = [
+    {
+      category: "Mis Notas",
+      icon: <FaClipboardCheck size={48} />,
+      path: "/NotasEstudiante",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)"
+        : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    },
+    {
+      category: "Justificaciones",
+      icon: <FaInfoCircle size={48} />,
+      path: "/Justificacion",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #ec4899 0%, #be123c 100%)"
+        : "linear-gradient(135deg, #f857a6 0%, #ff5858 100%)",
+    },
+  ];
 
   return (
-    <div className={`container mt-5 ${darkMode ? "dark-mode" : "light-mode"}`}>
-      <h1
-        className={`text-center mb-4 ${darkMode ? "text-white" : "text-dark"}`}
-      >
-        Panel del estudiante
-      </h1>
-      <div
-        className={`row justify-content-center ${
-          darkMode ? "text-white" : "text-dark"
-        }`}
-      >
-        {[
-          {
-            category: "Notas",
-            icon: <FaClipboardCheck size={40} />,
-            path: "/NotasEstudiante",
-            colorClass: darkMode ? "btn-secondary" : "btn-primary",
-          },
-          {
-            category: "Justificación",
-            icon: <FaInfoCircle size={40} />,
-            path: "/Justificacion",
-            colorClass: darkMode ? "btn-info" : "btn-success",
-          },
-        ].map((item) => (
-          <div
-            key={item.category}
-            className="col-12 col-md-4 col-lg-3 text-center mb-3"
-          >
-            <Link
-              to={item.path}
-              className={`btn btn-lg w-100 ${item.colorClass}`}
-              onClick={() => handleButtonClick(item.category)}
-            >
-              {item.icon} <br /> {item.category}
-            </Link>
+    <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+      <div className="container py-5">
+        {/* Header */}
+        <div className="dashboard-header text-center mb-5">
+          <div className="title-icon mx-auto mb-3" style={{ fontSize: '3.5rem' }}>
+            👨‍🎓
           </div>
-        ))}
+          <h1 className="dashboard-title mb-2">Panel de Estudiante</h1>
+          <p className="dashboard-subtitle">Consulta tus calificaciones y justificaciones</p>
+        </div>
+
+        {/* Student Tools Section */}
+        <div className="dashboard-section">
+          <h2 className="dashboard-section-title">
+            <FaUserGraduate className="me-2" />
+            Mis Herramientas
+          </h2>
+          <div className="dashboard-grid dashboard-grid-student">
+            {studentItems.map((item) => (
+              <CategoryCard
+                key={item.category}
+                category={item.category}
+                icon={item.icon}
+                path={item.path}
+                gradient={item.gradient}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

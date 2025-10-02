@@ -59,8 +59,21 @@ const CustomNavbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
+    localStorage.removeItem("userRole");
     setUsername("");
     navigate("/login");
+  };
+
+  const handleGoToDashboard = () => {
+    const role = localStorage.getItem("userRole");
+    
+    if (role === "1") {
+      navigate("/admindashboard");
+    } else if (role === "2") {
+      navigate("/profesordashboard");
+    } else {
+      navigate("/estudiantedashboard");
+    }
   };
 
   return (
@@ -89,7 +102,12 @@ const CustomNavbar = () => {
           <Nav className="align-items-center ms-auto">
             {token ? (
               <>
-                <Nav.Link disabled className="user-badge">
+                <Nav.Link 
+                  onClick={handleGoToDashboard} 
+                  className="user-badge"
+                  style={{ cursor: 'pointer' }}
+                  title="Ir a mi dashboard"
+                >
                   <FaUser className="me-2" /> {username}
                 </Nav.Link>
                 <Nav.Link as={Link} to="/horarios" className="nav-link-custom">

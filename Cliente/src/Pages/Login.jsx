@@ -29,6 +29,7 @@ const Login = () => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("username", response.data.username); // Guarda el nombre del usuario en el localStorage
+      localStorage.setItem("userRole", Roles_Id); // Guarda el rol del usuario
 
       switch (Roles_Id) {
         case 1:

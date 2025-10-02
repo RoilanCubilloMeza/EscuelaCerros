@@ -123,90 +123,162 @@ const Asistencia = () => {
   }, [darkMode]);
 
   return (
-    <div className="container">
-      <h1>Asistencia</h1>
-      <h2>Valor de la asistencia</h2>
-      <div className="form-group">
-        <label htmlFor="VA_Valor">Puntos de Asistencia:</label>
-        <input
-          type="number"
-          className={`form-control ${!campoValido ? "is-invalid" : ""}`} // Aplica la clase 'is-invalid' si el campo no es válido
-          id="VA_Valor"
-          value={VA_Valor}
-          onChange={(e) => {
-            setValor(e.target.value);
-            setCampoValido(true); // Restaura el estado de campo válido a verdadero cuando se realiza un cambio en el campo
-          }}
-        />
-        {!campoValido && (
-          <div className="invalid-feedback">Campo obligatorio</div>
-        )}{" "}
-        {/* Muestra un mensaje de error si el campo no es válido */}
-      </div>
-
-      <div>
-        {editar ? (
-          <div>
-            <button
-              type="submit"
-              className="btn btn-warning m-3"
-              onClick={actualizar}
-            >
-              Actualizar
-            </button>
-            <button
-              type="submit"
-              className="btn btn-danger m-3"
-              onClick={limpiarDatos}
-            >
-              Cancelar
-            </button>
+    <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+      <div className="container py-4">
+        {/* Header */}
+        <div className="noticias-header mb-5">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div className="d-flex align-items-center gap-3">
+              <div className="title-icon">
+                ✓
+              </div>
+              <div>
+                <h1 className="noticias-title mb-1">Gestión de Asistencia</h1>
+                <p className="noticias-subtitle mb-0">Valor de puntos de asistencia</p>
+              </div>
+            </div>
+            <Link to="/profesordashboard" className="btn-back">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Menú Principal
+            </Link>
           </div>
-        ) : (
-          <button type="submit" className="btn btn-primary m-3" onClick={add}>
-            Registrar
-          </button>
-        )}
-        <Link to="/profesordashboard" className="btn btn-secondary m-3">
-          Menú Principal
-        </Link>
-      </div>
+        </div>
 
-      <div className="form-group">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Valor</th>
-              <th scope="col">Funcionalidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Asistencia_List.map((val, key) => (
-              <tr key={key}>
-                <th>{val.VA_Id}</th>
-                <td>{val.VA_Valor}</td>
+        {/* Form Card */}
+        <div className="noticias-form-card mb-5">
+          <div className="card-header-custom">
+            <h5 className="mb-0">
+              {editar ? '✏️ Editar Valor de Asistencia' : '➕ Registrar Valor de Asistencia'}
+            </h5>
+          </div>
+          <div className="card-body-custom">
+            <div className="form-group-modern">
+              <label htmlFor="VA_Valor" className="form-label-modern">
+                <span className="label-icon">🎯</span>
+                Puntos de Asistencia
+              </label>
+              <input
+                type="number"
+                className="form-control-modern"
+                id="VA_Valor"
+                value={VA_Valor}
+                onChange={(e) => {
+                  setValor(e.target.value);
+                  setCampoValido(true);
+                }}
+                placeholder="Ingrese los puntos de asistencia"
+              />
+              {!campoValido && (
+                <small className="text-danger d-block mt-2">⚠️ Este campo es obligatorio</small>
+              )}
+            </div>
 
-                <td>
-                  <div className="btn-group" role="group">
-                    <button
-                      className="btn btn-info"
-                      onClick={() => editarAdecuacion(val)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => eliminar(val.VA_Id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            <div className="action-buttons">
+              {editar ? (
+                <>
+                  <button
+                    type="button"
+                    className="btn-action btn-update"
+                    onClick={actualizar}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M15 6L9 12L5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Actualizar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-action btn-cancel"
+                    onClick={limpiarDatos}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M6 6L14 14M6 14L14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-action btn-register"
+                  onClick={add}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 5V15M5 10H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Registrar
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Table Card */}
+        <div className="noticias-table-card">
+          <div className="card-header-custom">
+            <h5 className="mb-0">📋 Lista de Valores de Asistencia</h5>
+          </div>
+          <div className="card-body-custom">
+            {Asistencia_List.length > 0 ? (
+              <div className="table-responsive">
+                <table className="table-modern">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Valor</th>
+                      <th className="text-end">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Asistencia_List.map((val, key) => (
+                      <tr key={key} className="table-row-hover">
+                        <td className="td-id">
+                          <span className="badge-id">{val.VA_Id}</span>
+                        </td>
+                        <td className="td-nombre">
+                          <div className="nombre-wrapper">
+                            <span className="nombre-text">{val.VA_Valor}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="action-buttons-table">
+                            <button
+                              className="btn-table btn-edit"
+                              onClick={() => editarAdecuacion(val)}
+                              title="Editar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M12.5 2.5L15.5 5.5L6 15H3V12L12.5 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Editar
+                            </button>
+                            <button
+                              className="btn-table btn-delete"
+                              onClick={() => eliminar(val.VA_Id)}
+                              title="Eliminar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M3 5H15M7 8V13M11 8V13M4 5L5 15H13L14 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon">📭</div>
+                <p>No hay valores de asistencia registrados</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

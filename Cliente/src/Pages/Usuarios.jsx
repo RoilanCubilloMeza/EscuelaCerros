@@ -177,143 +177,239 @@ const Usuarios = () => {
     };
   }, [darkMode]);
   return (
-    <div className="container">
-      <h1>Formulario para usuarios</h1>
-      <h2>Datos del usuario</h2>
-      <div className="row">
-        <div className="col-md-6">
-          <div className="form-group">
-            <label htmlFor="usuarios_Nombre">Nombre del usuario:</label>
-            <input
-              type="text"
-              className="form-control"
-              id="usuarios_Nombre"
-              value={usuarios_Nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              required
-            />
+    <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+      <div className="container py-4">
+        {/* Header */}
+        <div className="noticias-header mb-5">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div className="d-flex align-items-center gap-3">
+              <div className="title-icon">
+                👥
+              </div>
+              <div>
+                <h1 className="noticias-title mb-1">Gestión de Usuarios</h1>
+                <p className="noticias-subtitle mb-0">Administración de usuarios del sistema</p>
+              </div>
+            </div>
+            <Link to="/admindashboard" className="btn-back">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Menú Principal
+            </Link>
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="form-group">
-            <label htmlFor="Usuarios_contraseña">Contraseña:</label>
-            <input
-              type="password"
-              className="form-control"
-              id="Usuarios_contraseña"
-              value={Usuarios_contraseña}
-              onChange={(e) => setContraseña(e.target.value)}
-              required
-            />
+
+        {/* Form Card */}
+        <div className="noticias-form-card mb-5">
+          <div className="card-header-custom">
+            <h5 className="mb-0">
+              {editar ? '✏️ Editar Usuario' : '➕ Registrar Usuario'}
+            </h5>
+          </div>
+          <div className="card-body-custom">
+            <h6 className="mb-3 text-primary">🔐 Credenciales</h6>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="usuarios_Nombre" className="form-label-modern">
+                    <span className="label-icon">👤</span>
+                    Nombre de Usuario
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="usuarios_Nombre"
+                    value={usuarios_Nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    placeholder="Usuario"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Usuarios_contraseña" className="form-label-modern">
+                    <span className="label-icon">🔒</span>
+                    Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control-modern"
+                    id="Usuarios_contraseña"
+                    value={Usuarios_contraseña}
+                    onChange={(e) => setContraseña(e.target.value)}
+                    placeholder="Contraseña"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <h6 className="mb-3 mt-4 text-primary">👨‍💼 Asignaciones</h6>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Roles_Id" className="form-label-modern">
+                    <span className="label-icon">🎭</span>
+                    Rol
+                  </label>
+                  <select
+                    className="form-control-modern"
+                    id="Roles_Id"
+                    value={Roles_Id}
+                    onChange={(event) => setRolId(event.target.value)}
+                  >
+                    <option value="" disabled>Seleccione una opción</option>
+                    {obtenerRol.map((option) => (
+                      <option key={option.Roles_Id} value={option.Roles_Id}>
+                        {option.Roles_Nombre} (ID: {option.Roles_Id})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Persona_Id" className="form-label-modern">
+                    <span className="label-icon">👨‍💼</span>
+                    Persona
+                  </label>
+                  <select
+                    className="form-control-modern"
+                    id="Persona_Id"
+                    value={Persona_Id}
+                    onChange={(event) => setPersonaId(event.target.value)}
+                  >
+                    <option value="" disabled>Seleccione una opción</option>
+                    {ObtenerPersona.map((option) => (
+                      <option key={option.Persona_Id} value={option.Persona_Id}>
+                        {option.Persona_Nombre} {option.Persona_PApellido} {option.Persona_SApellido}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="action-buttons">
+              {editar ? (
+                <>
+                  <button
+                    type="button"
+                    className="btn-action btn-update"
+                    onClick={actualizar}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M15 6L9 12L5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Actualizar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-action btn-cancel"
+                    onClick={limpiarDatos}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M6 6L14 14M6 14L14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-action btn-register"
+                  onClick={add}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 5V15M5 10H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Registrar
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      <br />
-      <div className="row">
-        <div className="col-md-6">
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">Rol</span>
-            <select
-              className="form-select"
-              aria-label="Default select example"
-              value={Roles_Id}
-              onChange={(event) => setRolId(event.target.value)}
-            >
-              <option value="" disabled>Seleccione una opción</option>
-              {obtenerRol.map((option) => (
-                <option key={option.Roles_Id} value={option.Roles_Id}>
-                  {option.Roles_Nombre} ID: {option.Roles_Id}
-                </option>
-              ))}
-            </select>
+
+        {/* Table Card */}
+        <div className="noticias-table-card">
+          <div className="card-header-custom">
+            <h5 className="mb-0">📋 Lista de Usuarios</h5>
+          </div>
+          <div className="card-body-custom">
+            {Adecuacion_List.length > 0 ? (
+              <div className="table-responsive">
+                <table className="table-modern">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Contraseña</th>
+                      <th>Rol</th>
+                      <th>Persona</th>
+                      <th className="text-end">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Adecuacion_List.map((val, key) => (
+                      <tr key={key} className="table-row-hover">
+                        <td className="td-id">
+                          <span className="badge-id">{val.Usuarios_Id}</span>
+                        </td>
+                        <td>
+                          <span className="badge bg-primary">{val.Usuarios_Nombre}</span>
+                        </td>
+                        <td>
+                          <span className="badge bg-secondary">••••••••</span>
+                        </td>
+                        <td>
+                          <span className="badge bg-info text-dark">Rol {val.Roles_Id}</span>
+                        </td>
+                        <td className="td-nombre">
+                          <div className="nombre-wrapper">
+                            <span className="nombre-text">{obtenerNombrePersonaPorId(val.Persona_Id)}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="action-buttons-table">
+                            <button
+                              className="btn-table btn-edit"
+                              onClick={() => editarAdecuacion(val)}
+                              title="Editar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M12.5 2.5L15.5 5.5L6 15H3V12L12.5 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Editar
+                            </button>
+                            <button
+                              className="btn-table btn-delete"
+                              onClick={() => eliminar(val.Usuarios_Id, val.Usuarios_Nombre)}
+                              title="Eliminar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M3 5H15M7 8V13M11 8V13M4 5L5 15H13L14 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon">📭</div>
+                <p>No hay usuarios registrados</p>
+              </div>
+            )}
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">Persona</span>
-            <select
-              className="form-select"
-              aria-label="Default select example"
-              value={Persona_Id}
-              onChange={(event) => setPersonaId(event.target.value)}
-            >
-              <option value="" disabled>Seleccione una opción</option>
-              {ObtenerPersona.map((option) => (
-                <option key={option.Persona_Id} value={option.Persona_Id}>
-                  {option.Persona_Nombre} {option.Persona_PApellido} {option.Persona_SApellido}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-      <div>
-        {editar ? (
-          <div>
-            <button
-              type="submit"
-              className="btn btn-warning m-3"
-              onClick={actualizar}
-            >
-              Actualizar
-            </button>
-            <button
-              type="submit"
-              className="btn btn-danger m-3"
-              onClick={limpiarDatos}
-            >
-              Cancelar
-            </button>
-          </div>
-        ) : (
-          <button type="submit" className="btn btn-primary m-3" onClick={add}>
-            Registrar
-          </button>
-        )}
-        <Link to="/admindashboard" className="btn btn-secondary m-3">
-          Menú Principal
-        </Link>
-      </div>
-      <div className="table-responsive">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Contraseña</th>
-              <th scope="col">Rol</th>
-              <th scope="col">Persona</th>
-              <th scope="col">Funcionalidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Adecuacion_List.map((val, key) => (
-              <tr key={key}>
-                <th>{val.Usuarios_Id}</th>
-                <td>{val.Usuarios_Nombre}</td>
-                <th>{val.Usuarios_contraseña}</th>
-                <td>{val.Roles_Id}</td>
-                <td>{obtenerNombrePersonaPorId(val.Persona_Id)}</td>
-                <td>
-                  <div className="btn-group" role="group">
-                    <button
-                      className="btn btn-info"
-                      onClick={() => editarAdecuacion(val)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => eliminar(val.Usuarios_Id, val.Usuarios_Nombre)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   );

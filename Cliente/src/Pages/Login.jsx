@@ -82,51 +82,84 @@ const Login = () => {
 
   return (
     <>
-      <div className="d-flex justify-content-center align-items-center">
-        <div>
-          <h2 className="m-3">Ingreso del usuario</h2>
-          <form className="container" onSubmit={Ingresar}>
-            <div className="form-group">
-              <label>Nombre del usuario:</label>
-              <input
-                type="text"
-                className="form-control"
-                value={Usuarios_Nombre}
-                onChange={(e) => setUsuarios_Nombre(e.target.value)}
-                required
-              />
+      <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+        <div className="container py-5">
+          <div className="row justify-content-center">
+            <div className="col-md-6 col-lg-5">
+              {/* Header */}
+              <div className="noticias-header mb-4 text-center">
+                <div className="title-icon mx-auto mb-3">
+                  🔐
+                </div>
+                <h1 className="noticias-title mb-2">Iniciar Sesión</h1>
+                <p className="noticias-subtitle mb-0">Accede a tu cuenta del sistema</p>
+              </div>
+
+              {/* Login Form Card */}
+              <div className="noticias-form-card">
+                <div className="card-body-custom">
+                  <form onSubmit={Ingresar}>
+                    <div className="form-group-modern">
+                      <label htmlFor="Usuarios_Nombre" className="form-label-modern">
+                        <span className="label-icon">👤</span>
+                        Nombre de Usuario
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control-modern"
+                        id="Usuarios_Nombre"
+                        value={Usuarios_Nombre}
+                        onChange={(e) => setUsuarios_Nombre(e.target.value)}
+                        placeholder="Ingrese su usuario"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group-modern">
+                      <label htmlFor="Usuarios_contraseña" className="form-label-modern">
+                        <span className="label-icon">🔒</span>
+                        Contraseña
+                      </label>
+                      <input
+                        type="password"
+                        className="form-control-modern"
+                        id="Usuarios_contraseña"
+                        value={Usuarios_contraseña}
+                        onChange={(e) => setUsuarios_contraseña(e.target.value)}
+                        placeholder="Ingrese su contraseña"
+                        required
+                      />
+                    </div>
+
+                    <div className="action-buttons">
+                      <button type="submit" className="btn-action btn-register w-100">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                          <path d="M10 2L3 7V17H7V12H13V17H17V7L10 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Iniciar Sesión
+                      </button>
+                    </div>
+
+                    <div className="text-center mt-3">
+                      <button type="button" className="btn btn-link text-decoration-none">
+                        ¿Olvidó su contraseña?
+                      </button>
+                    </div>
+                  </form>
+
+                  <div className="text-center mt-4 pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+                    <p className="mb-2" style={{ fontSize: '0.9rem' }}>¿No tiene una cuenta?</p>
+                    <Link to="/register" className="btn-action btn-update">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 5V15M5 10H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                      Registrarse
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="form-group">
-              <label>Contraseña:</label>
-              <input
-                type="password"
-                className="form-control"
-                value={Usuarios_contraseña}
-                onChange={(e) => setUsuarios_contraseña(e.target.value)}
-                required
-              />
-            </div>
-            <div className="">
-              <button type="submit" className="btn btn-primary ml-2 m-3">
-                Iniciar sesión
-              </button>
-              <button type="button" className="btn btn-success ml-2">
-                Olvidó su contraseña
-              </button>
-            </div>
-            <div>
-              <p className="mt-3 form ">
-                ¿No tiene un usuario?
-                <br></br>
-                <Link
-                  to="/register"
-                  className="btn btn-outline-primary cursor-pointer"
-                >
-                  Regístrese aquí
-                </Link>
-              </p>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
       <Outlet />

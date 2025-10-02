@@ -49,6 +49,7 @@ app.post("/createRegistroPersona", (req, res) => {
     Persona_Sexo,
     Persona_FNAciomiento,
     Persona_Correo,
+    Persona_Nacionalidad,
   } = req.body;
 
   if (!Persona_Nombre || !Persona_Cedula || !Persona_Sexo) {
@@ -57,11 +58,11 @@ app.post("/createRegistroPersona", (req, res) => {
 
   // Valores por defecto para campos no proporcionados en el registro
   const Persona_LuNacimiento = "";
-  const Persona_Nacionalidad = "Costarricense"; // Valor por defecto
+  const nacionalidad = Persona_Nacionalidad || "Costarricense"; // Usar el valor enviado o "Costarricense" por defecto
 
   const sql = "INSERT INTO Personas (Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_LuNacimiento, Persona_FNAciomiento, Persona_Nacionalidad, Persona_Correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-  connection.query(sql, [Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_LuNacimiento, Persona_FNAciomiento, Persona_Nacionalidad, Persona_Correo], (err, result) => {
+  connection.query(sql, [Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_LuNacimiento, Persona_FNAciomiento, nacionalidad, Persona_Correo], (err, result) => {
     if (err) {
       console.error("Error al crear la persona:", err);
       return res.status(500).send("Error al crear la persona");

@@ -60,14 +60,28 @@ app.post("/createRegistroUsuario", (req, res) => {
 });
 
 app.post("/createRegistroPersona", (req, res) => {
-  const { Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_FNAciomiento, Persona_Correo } = req.body;
+  const { 
+    Persona_Nombre, 
+    Persona_PApellido, 
+    Persona_SApellido, 
+    Persona_Cedula, 
+    Persona_Edad, 
+    Persona_Sexo, 
+    Persona_FNAciomiento, 
+    Persona_Correo,
+    Persona_Nacionalidad 
+  } = req.body;
+
+  // Valores por defecto para campos no proporcionados
+  const Persona_LuNacimiento = "";
+  const nacionalidad = Persona_Nacionalidad || "Costarricense";
 
   connection.query(
-    "INSERT INTO Personas (Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_FNAciomiento, Persona_Correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-    [Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_FNAciomiento, Persona_Correo],
+    "INSERT INTO Personas (Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_LuNacimiento, Persona_FNAciomiento, Persona_Nacionalidad, Persona_Correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [Persona_Nombre, Persona_PApellido, Persona_SApellido, Persona_Cedula, Persona_Edad, Persona_Sexo, Persona_LuNacimiento, Persona_FNAciomiento, nacionalidad, Persona_Correo],
     (err, result) => {
       if (err) {
-        console.log(err);
+        console.error("Error al crear el registro de persona:", err);
         res.status(500).send("Error al crear el registro de persona");
       } else {
         res.json({ message: "Registro de persona creado exitosamente", personaId: result.insertId });

@@ -142,112 +142,197 @@ const Materias = () => {
   }, [darkMode]);
 
   return (
-    <div className="container">
-      <h1>Formulario para registrar materias</h1>
-
-      {/* Datos personales del estudiante */}
-      <h2>Datos de la materia</h2>
-      <div className="form-group">
-        <label htmlFor="Materias_Nombre">Nombre de la materia:</label>
-        <input
-          type="text"
-          className={`form-control ${!campoValidoNombre ? "is-invalid" : ""}`} // Aplica la clase 'is-invalid' si el campo no es válido
-          id="Materias_Nombre"
-          value={Materias_Nombre}
-          onChange={(e) => {
-            setNombre(e.target.value);
-            setCampoValidoNombre(true); // Restaura el estado de campo de nombre válido a verdadero cuando se realiza un cambio en el campo
-          }}
-        />
-        {!campoValidoNombre && (
-          <div className="invalid-feedback">Este campo es obligatorio</div>
-        )}{" "}
-        {/* Muestra un mensaje de error si el campo no es válido */}
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="Grado_Aula">Tipo de materia:</label>
-        <input
-          type="text"
-          className={`form-control ${!campoValidoTipo ? "is-invalid" : ""}`} // Aplica la clase 'is-invalid' si el campo no es válido
-          id="Materias_Tipo"
-          value={Materias_Tipo}
-          onChange={(e) => {
-            setTipo(e.target.value);
-            setCampoValidoTipo(true); // Restaura el estado de campo de tipo válido a verdadero cuando se realiza un cambio en el campo
-          }}
-        />
-        {!campoValidoTipo && (
-          <div className="invalid-feedback">Este campo es obligatorio</div>
-        )}{" "}
-        {/* Muestra un mensaje de error si el campo no es válido */}
-      </div>
-
-      <div>
-        {editar ? (
-          <div>
-            <button
-              type="submit"
-              className="btn btn-warning m-3"
-              onClick={actualizar}
-            >
-              Actualizar
-            </button>
-            <button
-              type="submit"
-              className="btn btn-danger m-3"
-              onClick={limpiarDatos}
-            >
-              Cancelar
-            </button>
+    <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
+      <div className="container py-4">
+        {/* Header */}
+        <div className="noticias-header mb-5">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div className="d-flex align-items-center gap-3">
+              <div className="title-icon">
+                📚
+              </div>
+              <div>
+                <h1 className="noticias-title mb-1">Gestión de Materias</h1>
+                <p className="noticias-subtitle mb-0">Administración de materias del centro educativo</p>
+              </div>
+            </div>
+            <Link to="/profesordashboard" className="btn-back">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Menú Principal
+            </Link>
           </div>
-        ) : (
-          <button type="submit" className="btn btn-primary m-3" onClick={add}>
-            Registrar
-          </button>
-        )}
-        <Link to="/profesordashboard" className="btn btn-secondary m-3">
-          Menú Principal
-        </Link>
-      </div>
+        </div>
 
-      <div className="form-group">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Tipo</th>
-              <th scope="col">Funcionalidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Materias_List.map((val, key) => (
-              <tr key={key}>
-                <th>{val.Materias_id}</th>
-                <td>{val.Materias_Nombre}</td>
-                <td>{val.Materias_Tipo}</td>
+        {/* Form Card */}
+        <div className="noticias-form-card mb-5">
+          <div className="card-header-custom">
+            <h5 className="mb-0">
+              {editar ? '✏️ Editar Materia' : '➕ Registrar Materia'}
+            </h5>
+          </div>
+          <div className="card-body-custom">
+            <div className="row">
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Materias_Nombre" className="form-label-modern">
+                    <span className="label-icon">📖</span>
+                    Nombre de la Materia
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Materias_Nombre"
+                    value={Materias_Nombre}
+                    onChange={(e) => {
+                      setNombre(e.target.value);
+                      setCampoValidoNombre(true);
+                    }}
+                    placeholder="Ej: Matemáticas, Español, Ciencias..."
+                  />
+                  {!campoValidoNombre && (
+                    <div className="text-danger mt-2">
+                      <small>Este campo es obligatorio</small>
+                    </div>
+                  )}
+                </div>
+              </div>
 
-                <td>
-                  <div className="btn-group" role="group">
-                    <button
-                      className="btn btn-info"
-                      onClick={() => editarGrado(val)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => eliminar(val.Materias_id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Materias_Tipo" className="form-label-modern">
+                    <span className="label-icon">🏷️</span>
+                    Tipo de Materia
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Materias_Tipo"
+                    value={Materias_Tipo}
+                    onChange={(e) => {
+                      setTipo(e.target.value);
+                      setCampoValidoTipo(true);
+                    }}
+                    placeholder="Ej: Básica, Especial, Técnica..."
+                  />
+                  {!campoValidoTipo && (
+                    <div className="text-danger mt-2">
+                      <small>Este campo es obligatorio</small>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="action-buttons">
+              {editar ? (
+                <>
+                  <button
+                    type="button"
+                    className="btn-action btn-update"
+                    onClick={actualizar}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M15 6L9 12L5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Actualizar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-action btn-cancel"
+                    onClick={limpiarDatos}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M6 6L14 14M6 14L14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-action btn-register"
+                  onClick={add}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 5V15M5 10H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Registrar
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Table Card */}
+        <div className="noticias-table-card">
+          <div className="card-header-custom">
+            <h5 className="mb-0">📋 Lista de Materias</h5>
+          </div>
+          <div className="card-body-custom">
+            {Materias_List.length > 0 ? (
+              <div className="table-responsive">
+                <table className="table-modern">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Tipo</th>
+                      <th className="text-end">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Materias_List.map((val, key) => (
+                      <tr key={key} className="table-row-hover">
+                        <td className="td-id">
+                          <span className="badge-id">{val.Materias_id}</span>
+                        </td>
+                        <td className="td-nombre">
+                          <div className="nombre-wrapper">
+                            <span className="nombre-text">{val.Materias_Nombre}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="badge bg-info text-dark">{val.Materias_Tipo}</span>
+                        </td>
+                        <td>
+                          <div className="action-buttons-table">
+                            <button
+                              className="btn-table btn-edit"
+                              onClick={() => editarGrado(val)}
+                              title="Editar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M12.5 2.5L15.5 5.5L6 15H3V12L12.5 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Editar
+                            </button>
+                            <button
+                              className="btn-table btn-delete"
+                              onClick={() => eliminar(val.Materias_id)}
+                              title="Eliminar"
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M3 5H15M7 8V13M11 8V13M4 5L5 15H13L14 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon">📭</div>
+                <p>No hay materias registradas</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

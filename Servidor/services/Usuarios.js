@@ -14,7 +14,7 @@ app.post("/createUsuarioslogin", (req, res) => {
  
  
   connection.query(
-    "INSERT INTO Usuarios(usuarios_Nombre,Usuarios_contraseña,Roles_Id,Persona_Id) VALUES (?,?,?,?)",
+    "INSERT INTO Usuarios(Usuarios_Nombre,Usuarios_contraseña,Roles_Id,Persona_Id) VALUES (?,?,?,?)",
     [
       usuarios_Nombre,
       Usuarios_contraseña,
@@ -34,9 +34,9 @@ app.post("/createUsuarioslogin", (req, res) => {
 
 // Endpoint específico para registro de nuevos usuarios
 app.post("/createRegistroUsuario", (req, res) => {
-  const { usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id } = req.body;
+  const { Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id } = req.body;
 
-  if (!usuarios_Nombre || !Usuarios_contraseña || !Persona_Id) {
+  if (!Usuarios_Nombre || !Usuarios_contraseña || !Persona_Id) {
     return res.status(400).json({ 
       error: "Por favor completa todos los campos obligatorios" 
     });
@@ -46,8 +46,8 @@ app.post("/createRegistroUsuario", (req, res) => {
   const rolId = Roles_Id || 3;
 
   connection.query(
-    "INSERT INTO Usuarios(usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id) VALUES (?,?,?,?)",
-    [usuarios_Nombre, Usuarios_contraseña, rolId, Persona_Id],
+    "INSERT INTO Usuarios(Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id) VALUES (?,?,?,?)",
+    [Usuarios_Nombre, Usuarios_contraseña, rolId, Persona_Id],
     (err, result) => {
       if (err) {
         console.error("Error al crear el usuario:", err);
@@ -85,7 +85,7 @@ app.put("/actualizarUsuariosLogin", (req, res) => {
   const Persona_Id= req.body.Persona_Id;
   
   connection.query(
-    "UPDATE Usuarios SET usuarios_Nombre=?,Usuarios_contraseña=?,Roles_Id=? , Persona_Id=? WHERE Usuarios_Id=?",
+    "UPDATE Usuarios SET Usuarios_Nombre=?,Usuarios_contraseña=?,Roles_Id=? , Persona_Id=? WHERE Usuarios_Id=?",
     [
         usuarios_Nombre,
         Usuarios_contraseña,

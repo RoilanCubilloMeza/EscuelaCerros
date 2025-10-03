@@ -4,13 +4,20 @@ import PropTypes from 'prop-types';
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(false);
+  // Inicializar darkMode desde localStorage o false por defecto
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('darkMode');
+    return savedTheme === 'true';
+  });
   
   useEffect(() => {
-    // Agregar clase de transición al body
-    document.body.style.transition = 'background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+    // Guardar el tema en localStorage cada vez que cambia
+    localStorage.setItem('darkMode', darkMode);
     
-    // Aplicar tema
+    // Agregar clase de transición suave al body (estilo Telegram)
+    document.body.style.transition = 'background-color 0.7s cubic-bezier(0.4, 0.0, 0.2, 1), color 0.7s cubic-bezier(0.4, 0.0, 0.2, 1)';
+    
+    // Aplicar tema con animación suave
     if (darkMode) {
       document.body.classList.add('theme-dark');
       document.body.classList.remove('theme-light');

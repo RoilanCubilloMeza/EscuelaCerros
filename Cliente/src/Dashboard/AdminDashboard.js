@@ -12,6 +12,7 @@ import {
   FaNewspaper,
   FaUserCircle,
   FaBriefcase,
+  FaChalkboardTeacher,
 } from "react-icons/fa";
 import { HiAdjustments } from "react-icons/hi";
 
@@ -83,7 +84,7 @@ const AdminDashboard = () => {
         : "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
     },
     {
-      category: "Estudiantes",
+      category: "Personas",
       icon: <FaUsers size={32} />,
       path: "/Estudiantes",
       gradient: darkMode
@@ -105,6 +106,14 @@ const AdminDashboard = () => {
       gradient: darkMode
         ? "linear-gradient(135deg, #8b5cf6 0%, #1e3a8a 100%)"
         : "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+    },
+    {
+      category: "Profesores",
+      icon: <FaChalkboardTeacher size={32} />,
+      path: "/Profesores",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #0891b2 0%, #0e7490 100%)"
+        : "linear-gradient(135deg, #56ccf2 0%, #2f80ed 100%)",
     },
   ];
 

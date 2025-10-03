@@ -34,6 +34,7 @@ app.use(require('./services/Justificacion'))
 app.use(require('./services/Noticias'))
 app.use(require('./services/Notas'))
 app.use(require('./services/NotasFinales'))
+app.use(require('./services/Profesores'))
 
 
 app.listen(process.env.PORT||3001,() => {

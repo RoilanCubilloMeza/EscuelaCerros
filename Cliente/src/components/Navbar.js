@@ -138,41 +138,154 @@ const CustomNavbar = () => {
 
 const DarkModeButton = ({ darkMode, toggleDarkMode }) => {
   const [isAnimating, setIsAnimating] = React.useState(false);
+  const buttonRef = React.useRef(null);
 
-  const handleToggle = () => {
+  const createParticles = (x, y, isDarkMode) => {
+    const particleCount = 12;
+    const particles = [];
+    
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'theme-particle';
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      
+      const angle = (Math.PI * 2 * i) / particleCount;
+      const velocity = 100 + Math.random() * 50;
+      const tx = Math.cos(angle) * velocity;
+      const ty = Math.sin(angle) * velocity;
+      
+      particle.style.setProperty('--tx', `${tx}px`);
+      particle.style.setProperty('--ty', `${ty}px`);
+      
+      if (isDarkMode) {
+        particle.style.background = `rgba(255, 215, 0, ${0.8 - i * 0.05})`;
+        particle.style.boxShadow = '0 0 10px rgba(255, 215, 0, 0.8)';
+      } else {
+        particle.style.background = `rgba(224, 230, 237, ${0.8 - i * 0.05})`;
+        particle.style.boxShadow = '0 0 10px rgba(224, 230, 237, 0.8)';
+      }
+      
+      document.body.appendChild(particle);
+      particles.push(particle);
+      
+      setTimeout(() => particle.classList.add('active'), 10);
+    }
+    
+    setTimeout(() => {
+      particles.forEach(p => p.remove());
+    }, 800);
+  };
+
+  const handleToggle = (e) => {
+    if (isAnimating) return;
+    
     setIsAnimating(true);
-    toggleDarkMode();
-    setTimeout(() => setIsAnimating(false), 600);
+    
+    const button = buttonRef.current;
+    const rect = button.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    
+    // Crear partículas antes de la transición
+    createParticles(x, y, darkMode);
+    
+    // Calcular el radio necesario para cubrir toda la pantalla
+    const maxRadius = Math.sqrt(
+      Math.pow(Math.max(x, window.innerWidth - x), 2) +
+      Math.pow(Math.max(y, window.innerHeight - y), 2)
+    );
+    
+    // Crear overlay de transición
+    const overlay = document.createElement('div');
+    overlay.className = 'theme-transition-overlay';
+    overlay.style.left = `${x}px`;
+    overlay.style.top = `${y}px`;
+    
+    if (darkMode) {
+      overlay.style.background = 'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(247,250,252,0.98) 40%, rgba(226,232,240,1) 100%)';
+    } else {
+      overlay.style.background = 'radial-gradient(circle, rgba(26,32,44,0.95) 0%, rgba(45,55,72,0.98) 40%, rgba(26,31,46,1) 100%)';
+    }
+    
+    document.body.appendChild(overlay);
+    
+    // Crear anillo de pulso
+    const ring = document.createElement('div');
+    ring.className = 'theme-pulse-ring';
+    ring.style.left = `${x}px`;
+    ring.style.top = `${y}px`;
+    ring.style.borderColor = darkMode ? 'rgba(255, 215, 0, 0.6)' : 'rgba(224, 230, 237, 0.6)';
+    document.body.appendChild(ring);
+    
+    setTimeout(() => ring.classList.add('active'), 10);
+    
+    // Iniciar animación del overlay
+    requestAnimationFrame(() => {
+      overlay.style.width = `${maxRadius * 2.2}px`;
+      overlay.style.height = `${maxRadius * 2.2}px`;
+      overlay.style.opacity = '1';
+    });
+    
+    // Cambiar tema en el momento perfecto
+    setTimeout(() => {
+      toggleDarkMode();
+    }, 400);
+    
+    // Desvanecer overlay
+    setTimeout(() => {
+      overlay.style.opacity = '0';
+      overlay.style.transform = 'translate(-50%, -50%) scale(1.1)';
+    }, 750);
+    
+    // Limpiar elementos
+    setTimeout(() => {
+      overlay.remove();
+      ring.remove();
+      setIsAnimating(false);
+    }, 1100);
   };
 
   return (
     <button 
+      ref={buttonRef}
       onClick={handleToggle} 
-      className={`btn theme-toggle-btn ${isAnimating ? 'theme-button-pulse' : ''}`}
+      className={`btn theme-toggle-btn ${isAnimating ? 'theme-button-active' : ''}`}
       style={{
         background: "transparent",
         border: "none",
         padding: "0.5rem",
         cursor: "pointer",
         position: "relative",
+        zIndex: 1001,
+        transition: "transform 0.2s ease",
       }}
+      disabled={isAnimating}
+      title={darkMode ? "Cambiar a modo día" : "Cambiar a modo noche"}
     >
-      <div className={`theme-icon-wrapper ${isAnimating ? 'theme-transitioning' : ''}`}>
+      <div className={`theme-icon-wrapper ${isAnimating ? 'theme-icon-spin' : ''}`}>
         {darkMode ? (
           <FaMoon 
             size={28} 
             color="#e0e6ed" 
-            className={`theme-icon-animated theme-moon ${isAnimating ? 'animate__animated animate__fadeInDown' : 'animate__animated animate__fadeIn'}`} 
+            className="theme-icon-animated theme-moon" 
+            style={{
+              filter: 'drop-shadow(0 0 8px rgba(224, 230, 237, 0.8))',
+              transition: 'all 0.3s ease'
+            }}
           />
         ) : (
           <FaSun 
             size={28} 
             color="#FFD700" 
-            className={`theme-icon-animated theme-sun ${isAnimating ? 'animate__animated animate__fadeInUp' : 'animate__animated animate__fadeIn'}`} 
+            className="theme-icon-animated theme-sun" 
+            style={{
+              filter: 'drop-shadow(0 0 12px rgba(255, 215, 0, 0.8))',
+              transition: 'all 0.3s ease'
+            }}
           />
         )}
       </div>
-      {isAnimating && <div className="theme-ripple-effect"></div>}
     </button>
   );
 };

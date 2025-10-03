@@ -19,6 +19,7 @@ import Tareas from "./Pages/Tareas";
 import Cotidiano from "./Pages/Cotidiano";
 import Asistencia from "./Pages/Asistencia";
 import Matricula from "./Pages/Matricula";
+import Profesores from "./Pages/Profesores";
 import AdminDashboard from "./Dashboard/AdminDashboard";
 import ProfesorDashboard from "./Dashboard/ProfesorDashboard";
 import EstudianteDashboard from "./Dashboard/EstudianteDashboard";
@@ -139,6 +140,16 @@ function App() {
                   <Matricula />
                 ) : (
                   <Navigate to="/Matricula" replace />
+                )
+              }
+            />
+            <Route
+              path="/Profesores"
+              element={
+                isAuthenticated ? (
+                  <Profesores />
+                ) : (
+                  <Navigate to="/Profesores" replace />
                 )
               }
             />

@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { UserProvider } from "./components/UserContext";
 import { ThemeProvider } from "./components/Theme";
 import Navbar from "./components/Navbar";
+import { AdminRoute, ProfesorRoute, EstudianteRoute, MultiRoleRoute } from "./components/PrivateRoute";
 import Login from "./Pages/Login";
 import Registration from "./Pages/Register";
 import Home from "./Pages/Home";
@@ -60,31 +61,25 @@ function App() {
             <Route
               path="/Estudiantes"
               element={
-                isAuthenticated ? (
+                <MultiRoleRoute allowedRoles={[1, 2]}>
                   <Persona />
-                ) : (
-                  <Navigate to="/Persona" replace />
-                )
+                </MultiRoleRoute>
               }
             />
             <Route
               path="/Encargado"
               element={
-                isAuthenticated ? (
+                <MultiRoleRoute allowedRoles={[1, 2]}>
                   <Encargado />
-                ) : (
-                  <Navigate to="/Encargado" replace />
-                )
+                </MultiRoleRoute>
               }
             />
             <Route
               path="/Enfermedades"
               element={
-                isAuthenticated ? (
+                <MultiRoleRoute allowedRoles={[1, 2]}>
                   <Enfermedades />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
+                </MultiRoleRoute>
               }
             />
             <Route
@@ -156,27 +151,25 @@ function App() {
             <Route
               path="/Usuarios"
               element={
-                isAuthenticated ? (
+                <AdminRoute>
                   <Usuarios />
-                ) : (
-                  <Navigate to="/Usuarios" replace />
-                )
+                </AdminRoute>
               }
             />
             <Route
               path="/Roles"
               element={
-                isAuthenticated ? <Roles /> : <Navigate to="/Roles" replace />
+                <AdminRoute>
+                  <Roles />
+                </AdminRoute>
               }
             />
             <Route
               path="/Noticias"
               element={
-                isAuthenticated ? (
+                <AdminRoute>
                   <Noticias />
-                ) : (
-                  <Navigate to="/Noticias" replace />
-                )
+                </AdminRoute>
               }
             />
             <Route
@@ -254,31 +247,25 @@ function App() {
             <Route
               path="/AdminDashboard"
               element={
-                isAuthenticated ? (
+                <AdminRoute>
                   <AdminDashboard />
-                ) : (
-                  <Navigate to="/AdminDashboard" replace />
-                )
+                </AdminRoute>
               }
             />
             <Route
               path="/ProfesorDashboard"
               element={
-                isAuthenticated ? (
+                <ProfesorRoute>
                   <ProfesorDashboard />
-                ) : (
-                  <Navigate to="/ProfesorDashboard" replace />
-                )
+                </ProfesorRoute>
               }
             />
             <Route
               path="/EstudianteDashboard"
               element={
-                isAuthenticated ? (
+                <EstudianteRoute>
                   <EstudianteDashboard />
-                ) : (
-                  <Navigate to="/EstudianteDashboard" replace />
-                )
+                </EstudianteRoute>
               }
             />
             <Route

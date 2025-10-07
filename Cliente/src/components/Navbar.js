@@ -4,6 +4,8 @@ import { useTheme } from "./Theme";
 import { FaSun, FaMoon, FaUser } from "react-icons/fa";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import authService from "../services/authService";
+import Swal from "sweetalert2";
 import "animate.css/animate.min.css";
 
 const LogoutButton = ({ onLogout }) => (
@@ -15,18 +17,24 @@ const LogoutButton = ({ onLogout }) => (
 const CustomNavbar = () => {
   const { darkMode, setDarkMode } = useTheme();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    setUsername(localStorage.getItem("username"));
-  }, []);
+    const checkSession = () => {
+      if (authService.isSessionValid()) {
+        const user = authService.getCurrentUser();
+        setIsAuthenticated(true);
+        setUsername(user.username);
+      } else {
+        setIsAuthenticated(false);
+        setUsername("");
+      }
+    };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setUsername(localStorage.getItem("username"));
-    }, 1000);
+    checkSession();
+    const interval = setInterval(checkSession, 5000); // Verificar cada 5 segundos
 
     return () => clearInterval(interval);
   }, []);
@@ -57,22 +65,49 @@ const CustomNavbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    localStorage.removeItem("userRole");
-    setUsername("");
-    navigate("/login");
+    Swal.fire({
+      title: "¿Cerrar sesión?",
+      text: "¿Estás seguro de que deseas cerrar tu sesión?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, cerrar sesión",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        authService.clearSession();
+        setUsername("");
+        setIsAuthenticated(false);
+        navigate("/");
+        Swal.fire({
+          title: "Sesión cerrada",
+          text: "Has cerrado sesión exitosamente",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    });
   };
 
   const handleGoToDashboard = () => {
-    const role = localStorage.getItem("userRole");
+    const user = authService.getCurrentUser();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
     
-    if (role === "1") {
-      navigate("/admindashboard");
-    } else if (role === "2") {
-      navigate("/profesordashboard");
-    } else {
-      navigate("/estudiantedashboard");
+    switch (user.userRole) {
+      case 1:
+        navigate("/admindashboard");
+        break;
+      case 2:
+        navigate("/profesordashboard");
+        break;
+      default:
+        navigate("/estudiantedashboard");
+        break;
     }
   };
 
@@ -100,7 +135,7 @@ const CustomNavbar = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav className="align-items-center ms-auto">
-            {token ? (
+            {isAuthenticated ? (
               <>
                 <Nav.Link 
                   onClick={handleGoToDashboard} 

@@ -4,6 +4,7 @@ import { useNavigate, Link, Outlet, useLocation } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 import Axios from "axios";
 import API_BASE_URL from "../config/api";
+import authService from "../services/authService";
 
 const Login = () => {
   const [Usuarios_Nombre, setUsuarios_Nombre] = useState("");
@@ -14,7 +15,23 @@ const Login = () => {
 
   useEffect(() => {
     console.log("Ubicación actual:", location.pathname);
-  }, [location]);
+    
+    // Si ya hay una sesión válida, redirigir al dashboard correspondiente
+    if (authService.isSessionValid()) {
+      const user = authService.getCurrentUser();
+      switch (user.userRole) {
+        case 1:
+          navigate("/AdminDashboard");
+          break;
+        case 2:
+          navigate("/ProfesorDashboard");
+          break;
+        default:
+          navigate("/EstudianteDashboard");
+          break;
+      }
+    }
+  }, [location, navigate]);
 
   const Ingresar = async (e) => {
     e.preventDefault();
@@ -25,12 +42,20 @@ const Login = () => {
         Usuarios_contraseña,
       });
 
-      const { token, Roles_Id } = response.data;
+      const { token, Roles_Id, username } = response.data;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("username", response.data.username); // Guarda el nombre del usuario en el localStorage
-      localStorage.setItem("userRole", Roles_Id); // Guarda el rol del usuario
+      // Usar el servicio de autenticación para establecer la sesión con tiempo de expiración
+      authService.setSession(token, username || Usuarios_Nombre, Roles_Id);
 
+      // Mostrar mensaje de éxito con información de duración de sesión
+      Swal.fire({
+        title: "Login exitoso",
+        html: `<i>¡Hola, <strong>${username || Usuarios_Nombre}!</strong> Bienvenido(a)<br><small>Tu sesión expirará en 1 hora</small></i>`,
+        icon: "success",
+        timer: 3000,
+      });
+
+      // Navegar según el rol
       switch (Roles_Id) {
         case 1:
           navigate("/AdminDashboard");
@@ -42,16 +67,9 @@ const Login = () => {
           navigate("/EstudianteDashboard");
           break;
       }
-
-      Swal.fire({
-        title: "Login exitoso",
-        html: `<i>¡Hola, <strong>${Usuarios_Nombre}!</strong> Bienvenido(a)`,
-        icon: "success",
-        timer: 3000,
-      });
     } catch (error) {
       Swal.fire({
-        title: "<strong >Login fallido</strong>",
+        title: "<strong>Login fallido</strong>",
         html: `<i>El usuario <strong>${Usuarios_Nombre}</strong> no existe. Verifique sus datos.</i>`,
         icon: "error",
         timer: 3000,

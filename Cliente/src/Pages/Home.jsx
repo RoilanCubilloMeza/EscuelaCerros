@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/iframe-has-title */
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FaFacebook, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTheme } from "../components/Theme";
 import "animate.css/animate.min.css";
@@ -86,34 +86,80 @@ const Home = () => {
     setCurrentSlide(index);
   };
 
-  return (
-    <div className={`home-container ${darkMode ? "bg-dark text-white" : "bg-light text-dark"}`} style={{minHeight: '100vh'}}>
-      
+  const heroStyle = {
+    minHeight: '100vh',
+    '--hero-image': `url(${process.env.PUBLIC_URL || ''}/EscuelaHome.jpg)`
+  };
 
-      {/* Slider de Noticias/Eventos */}
-      <section className="news-section">
+  // Normaliza y valida el texto de actividad (usa el nombre): 5 a 500 caracteres
+  const getActivityText = useCallback((nombre) => {
+    if (!nombre) return null;
+    const t = String(nombre).trim();
+    if (t.length < 5) return null;
+    return t.length > 500 ? `${t.slice(0, 500)}...` : t;
+  }, []);
+
+  // Clasifica el texto por longitud: short, medium, long
+  const getTextVariant = useCallback((t) => {
+    if (!t) return null;
+    const len = t.length;
+    if (len <= 50) return 'short';
+    if (len <= 200) return 'medium';
+    return 'long';
+  }, []);
+
+  const currentText = materiasList[currentSlide]
+    ? getActivityText(materiasList[currentSlide].Eventos_Nombre)
+    : null;
+
+  const currentVariant = useMemo(() => getTextVariant(currentText), [currentText, getTextVariant]);
+
+  return (
+    <div
+      className={`home-container ${darkMode ? "bg-dark text-white" : "bg-light text-dark"}`}
+      style={heroStyle}
+    >
+      {/* Noticias/Eventos - Primera Sección */}
+      <section className="news-section news-hero">
+        <div className="news-header container">
+          <div className="news-header-content">
+            <span className="section-eyebrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="eyebrow-icon">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              Noticias & Eventos
+            </span>
+            <h2 className="section-title-hero">Mantente informado</h2>
+            <p className="section-subtitle-hero">Conoce las últimas actividades, logros y anuncios de nuestra comunidad educativa</p>
+          </div>
+        </div>
+
+        {!imagesLoaded && (
+          <div className={`news-skeleton ${darkMode ? 'skeleton-dark' : 'skeleton-light'}`}>
+            <div className="skeleton-card">
+              <div className="skeleton-media" />
+              <div className="skeleton-caption" />
+            </div>
+          </div>
+        )}
+
         {imagesLoaded && materiasList.length > 0 && (
-          <div className={`news-slider ${darkMode ? 'slider-dark' : 'slider-light'}`}>
+          <div className={`news-slider variant-${currentVariant || 'medium'} ${darkMode ? 'slider-dark' : 'slider-light'}`}>
             <div className="slider-container">
               {materiasList.map((val, index) => (
                 <div
                   key={index}
                   className={`slide ${index === currentSlide ? 'active' : ''}`}
                 >
-                  <div className="slide-image-wrapper">
-                    <img
-                      src={`${API_BASE_URL}/getImage/${val.Evento_id}`}
-                      alt={val.Eventos_Nombre}
-                      className="slide-image"
-                    />
-                    <div className="slide-overlay"></div>
-                  </div>
-                  <div className="slide-content">
-                    <div className="slide-text">
-                      <h1 className="slide-title">
-                        {val.Eventos_Nombre}
-                      </h1>
+                  <div className="slide-card">
+                    <div className="slide-image-wrapper">
+                      <img
+                        src={`${API_BASE_URL}/getImage/${val.Evento_id}`}
+                        alt={val.Eventos_Nombre}
+                        className="slide-image"
+                      />
                     </div>
+                  
                   </div>
                 </div>
               ))}
@@ -144,7 +190,35 @@ const Home = () => {
             </div>
           </div>
         )}
+
+        {imagesLoaded && materiasList.length === 0 && (
+          <div className="container">
+            <div className={`no-news ${darkMode ? 'no-news-dark' : 'no-news-light'}`}>
+              <p>No hay noticias disponibles por el momento.</p>
+            </div>
+          </div>
+        )}
       </section>
+
+      {/* Sección de Actividad sincronizada con el slide actual (texto 5-255 chars) */}
+      {currentText && (
+        <section className={`activities-section variant-${currentVariant || 'medium'}`}>
+          <div className="container">
+            <article className={`activity-content ${darkMode ? 'activity-dark' : 'activity-light'}`}>
+              <div className="activity-decorator"></div>
+              <div className="activity-body">
+                <h3 className="activity-label">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="activity-icon">
+                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
+                  </svg>
+                  Información de la actividad
+                </h3>
+                <p className={`activity-text variant-${currentVariant || 'medium'}`}>{currentText}</p>
+              </div>
+            </article>
+          </div>
+        </section>
+      )}
 
       {/* Wave Divider */}
       <div className="section-divider">
@@ -157,7 +231,7 @@ const Home = () => {
       </div>
 
       {/* Sección de Estadísticas */}
-      <section className={`stats-section ${darkMode ? 'stats-dark' : 'stats-light'}`}>
+      <section className={`stats-section stats-outline ${darkMode ? 'stats-dark' : 'stats-light'}`}>
         <div className="container">
           <div className="stats-header">
             <h2 className="stats-title">Nuestra Trayectoria</h2>

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { FaFacebook, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTheme } from "../components/Theme";
 import "animate.css/animate.min.css";
+import "../styles/home-modern.css";
 import API_BASE_URL from "../config/api";
 
 const Home = () => {
@@ -88,93 +89,62 @@ const Home = () => {
   return (
     <div className={`home-container ${darkMode ? "bg-dark text-white" : "bg-light text-dark"}`} style={{minHeight: '100vh'}}>
       
-      {/* Banner de Bienvenida Flotante */}
-      <div className="welcome-banner">
-        <div className="welcome-content">
-          <span className="welcome-icon">🎓</span>
-          <div className="welcome-text">
-            <h3 className="welcome-title">Bienvenidos a Escuela Cerros</h3>
-            <p className="welcome-subtitle">Educación de calidad desde 1958</p>
-          </div>
-        </div>
-      </div>
 
       {/* Slider de Noticias/Eventos */}
-      {imagesLoaded && materiasList.length > 0 && (
-        <div className={`news-slider ${darkMode ? 'slider-dark' : 'slider-light'}`}>
-          <div className="slider-container">
-            {materiasList.map((val, index) => (
-              <div
-                key={index}
-                className={`slide ${index === currentSlide ? 'active' : ''} ${index < currentSlide ? 'prev' : 'next'}`}
-              >
-                <div className="slide-image-wrapper">
-                  <img
-                    src={`${API_BASE_URL}/getImage/${val.Evento_id}`}
-                    alt={val.Eventos_Nombre}
-                    className="slide-image"
-                  />
-                  <div className="slide-overlay"></div>
-                </div>
-                <div className="slide-content">
-                  <div className="container">
+      <section className="news-section">
+        {imagesLoaded && materiasList.length > 0 && (
+          <div className={`news-slider ${darkMode ? 'slider-dark' : 'slider-light'}`}>
+            <div className="slider-container">
+              {materiasList.map((val, index) => (
+                <div
+                  key={index}
+                  className={`slide ${index === currentSlide ? 'active' : ''}`}
+                >
+                  <div className="slide-image-wrapper">
+                    <img
+                      src={`${API_BASE_URL}/getImage/${val.Evento_id}`}
+                      alt={val.Eventos_Nombre}
+                      className="slide-image"
+                    />
+                    <div className="slide-overlay"></div>
+                  </div>
+                  <div className="slide-content">
                     <div className="slide-text">
-                      <span className="slide-badge animate__animated animate__fadeInDown">
-                        <span className="badge-icon">📰</span>
-                        Noticia
-                      </span>
-                      <h1 className="slide-title animate__animated animate__fadeInUp">
+                      <h1 className="slide-title">
                         {val.Eventos_Nombre}
                       </h1>
-                      <div className="slide-meta animate__animated animate__fadeInUp animate__delay-1s">
-                        <span className="meta-item">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"/>
-                          </svg>
-                          Evento Escolar
-                        </span>
-                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* Controles del Slider */}
-          <button className="slider-control slider-control-prev" onClick={prevSlide} aria-label="Anterior">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-          <button className="slider-control slider-control-next" onClick={nextSlide} aria-label="Siguiente">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
+            {/* Controles del Slider */}
+            <button className="slider-control slider-control-prev" onClick={prevSlide} aria-label="Anterior">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg>
+            </button>
+            <button className="slider-control slider-control-next" onClick={nextSlide} aria-label="Siguiente">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </button>
 
-          {/* Indicadores */}
-          <div className="slider-indicators">
-            {materiasList.map((_, index) => (
-              <button
-                key={index}
-                className={`indicator ${index === currentSlide ? 'active' : ''}`}
-                onClick={() => goToSlide(index)}
-                aria-label={`Ir a slide ${index + 1}`}
-              >
-                {index === currentSlide && <span className="progress-ring"></span>}
-              </button>
-            ))}
+            {/* Indicadores */}
+            <div className="slider-indicators">
+              {materiasList.map((_, index) => (
+                <button
+                  key={index}
+                  className={`indicator ${index === currentSlide ? 'active' : ''}`}
+                  onClick={() => goToSlide(index)}
+                  aria-label={`Ir a slide ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
-
-          {/* Contador */}
-          <div className="slider-counter">
-            <span className="counter-current">{currentSlide + 1}</span>
-            <span className="counter-separator">/</span>
-            <span className="counter-total">{materiasList.length}</span>
-          </div>
-        </div>
-      )}
+        )}
+      </section>
 
       {/* Wave Divider */}
       <div className="section-divider">
@@ -187,32 +157,36 @@ const Home = () => {
       </div>
 
       {/* Sección de Estadísticas */}
-      <div className={`stats-section ${darkMode ? 'stats-dark' : 'stats-light'}`}>
+      <section className={`stats-section ${darkMode ? 'stats-dark' : 'stats-light'}`}>
         <div className="container">
+          <div className="stats-header">
+            <h2 className="stats-title">Nuestra Trayectoria</h2>
+            <p className="stats-subtitle">Décadas de excelencia educativa</p>
+          </div>
           <div className="row g-4">
             <div className="col-6 col-md-3">
-              <div className="stat-card">
+              <div className="stat-card" data-aos="fade-up" data-aos-delay="0">
                 <div className="stat-icon">📚</div>
-                <div className="stat-number">65+</div>
+                <div className="stat-number" data-count="65">65+</div>
                 <div className="stat-label">Años de Historia</div>
               </div>
             </div>
             <div className="col-6 col-md-3">
-              <div className="stat-card">
+              <div className="stat-card" data-aos="fade-up" data-aos-delay="100">
                 <div className="stat-icon">👨‍🎓</div>
-                <div className="stat-number">250+</div>
+                <div className="stat-number" data-count="250">250+</div>
                 <div className="stat-label">Estudiantes</div>
               </div>
             </div>
             <div className="col-6 col-md-3">
-              <div className="stat-card">
+              <div className="stat-card" data-aos="fade-up" data-aos-delay="200">
                 <div className="stat-icon">👨‍🏫</div>
-                <div className="stat-number">15+</div>
+                <div className="stat-number" data-count="15">15+</div>
                 <div className="stat-label">Docentes</div>
               </div>
             </div>
             <div className="col-6 col-md-3">
-              <div className="stat-card">
+              <div className="stat-card" data-aos="fade-up" data-aos-delay="300">
                 <div className="stat-icon">🏆</div>
                 <div className="stat-number">100%</div>
                 <div className="stat-label">Compromiso</div>
@@ -220,7 +194,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
         <div id="historia" className="container-fluid px-3 px-md-4">
           <div className="row justify-content-center align-items-center my-4 my-md-5 animate__animated animate__fadeIn">

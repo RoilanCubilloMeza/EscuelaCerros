@@ -1,0 +1,525 @@
+/* ============================================
+   HOME PAGE - DISEÑO MODERNO 2025
+   Sistema de diseño completo renovado
+   ============================================ */
+
+/* ============================================
+   1. SLIDER DE NOTICIAS/EVENTOS
+   ============================================ */
+
+.news-section {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.news-slider {
+  position: relative;
+  width: 100%;
+  height: 75vh;
+  min-height: 500px;
+  max-height: 650px;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Modo Día - Fondo blanco limpio */
+.news-slider.slider-light {
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+/* Modo Noche - Fondo oscuro elegante */
+.news-slider.slider-dark {
+  background: linear-gradient(180deg, #1a1d29 0%, #0f1419 100%);
+}
+
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  z-index: 2;
+}
+
+.slide-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  height: 85%;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.slider-light .slide-image-wrapper {
+  border: 2px solid rgba(40, 167, 69, 0.2);
+  box-shadow: 0 15px 50px rgba(40, 167, 69, 0.15);
+}
+
+.slider-dark .slide-image-wrapper {
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 6s ease-in-out;
+}
+
+.slide.active .slide-image {
+  animation: gentleZoom 6s ease-in-out infinite alternate;
+}
+
+@keyframes gentleZoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.04); }
+}
+
+.slide-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(to top,
+    rgba(0, 0, 0, 0.80) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    transparent 100%);
+  z-index: 1;
+}
+
+.slide-content {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 2.5rem;
+  right: 2.5rem;
+  z-index: 2;
+}
+
+.slide-text {
+  max-width: 700px;
+}
+
+.slide-title {
+  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);
+  animation: fadeSlideUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Controles del Slider */
+.slider-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  border: 2px solid;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+}
+
+.slider-light .slider-control {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(40, 167, 69, 0.25);
+  color: #28a745;
+}
+
+.slider-light .slider-control:hover {
+  background: #28a745;
+  border-color: #28a745;
+  color: white;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.35);
+}
+
+.slider-dark .slider-control {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.slider-dark .slider-control:hover {
+  background: rgba(40, 167, 69, 0.85);
+  border-color: #28a745;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.slider-control-prev {
+  left: 2rem;
+}
+
+.slider-control-next {
+  right: 2rem;
+}
+
+/* Indicadores Minimalistas */
+.slider-indicators {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.7rem;
+  z-index: 10;
+  padding: 0.7rem 1.3rem;
+  border-radius: 50px;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+
+.slider-light .slider-indicators {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.slider-dark .slider-indicators {
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.slider-light .indicator {
+  background: rgba(40, 167, 69, 0.3);
+}
+
+.slider-light .indicator.active {
+  background: #28a745;
+  width: 24px;
+  border-radius: 4px;
+}
+
+.slider-dark .indicator {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.slider-dark .indicator.active {
+  background: #28a745;
+  width: 24px;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(40, 167, 69, 0.6);
+}
+
+/* ============================================
+   2. SECCIÓN DE ESTADÍSTICAS
+   ============================================ */
+
+.stats-section {
+  padding: 5rem 0;
+  transition: all 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fondos por modo */
+.stats-section.stats-light {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f8f4 100%);
+}
+
+.stats-section.stats-dark {
+  background: linear-gradient(135deg, #0f1419 0%, #1a1d29 50%, #121820 100%);
+}
+
+/* Header - Igual en ambos modos */
+.stats-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+  animation: fadeIn 0.8s ease;
+}
+
+.stats-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 0.8rem;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stats-subtitle {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+/* Colores de subtítulo por modo */
+.stats-light .stats-subtitle {
+  color: #6c757d;
+}
+
+.stats-dark .stats-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Tarjetas - Mismo tamaño y animación en ambos modos */
+.stat-card {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover - IGUAL en ambos modos */
+.stat-card:hover {
+  transform: translateY(-8px);
+}
+
+/* Colores de tarjetas por modo */
+.stats-light .stat-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(40, 167, 69, 0.1);
+}
+
+.stats-light .stat-card:hover {
+  box-shadow: 0 12px 35px rgba(40, 167, 69, 0.2);
+  border-color: rgba(40, 167, 69, 0.3);
+}
+
+.stats-dark .stat-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stats-dark .stat-card:hover {
+  box-shadow: 0 12px 35px rgba(40, 167, 69, 0.25);
+  border-color: rgba(40, 167, 69, 0.4);
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.05) 100%);
+}
+
+/* Iconos - Mismo tamaño y animación en ambos modos */
+.stat-icon {
+  font-size: 3.2rem;
+  margin-bottom: 1.2rem;
+  display: inline-block;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover iconos - IGUAL en ambos modos */
+.stat-card:hover .stat-icon {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+/* Colores de iconos por modo (solo drop-shadow) */
+.stats-light .stat-icon {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.stats-light .stat-card:hover .stat-icon {
+  filter: drop-shadow(0 6px 12px rgba(40, 167, 69, 0.3));
+}
+
+.stats-dark .stat-icon {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.stats-dark .stat-card:hover .stat-icon {
+  filter: drop-shadow(0 6px 12px rgba(40, 167, 69, 0.4));
+}
+
+/* Números - Mismo tamaño en ambos modos */
+.stat-number {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 900;
+  margin-bottom: 0.6rem;
+  line-height: 1;
+  transition: all 0.3s ease;
+}
+
+/* Colores de números por modo */
+.stats-light .stat-number {
+  color: #1b5e20;
+}
+
+.stats-dark .stat-number {
+  color: #28a745;
+  text-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
+}
+
+/* Labels - Mismo tamaño en ambos modos */
+.stat-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  transition: color 0.3s ease;
+}
+
+/* Colores de labels por modo */
+.stats-light .stat-label {
+  color: #6c757d;
+}
+
+.stats-dark .stat-label {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ============================================
+   3. ANIMACIONES GLOBALES
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   4. RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .news-slider {
+    height: 70vh;
+    min-height: 450px;
+  }
+
+  .slider-container {
+    padding: 1.5rem;
+  }
+
+  .slide {
+    padding: 1rem;
+  }
+
+  .slide-image-wrapper {
+    height: 80%;
+  }
+
+  .slide-content {
+    bottom: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
+  }
+
+  .slide-title {
+    font-size: 1.8rem;
+  }
+
+  .slider-control {
+    width: 44px;
+    height: 44px;
+  }
+
+  .slider-control-prev {
+    left: 1rem;
+  }
+
+  .slider-control-next {
+    right: 1rem;
+  }
+
+  .slider-indicators {
+    bottom: 1.5rem;
+    padding: 0.6rem 1rem;
+    gap: 0.5rem;
+  }
+
+  .indicator {
+    width: 7px;
+    height: 7px;
+  }
+
+  .indicator.active {
+    width: 20px;
+  }
+
+  .stats-section {
+    padding: 3.5rem 0;
+  }
+
+  .stats-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .stat-card {
+    padding: 2rem 1rem;
+  }
+
+  .stat-icon {
+    font-size: 2.5rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .slide-title {
+    font-size: 1.5rem;
+  }
+
+  .stat-icon {
+    font-size: 2.2rem;
+  }
+}

@@ -160,9 +160,9 @@ const Login = () => {
                     </div>
 
                     <div className="text-center mt-3">
-                      <button type="button" className="btn btn-link text-decoration-none">
+                      <Link to="/forgot-password" className="btn btn-link text-decoration-none">
                         ¿Olvidó su contraseña?
-                      </button>
+                      </Link>
                     </div>
                   </form>
 

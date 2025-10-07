@@ -15,6 +15,8 @@ const Usuarios = () => {
   const [Usuarios_contraseña, setContraseña] = useState("");
   const [Roles_Id, setRolId] = useState(3);
   const [Persona_Id, setPersonaId] = useState("");
+  const [Pregunta_Seguridad, setPreguntaSeguridad] = useState("");
+  const [Respuesta_Seguridad, setRespuestaSeguridad] = useState("");
   const [ObtenerPersona, setPersona] = useState([]);
   const [obtenerRol, setRol] = useState([]);
 
@@ -42,7 +44,7 @@ const Usuarios = () => {
       Swal.fire({
         icon: "warning",
         title: "Campos vacíos",
-        text: "Por favor, complete todos los campos.",
+        text: "Por favor, complete todos los campos obligatorios.",
       });
       return;
     }
@@ -52,6 +54,8 @@ const Usuarios = () => {
       Usuarios_contraseña: Usuarios_contraseña,
       Roles_Id: Roles_Id,
       Persona_Id: Persona_Id,
+      Pregunta_Seguridad: Pregunta_Seguridad,
+      Respuesta_Seguridad: Respuesta_Seguridad,
     }).then(() => {
       getLista();
       limpiarDatos();
@@ -88,6 +92,8 @@ const Usuarios = () => {
     setContraseña(val.Usuarios_contraseña);
     setRolId(val.Roles_Id);
     setPersonaId(val.Persona_Id);
+    setPreguntaSeguridad(val.Pregunta_Seguridad || "");
+    setRespuestaSeguridad(val.Respuesta_Seguridad || "");
   };
 
   const actualizar = () => {
@@ -95,7 +101,7 @@ const Usuarios = () => {
       Swal.fire({
         icon: "warning",
         title: "Campos vacíos",
-        text: "Por favor, complete todos los campos.",
+        text: "Por favor, complete todos los campos obligatorios.",
       });
       return;
     }
@@ -106,6 +112,8 @@ const Usuarios = () => {
       Roles_Id: Roles_Id,
       Persona_Id: Persona_Id,
       Usuarios_Id: Usuarios_Id,
+      Pregunta_Seguridad: Pregunta_Seguridad,
+      Respuesta_Seguridad: Respuesta_Seguridad,
     }).then(() => {
       getLista();
       Swal.fire({
@@ -125,6 +133,8 @@ const Usuarios = () => {
     setContraseña("");
     setRolId(3);
     setPersonaId("");
+    setPreguntaSeguridad("");
+    setRespuestaSeguridad("");
     setEditar(false);
   };
 
@@ -294,8 +304,50 @@ const Usuarios = () => {
               </div>
             </div>
 
-            <div className="action-buttons">
-              {editar ? (
+            <h6 className="mb-3 mt-4 text-primary">🔐 Seguridad (Opcional)</h6>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Pregunta_Seguridad" className="form-label-modern">
+                    <span className="label-icon">❓</span>
+                    Pregunta de Seguridad
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Pregunta_Seguridad"
+                    value={Pregunta_Seguridad}
+                    onChange={(e) => setPreguntaSeguridad(e.target.value)}
+                    placeholder="¿Cuál es el nombre de tu primera mascota?"
+                  />
+                  <small className="form-text text-muted">
+                    Para recuperación de contraseña
+                  </small>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="form-group-modern">
+                  <label htmlFor="Respuesta_Seguridad" className="form-label-modern">
+                    <span className="label-icon">💬</span>
+                    Respuesta de Seguridad
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-modern"
+                    id="Respuesta_Seguridad"
+                    value={Respuesta_Seguridad}
+                    onChange={(e) => setRespuestaSeguridad(e.target.value)}
+                    placeholder="Respuesta a la pregunta"
+                  />
+                  <small className="form-text text-muted">
+                    No distingue mayúsculas/minúsculas
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div className="action-buttons">{editar ? (
                 <>
                   <button
                     type="button"

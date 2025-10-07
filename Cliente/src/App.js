@@ -3,9 +3,15 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { UserProvider } from "./components/UserContext";
 import { ThemeProvider } from "./components/Theme";
 import Navbar from "./components/Navbar";
-import { AdminRoute, ProfesorRoute, EstudianteRoute, MultiRoleRoute } from "./components/PrivateRoute";
+import {
+  AdminRoute,
+  ProfesorRoute,
+  EstudianteRoute,
+  MultiRoleRoute,
+} from "./components/PrivateRoute";
 import Login from "./Pages/Login";
 import Registration from "./Pages/Register";
+import ForgotPassword from "./Pages/ForgotPassword";
 import Home from "./Pages/Home";
 import Persona from "./Pages/Estudiantes";
 import Encargado from "./Pages/Encargado";
@@ -46,7 +52,6 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
-  //hola
 
   return (
     <BrowserRouter>
@@ -56,6 +61,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Registration />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/" element={<Home />} />
             <Route path="/Horarios" element={<Horarios />} />
             <Route
@@ -283,9 +289,8 @@ function App() {
                   <Navigate to="/NotasFinales" replace />
                 )
               }
-
             />
-             <Route
+            <Route
               path="/JustificacionProfesor"
               element={
                 isAuthenticated ? (
@@ -293,7 +298,8 @@ function App() {
                 ) : (
                   <Navigate to="/JustificacionProfesor" replace />
                 )
-              }/>
+              }
+            />
           </Routes>
         </ThemeProvider>
       </UserProvider>

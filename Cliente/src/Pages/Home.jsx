@@ -129,8 +129,6 @@ const Home = () => {
               </svg>
               Noticias & Eventos
             </span>
-            <h2 className="section-title-hero">Mantente informado</h2>
-            <p className="section-subtitle-hero">Conoce las últimas actividades, logros y anuncios de nuestra comunidad educativa</p>
           </div>
         </div>
 
@@ -271,122 +269,140 @@ const Home = () => {
       </section>
 
         <div id="historia" className="container-fluid px-3 px-md-4">
-          <div className="row justify-content-center align-items-center my-4 my-md-5 animate__animated animate__fadeIn">
-            <div className="col-12 col-lg-6 mb-4 mb-lg-0 order-1 order-lg-1">
-              <div className="historia-image-wrapper">
-                <img
-                  src="/EscuelaHome.jpg"
-                  alt="Imagen de la escuela"
-                  className="img-fluid rounded shadow-lg animate__animated animate__slideInLeft historia-image"
-                />
-              </div>
+          <div className="historia-modern-section">
+            {/* Encabezado principal centrado */}
+            <div className="historia-header-modern">
+              <span className="historia-eyebrow">Nuestra Historia</span>
+              <h2 className="historia-main-title">📚 Historia de la Escuela</h2>
+              <p className="historia-lead">Más de 65 años formando generaciones en la comunidad de Cerros</p>
             </div>
-            <div className="col-12 col-lg-6 order-2 order-lg-2">
-              <div className="historia-content">
-                <h2 className={`animate__animated animate__slideInRight mb-3 mb-md-4 historia-title ${darkMode ? "text-white" : "text-dark"}`}>
-                  📚 Historia de la Escuela
-                </h2>
-                
-                <div className="historia-section mb-3">
-                  <h4 className={`historia-subtitle ${darkMode ? "text-white" : "text-dark"}`}>
-                    📍 Ubicación Geográfica
-                  </h4>
-                  <p className={`animate__animated animate__slideInRight historia-text ${darkMode ? "text-white" : "text-dark"}`}>
-                    La comunidad de Cerros se encuentra ubicada en el Cantón de Quepos, Distrito de Quepos a 3 kilómetros de la comunidad de Damas. 
-                    Se ubica en la intersección del paralelo 9º 28 Latitud Norte y el Meridiano 84º 10 longitud Oeste. Sus límites son los siguientes: 
-                    Al Norte la montaña, al Sur con la comunidad de Paquita, al este con la comunidad de Damas, posee una población de 1,000 habitantes.
+
+            {/* Imagen destacada */}
+            <div className="historia-image-container">
+              <img
+                src="/EscuelaHome.jpg"
+                alt="Imagen de la escuela"
+                className="historia-featured-image"
+              />
+            </div>
+
+            {/* Contenido de historia en secciones */}
+            <div className="historia-content-modern">
+              <div className="historia-card">
+                <div className="historia-card-header">
+                  <span className="historia-icon">📍</span>
+                  <h3 className={`historia-card-title ${darkMode ? "text-white" : "text-dark"}`}>
+                    Ubicación Geográfica
+                  </h3>
+                </div>
+                <p className={`historia-card-text ${darkMode ? "text-white" : "text-dark"}`}>
+                  La comunidad de Cerros se encuentra ubicada en el Cantón de Quepos, Distrito de Quepos a 3 kilómetros de la comunidad de Damas. 
+                  Se ubica en la intersección del paralelo 9º 28 Latitud Norte y el Meridiano 84º 10 longitud Oeste. Sus límites son los siguientes: 
+                  Al Norte la montaña, al Sur con la comunidad de Paquita, al este con la comunidad de Damas, posee una población de 1,000 habitantes.
+                </p>
+              </div>
+
+              <div className={`historia-expandable-modern ${showFullHistory ? 'expanded' : ''}`}>
+                <div className="historia-card">
+                  <div className="historia-card-header">
+                    <span className="historia-icon">🏫</span>
+                    <h3 className={`historia-card-title ${darkMode ? "text-white" : "text-dark"}`}>
+                      Inicios de la Educación
+                    </h3>
+                  </div>
+                  <p className={`historia-card-text ${darkMode ? "text-white" : "text-dark"}`}>
+                    Los primeros alumnos de la comunidad de Cerros y la que hoy es San Rafael de Cerros, debían trasladarse a la comunidad de Damas 
+                    a una escuela llamada Papaturro, para así poder educarse.
+                  </p>
+                  <p className={`historia-card-text ${darkMode ? "text-white" : "text-dark"}`}>
+                    En el año 1958 donde en la actualidad se ubica el Centro de Atención Integral se creó la Escuela Cerros. Era una pequeña casita 
+                    o rancho de paja cubierta de madera de balsa y guarumo. Se daba instrucción a varios grados a la vez, siendo el primer maestro 
+                    don José Méndez Duarte, quien trabajó en dicha escuela un año.
                   </p>
                 </div>
 
-                <div className={`historia-expandable ${showFullHistory ? 'expanded' : ''}`}>
-                  <div className="historia-section mb-3">
-                    <h4 className={`historia-subtitle ${darkMode ? "text-white" : "text-dark"}`}>
-                      🏫 Inicios de la Educación
-                    </h4>
-                    <p className={`historia-text ${darkMode ? "text-white" : "text-dark"}`}>
-                      Los primeros alumnos de la comunidad de Cerros y la que hoy es San Rafael de Cerros, debían trasladarse a la comunidad de Damas 
-                      a una escuela llamada Papaturro, para así poder educarse.
-                    </p>
-                    <p className={`historia-text ${darkMode ? "text-white" : "text-dark"}`}>
-                      En el año 1958 donde en la actualidad se ubica el Centro de Atención Integral se creó la Escuela Cerros. Era una pequeña casita 
-                      o rancho de paja cubierta de madera de balsa y guarumo. Se daba instrucción a varios grados a la vez, siendo el primer maestro 
-                      don José Méndez Duarte, quien trabajó en dicha escuela un año.
-                    </p>
+                <div className="historia-card">
+                  <div className="historia-card-header">
+                    <span className="historia-icon">👨‍🏫</span>
+                    <h3 className={`historia-card-title ${darkMode ? "text-white" : "text-dark"}`}>
+                      Maestros Fundadores
+                    </h3>
                   </div>
+                  <p className={`historia-card-text ${darkMode ? "text-white" : "text-dark"}`}>
+                    La segunda maestra y directora fue la profesora Beatriz Campos González quien laboró con los seis niveles. Años después y por 
+                    casi veintidós años trabajó el profesor Egidio Palomo Cascante; sus últimos años los trabajó con dos maestros.
+                  </p>
+                </div>
 
-                  <div className="historia-section mb-3">
-                    <h4 className={`historia-subtitle ${darkMode ? "text-white" : "text-dark"}`}>
-                      👨‍🏫 Maestros Fundadores
-                    </h4>
-                    <p className={`historia-text ${darkMode ? "text-white" : "text-dark"}`}>
-                      La segunda maestra y directora fue la profesora Beatriz Campos González quien laboró con los seis niveles. Años después y por 
-                      casi veintidós años trabajó el profesor Egidio Palomo Cascante; sus últimos años los trabajó con dos maestros.
-                    </p>
+                <div className="historia-card">
+                  <div className="historia-card-header">
+                    <span className="historia-icon">🎓</span>
+                    <h3 className={`historia-card-title ${darkMode ? "text-white" : "text-dark"}`}>
+                      Primeros Estudiantes
+                    </h3>
                   </div>
-
-                  <div className="historia-section mb-3">
-                    <h4 className={`historia-subtitle ${darkMode ? "text-white" : "text-dark"}`}>
-                      🎓 Primeros Estudiantes
-                    </h4>
-                    <div className={`historia-text ${darkMode ? "text-white" : "text-dark"}`}>
-                      <p className="mb-2">Los primeros alumnos de esta institución fueron:</p>
-                      <div className="estudiantes-grid">
-                        <span>• Isabel Vindas Hernández</span>
-                        <span>• Mireya Vindas Elizondo</span>
-                        <span>• Víctor Villalobos Elizondo</span>
-                        <span>• Olivio Fallas Mora</span>
-                        <span>• Recadero Morales Hernández</span>
-                        <span>• Josefa Rodríguez Morales</span>
-                        <span>• Rodrigo González Elizondo</span>
-                        <span>• Margarita Vindas Elizondo</span>
-                        <span>• Rubén Morales</span>
-                        <span>• Crispín Morales</span>
-                        <span>• Alcides Hernández Elizondo</span>
-                        <span>• Josefa Hernández Mora</span>
-                        <span>• Blanca Miranda Hernández</span>
-                        <span>• German Elizondo Mora</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="historia-section mb-3">
-                    <h4 className={`historia-subtitle ${darkMode ? "text-white" : "text-dark"}`}>
-                      🏛️ Desarrollo Institucional
-                    </h4>
-                    <p className={`historia-text ${darkMode ? "text-white" : "text-dark"}`}>
-                      La primera Junta de Educación la integraron Ventura Elizondo y Adán Elizondo Valverde, ellos donaron el lote para la escuela 
-                      San Rafaela de Cerros. Se llamaba así debido a que un señor llamado Rafael Vindas Hernández acostumbraba a celebrar una fiesta 
-                      al santo llamado San Rafael, existía una escultura de madera que representaba dicho Santo.
-                    </p>
-                    <p className={`historia-text ${darkMode ? "text-white" : "text-dark"}`}>
-                      En el año 1970, se construyó en terrenos de la Empresa Palma Tica, 3 aulas, en los terrenos actuales, y no fue hasta el año 2021, 
-                      que se logró que el terreno fuera traspasado al estado, para uso de la Escuela Cerros.
-                    </p>
+                  <p className={`historia-card-text ${darkMode ? "text-white" : "text-dark"}`}>
+                    Los primeros alumnos de esta institución fueron:
+                  </p>
+                  <div className="estudiantes-grid-modern">
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Isabel Vindas Hernández</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Mireya Vindas Elizondo</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Víctor Villalobos Elizondo</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Olivio Fallas Mora</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Recadero Morales Hernández</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Josefa Rodríguez Morales</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Rodrigo González Elizondo</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Margarita Vindas Elizondo</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Rubén Morales</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Crispín Morales</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Alcides Hernández Elizondo</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Josefa Hernández Mora</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• Blanca Miranda Hernández</span>
+                    <span className={darkMode ? "text-white" : "text-dark"}>• German Elizondo Mora</span>
                   </div>
                 </div>
 
-                <div className="text-center">
-                  <button 
-                    className={`btn-ver-mas ${darkMode ? 'btn-dark-mode' : 'btn-light-mode'}`}
-                    onClick={() => setShowFullHistory(!showFullHistory)}
-                  >
-                    {showFullHistory ? (
-                      <>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="me-2">
-                          <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
-                        </svg>
-                        Ver menos
-                      </>
-                    ) : (
-                      <>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="me-2">
-                          <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                        </svg>
-                        Ver más historia
-                      </>
-                    )}
-                  </button>
+                <div className="historia-card">
+                  <div className="historia-card-header">
+                    <span className="historia-icon">🏛️</span>
+                    <h3 className={`historia-card-title ${darkMode ? "text-white" : "text-dark"}`}>
+                      Desarrollo Institucional
+                    </h3>
+                  </div>
+                  <p className={`historia-card-text ${darkMode ? "text-white" : "text-dark"}`}>
+                    La primera Junta de Educación la integraron Ventura Elizondo y Adán Elizondo Valverde, ellos donaron el lote para la escuela 
+                    San Rafaela de Cerros. Se llamaba así debido a que un señor llamado Rafael Vindas Hernández acostumbraba a celebrar una fiesta 
+                    al santo llamado San Rafael, existía una escultura de madera que representaba dicho Santo.
+                  </p>
+                  <p className={`historia-card-text ${darkMode ? "text-white" : "text-dark"}`}>
+                    En el año 1970, se construyó en terrenos de la Empresa Palma Tica, 3 aulas, en los terrenos actuales, y no fue hasta el año 2021, 
+                    que se logró que el terreno fuera traspasado al estado, para uso de la Escuela Cerros.
+                  </p>
                 </div>
+              </div>
+
+              {/* Botón Ver más/menos */}
+              <div className="historia-toggle-container">
+                <button 
+                  className={`btn-ver-mas-modern ${darkMode ? 'btn-dark-mode' : 'btn-light-mode'}`}
+                  onClick={() => setShowFullHistory(!showFullHistory)}
+                >
+                  {showFullHistory ? (
+                    <>
+                      <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" className="me-2">
+                        <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+                      </svg>
+                      Ver menos historia
+                    </>
+                  ) : (
+                    <>
+                      <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" className="me-2">
+                        <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                      </svg>
+                      Ver más historia
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>

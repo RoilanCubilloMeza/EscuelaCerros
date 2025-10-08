@@ -22,10 +22,13 @@ const Encargado = () => {
   const [Encargado_Apellido2, setEncargadoApellido2] = useState("");
 
   const [EncargadoList, setEncargadoList] = useState([]);
+  const [EncargadoListFiltrados, setEncargadoListFiltrados] = useState([]);
   const [editar, setEditar] = useState(false);
   const [EscolaridadList, setEscolaridadList] = useState([]);
   const [OcupacionList, setOcupacionList] = useState([]);
   const [ParentescoList, setParentescoList] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
+  const [busquedaTemporal, setBusquedaTemporal] = useState("");
 
   useEffect(() => {
     if (darkMode) {
@@ -48,14 +51,29 @@ const Encargado = () => {
     };
   }, [darkMode]);
 
+  const getLista = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/obtenerEncargados`);
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      console.log('📋 Datos recibidos del servidor:', data);
+      if (data.length > 0) {
+        console.log('📋 Primer encargado (ejemplo):', data[0]);
+        console.log('📚 Tiene Escolaridad_Id?:', data[0].Escolaridad_Id);
+      }
+      setEncargadoList(data);
+      setEncargadoListFiltrados(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
-    Axios.get(`${API_BASE_URL}/obtenerPersonas`)
-      .then((response) => {
-        setEncargadoList(response.data);
-      })
-      .catch((error) => {
-        console.error("Error al obtener datos:", error);
-      });
+    getLista();
   }, []);
 
   useEffect(() => {
@@ -106,6 +124,20 @@ const Encargado = () => {
       return;
     }
 
+    console.log('📤 Enviando datos al servidor:', {
+      Encargados_Nombre,
+      Encargado_Nombre2,
+      Encargado_Apellido1,
+      Encargado_Apellido2,
+      Encargados_LugarTrabajo,
+      Ocupacion_Id,
+      Parentesco_Id,
+      Encargado_ViveEstudiante,
+      Encargado_Telefono,
+      Encargado_EstadoCivil,
+      Escolaridad_Id,
+    });
+
     Axios.post(`${API_BASE_URL}/createEncargado`, {
       Encargados_Nombre: Encargados_Nombre,
       Encargado_Nombre2: Encargado_Nombre2,
@@ -118,7 +150,9 @@ const Encargado = () => {
       Encargado_Telefono: Encargado_Telefono,
       Encargado_EstadoCivil: Encargado_EstadoCivil,
       Escolaridad_Id: Escolaridad_Id,
-    }).then(() => {
+    })
+    .then((response) => {
+      console.log('✅ Respuesta del servidor:', response.data);
       getLista();
       limpiarDatos();
       Swal.fire({
@@ -126,32 +160,55 @@ const Encargado = () => {
         html:
           "<i>El encargado <strong>" +
           Encargados_Nombre +
+          " " +
           Encargado_Apellido1 +
           "</strong> ha sido registrado.</i>",
         icon: "success",
         timer: 3000,
       });
+    })
+    .catch((error) => {
+      console.error('❌ Error al guardar:', error);
+      console.error('❌ Detalles del error:', error.response?.data);
+      Swal.fire({
+        icon: "error",
+        title: "Error al guardar",
+        text: error.response?.data || error.message || "No se pudo conectar con el servidor",
+      });
     });
   };
 
-  const getLista = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/obtenerEncargados`);
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-      setEncargadoList(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+  // Efecto para filtrar encargados
+  useEffect(() => {
+    if (busqueda.trim() === "") {
+      setEncargadoListFiltrados(EncargadoList);
+    } else {
+      const resultados = EncargadoList.filter((encargado) => {
+        const nombreCompleto = `${encargado.Encargados_Nombre || ''} ${encargado.Encargado_Nombre2 || ''} ${encargado.Encargado_Apellido1 || ''} ${encargado.Encargado_Apellido2 || ''}`.toLowerCase();
+        const telefono = encargado.Encargado_Telefono?.toLowerCase() || "";
+        const estadoCivil = encargado.Encargado_EstadoCivil?.toLowerCase() || "";
+        const lugarTrabajo = encargado.Encargados_LugarTrabajo?.toLowerCase() || "";
+        const id = encargado.Encargados_Id?.toString() || "";
+        const busquedaLower = busqueda.toLowerCase();
+        
+        return (
+          nombreCompleto.includes(busquedaLower) ||
+          telefono.includes(busquedaLower) ||
+          estadoCivil.includes(busquedaLower) ||
+          lugarTrabajo.includes(busquedaLower) ||
+          id.includes(busquedaLower)
+        );
+      });
+      setEncargadoListFiltrados(resultados);
     }
-  };
+  }, [busqueda, EncargadoList]);
 
   const editarEstudiante = (val) => {
+    console.log('✏️ Datos del encargado a editar:', val);
+    console.log('📚 Escolaridad_Id recibido:', val.Escolaridad_Id);
+    
     setEditar(true);
-    setId(val.Persona_Id);
+    setId(val.Encargados_Id);
     setEncargadoNombre(val.Encargados_Nombre);
     setEncargadoNombre2(val.Encargado_Nombre2);
     setEncargadoApellido1(val.Encargado_Apellido1);
@@ -163,6 +220,8 @@ const Encargado = () => {
     setEncargadoViveEstudiante(val.Encargado_ViveEstudiante);
     setEncargadoTelefono(val.Encargado_Telefono);
     setEncargadoEstadoCivil(val.Encargado_EstadoCivil);
+    
+    console.log('✅ Estados actualizados - Escolaridad_Id:', val.Escolaridad_Id);
   };
 
   const actualizar = () => {
@@ -170,40 +229,60 @@ const Encargado = () => {
       !Encargados_LugarTrabajo.trim() ||
       !Encargado_ViveEstudiante.trim() ||
       !Encargado_Telefono.trim() ||
-      !Encargado_EstadoCivil.trim()
+      !Encargado_EstadoCivil.trim() ||
+      !Escolaridad_Id ||
+      !Ocupacion_Id ||
+      !Parentesco_Id
     ) {
       Swal.fire({
         icon: "warning",
         title: "Campos vacíos",
-        text: "Por favor, complete todos los campos.",
+        text: "Por favor, complete todos los campos obligatorios (Escolaridad, Ocupación, Parentesco, etc.).",
       });
       return;
     }
 
-    Axios.put(`${API_BASE_URL}/actualizarEncargados`, {
+    const datosActualizar = {
       Encargados_Nombre: Encargados_Nombre,
       Encargado_Nombre2: Encargado_Nombre2,
       Encargado_Apellido1: Encargado_Apellido1,
       Encargado_Apellido2: Encargado_Apellido2,
       Encargados_LugarTrabajo: Encargados_LugarTrabajo,
+      Escolaridad_Id: Escolaridad_Id,
       Ocupacion_Id: Ocupacion_Id,
       Parentesco_Id: Parentesco_Id,
       Encargado_ViveEstudiante: Encargado_ViveEstudiante,
       Encargado_Telefono: Encargado_Telefono,
       Encargado_EstadoCivil: Encargado_EstadoCivil,
       Encargados_Id: Encargados_Id,
-    }).then(() => {
+    };
+
+    console.log('📤 Actualizando encargado con datos:', datosActualizar);
+
+    Axios.put(`${API_BASE_URL}/actualizarEncargados`, datosActualizar)
+    .then((response) => {
+      console.log('✅ Actualizado correctamente:', response.data);
       getLista();
-    });
-    Swal.fire({
-      title: "<strong >Editado exitoso</strong>",
-      html:
-        "<i>El encargado <strong>" +
-        Encargados_Nombre +
-        Encargado_Apellido1 +
-        "</strong> ha sido actualizado.</i>",
-      icon: "success",
-      timer: 3000,
+      limpiarDatos();
+      Swal.fire({
+        title: "<strong >Editado exitoso</strong>",
+        html:
+          "<i>El encargado <strong>" +
+          Encargados_Nombre +
+          " " +
+          Encargado_Apellido1 +
+          "</strong> ha sido actualizado.</i>",
+        icon: "success",
+        timer: 3000,
+      });
+    })
+    .catch((error) => {
+      console.error('❌ Error al actualizar:', error);
+      Swal.fire({
+        icon: "error",
+        title: "Error al actualizar",
+        text: error.response?.data || error.message || "No se pudo conectar con el servidor",
+      });
     });
   };
 
@@ -251,7 +330,6 @@ const Encargado = () => {
     });
   };
 
-  getLista();
   return (
     <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
       <div className="container py-4">
@@ -280,6 +358,92 @@ const Encargado = () => {
                 </svg>
                 Menú Principal
               </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Barra de búsqueda */}
+        <div className="noticias-search-card mb-4">
+          <div className="row g-3 align-items-center">
+            <div className="col-12">
+              <div className="search-box" style={{ position: 'relative' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="search-icon">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Buscar por nombre, apellido, teléfono, lugar de trabajo o ID..."
+                  value={busquedaTemporal}
+                  onChange={(e) => setBusquedaTemporal(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      setBusqueda(busquedaTemporal);
+                    }
+                  }}
+                  style={{ paddingRight: '120px' }}
+                />
+                <button
+                  onClick={() => setBusqueda(busquedaTemporal)}
+                  style={{
+                    position: 'absolute',
+                    right: '8px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    cursor: 'pointer',
+                    color: 'white',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-50%)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+                  }}
+                  title="Buscar"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                  </svg>
+                  Buscar
+                </button>
+              </div>
+              {busqueda && (
+                <small className="text-muted d-block mt-2">
+                  Mostrando {EncargadoListFiltrados.length} de {EncargadoList.length} encargados
+                  <button
+                    onClick={() => {
+                      setBusqueda("");
+                      setBusquedaTemporal("");
+                    }}
+                    style={{
+                      marginLeft: '10px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: darkMode ? '#4dabf7' : '#0d6efd',
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    Limpiar búsqueda
+                  </button>
+                </small>
+              )}
             </div>
           </div>
         </div>
@@ -549,7 +713,7 @@ const Encargado = () => {
             <h5 className="mb-0">📋 Lista de Encargados</h5>
           </div>
           <div className="card-body-custom">
-            {EncargadoList.length > 0 ? (
+            {EncargadoListFiltrados.length > 0 ? (
               <div className="table-responsive">
                 <table className="table-modern">
                   <thead>
@@ -561,7 +725,7 @@ const Encargado = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {EncargadoList.map((val, key) => (
+                    {EncargadoListFiltrados.map((val, key) => (
                       <tr key={key} className="table-row-hover">
                         <td className="td-id">
                           <span className="badge-id">{val.Encargados_Id}</span>
@@ -604,7 +768,18 @@ const Encargado = () => {
             ) : (
               <div className="empty-state">
                 <div className="empty-icon">📭</div>
-                <p>No hay encargados registrados</p>
+                <p>{busqueda ? 'No se encontraron encargados con ese criterio' : 'No hay encargados registrados'}</p>
+                {busqueda && (
+                  <button
+                    onClick={() => {
+                      setBusqueda("");
+                      setBusquedaTemporal("");
+                    }}
+                    className="btn-action btn-cancel mt-2"
+                  >
+                    Limpiar búsqueda
+                  </button>
+                )}
               </div>
             )}
           </div>

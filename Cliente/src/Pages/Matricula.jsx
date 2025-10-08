@@ -503,12 +503,12 @@ function Matricula() {
             <div className="noticias-search-card mb-4">
               <div className="row g-3 align-items-center">
                 <div className="col-md-5">
-                  <div className="search-box">
+                  <div className="search-box" style={{ position: 'relative' }}>
                     <FaSearch className="search-icon" />
                     <input
                       type="text"
                       className="search-input"
-                      placeholder="Buscar por nombre, profesor, grado, estado o ID... (Presione Enter)"
+                      placeholder="Buscar por nombre, profesor, grado, estado o ID..."
                       value={busquedaTemporal}
                       onChange={(e) => setBusquedaTemporal(e.target.value)}
                       onKeyPress={(e) => {
@@ -517,7 +517,45 @@ function Matricula() {
                           setPaginaActual(1);
                         }
                       }}
+                      style={{ paddingRight: '45px' }}
                     />
+                    <button
+                      onClick={() => {
+                        setBusqueda(busquedaTemporal);
+                        setPaginaActual(1);
+                      }}
+                      style={{
+                        position: 'absolute',
+                        right: '8px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '6px 12px',
+                        cursor: 'pointer',
+                        color: 'white',
+                        fontSize: '0.875rem',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-50%)';
+                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+                      }}
+                      title="Buscar"
+                    >
+                      <FaSearch size={12} />
+                      <span style={{ display: window.innerWidth > 768 ? 'inline' : 'none' }}>Buscar</span>
+                    </button>
                   </div>
                 </div>
                 <div className="col-md-3">

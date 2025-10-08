@@ -11,7 +11,10 @@ const Parentesco = () => {
   const [Parentesco_Nombre, setNombre] = useState("");
   const [Parentesco_Id, setId] = useState("");
   const [Parentesco_List, setParentesco_List] = useState([]);
+  const [Parentesco_ListFiltrados, setParentesco_ListFiltrados] = useState([]);
   const [editar, setEditar] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
+  const [busquedaTemporal, setBusquedaTemporal] = useState("");
 
   const add = () => {
     if (!Parentesco_Nombre.trim()) {
@@ -50,10 +53,30 @@ const Parentesco = () => {
 
       const data = await response.json();
       setParentesco_List(data);
+      setParentesco_ListFiltrados(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
+  // Efecto para filtrar parentescos
+  useEffect(() => {
+    if (busqueda.trim() === "") {
+      setParentesco_ListFiltrados(Parentesco_List);
+    } else {
+      const resultados = Parentesco_List.filter((parentesco) => {
+        const nombre = parentesco.Parentesco_Nombre?.toLowerCase() || "";
+        const id = parentesco.Parentesco_Id?.toString() || "";
+        const busquedaLower = busqueda.toLowerCase();
+        
+        return (
+          nombre.includes(busquedaLower) ||
+          id.includes(busquedaLower)
+        );
+      });
+      setParentesco_ListFiltrados(resultados);
+    }
+  }, [busqueda, Parentesco_List]);
 
   const editarAdecuacion = (val) => {
     setEditar(true);
@@ -173,6 +196,92 @@ const Parentesco = () => {
           </div>
         </div>
 
+        {/* Barra de búsqueda */}
+        <div className="noticias-search-card mb-4">
+          <div className="row g-3 align-items-center">
+            <div className="col-12">
+              <div className="search-box" style={{ position: 'relative' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="search-icon">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Buscar por nombre o ID de parentesco..."
+                  value={busquedaTemporal}
+                  onChange={(e) => setBusquedaTemporal(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      setBusqueda(busquedaTemporal);
+                    }
+                  }}
+                  style={{ paddingRight: '120px' }}
+                />
+                <button
+                  onClick={() => setBusqueda(busquedaTemporal)}
+                  style={{
+                    position: 'absolute',
+                    right: '8px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    cursor: 'pointer',
+                    color: 'white',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-50%)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+                  }}
+                  title="Buscar"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                  </svg>
+                  Buscar
+                </button>
+              </div>
+              {busqueda && (
+                <small className="text-muted d-block mt-2">
+                  Mostrando {Parentesco_ListFiltrados.length} de {Parentesco_List.length} parentescos
+                  <button
+                    onClick={() => {
+                      setBusqueda("");
+                      setBusquedaTemporal("");
+                    }}
+                    style={{
+                      marginLeft: '10px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: darkMode ? '#4dabf7' : '#0d6efd',
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    Limpiar búsqueda
+                  </button>
+                </small>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* Form Card */}
         <div className="noticias-form-card mb-5">
           <div className="card-header-custom">
@@ -242,7 +351,7 @@ const Parentesco = () => {
             <h5 className="mb-0">📋 Lista de Parentescos</h5>
           </div>
           <div className="card-body-custom">
-            {Parentesco_List.length > 0 ? (
+            {Parentesco_ListFiltrados.length > 0 ? (
               <div className="table-responsive">
                 <table className="table-modern">
                   <thead>
@@ -253,7 +362,7 @@ const Parentesco = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {Parentesco_List.map((val, key) => (
+                    {Parentesco_ListFiltrados.map((val, key) => (
                       <tr key={key} className="table-row-hover">
                         <td className="td-id">
                           <span className="badge-id">{val.Parentesco_Id}</span>
@@ -295,7 +404,18 @@ const Parentesco = () => {
             ) : (
               <div className="empty-state">
                 <div className="empty-icon">📭</div>
-                <p>No hay parentescos registrados</p>
+                <p>{busqueda ? 'No se encontraron parentescos' : 'No hay parentescos registrados'}</p>
+                {busqueda && (
+                  <button
+                    onClick={() => {
+                      setBusqueda("");
+                      setBusquedaTemporal("");
+                    }}
+                    className="btn-action btn-cancel mt-2"
+                  >
+                    Limpiar búsqueda
+                  </button>
+                )}
               </div>
             )}
           </div>

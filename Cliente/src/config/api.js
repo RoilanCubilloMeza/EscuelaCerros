@@ -1,5 +1,9 @@
 // Configuración centralizada de la API
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://escuelacerros.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
+// Mostrar en consola qué servidor se está usando
+console.log('🌐 API URL:', API_BASE_URL);
+console.log('🔧 Modo:', API_BASE_URL.includes('localhost') ? 'DESARROLLO LOCAL' : 'PRODUCCIÓN');
 
 export default API_BASE_URL;
 

@@ -12,6 +12,7 @@ const Persona = () => {
   const [Persona_SApellido, setSApellido] = useState("");
   const [Persona_Id, setId] = useState();
   const [estudiantesList, setEstudiantesList] = useState([]);
+  const [estudiantesListFiltrados, setEstudiantesListFiltrados] = useState([]);
   const [editar, setEditar] = useState(false);
   const [Persona_Cedula, setCedula] = useState("");
   const [Persona_Edad, setEdad] = useState("");
@@ -20,6 +21,8 @@ const Persona = () => {
   const [Persona_LuNacimiento, setLugarNacimiento] = useState("");
   const [Persona_Correo, setCorreoElectronico] = useState("");
   const [Persona_FNAciomiento, setFNAciomiento] = useState("");
+  const [busqueda, setBusqueda] = useState("");
+  const [busquedaTemporal, setBusquedaTemporal] = useState("");
 
   const add = () => {
     if (
@@ -71,11 +74,35 @@ const Persona = () => {
 
       const data = await response.json();
       setEstudiantesList(data);
+      setEstudiantesListFiltrados(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
   getLista();
+
+  // Efecto para filtrar estudiantes
+  useEffect(() => {
+    if (busqueda.trim() === "") {
+      setEstudiantesListFiltrados(estudiantesList);
+    } else {
+      const resultados = estudiantesList.filter((estudiante) => {
+        const nombreCompleto = `${estudiante.Persona_Nombre} ${estudiante.Persona_PApellido} ${estudiante.Persona_SApellido}`.toLowerCase();
+        const cedula = estudiante.Persona_Cedula?.toLowerCase() || "";
+        const edad = estudiante.Persona_Edad?.toString() || "";
+        const correo = estudiante.Persona_Correo?.toLowerCase() || "";
+        const busquedaLower = busqueda.toLowerCase();
+        
+        return (
+          nombreCompleto.includes(busquedaLower) ||
+          cedula.includes(busquedaLower) ||
+          edad.includes(busquedaLower) ||
+          correo.includes(busquedaLower)
+        );
+      });
+      setEstudiantesListFiltrados(resultados);
+    }
+  }, [busqueda, estudiantesList]);
 
   const editarEstudiante = (val) => {
     setEditar(true);
@@ -223,6 +250,92 @@ const Persona = () => {
                 </svg>
                 Menú Principal
               </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Barra de búsqueda */}
+        <div className="noticias-search-card mb-4">
+          <div className="row g-3 align-items-center">
+            <div className="col-12">
+              <div className="search-box" style={{ position: 'relative' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="search-icon">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Buscar por nombre, cédula, edad o correo..."
+                  value={busquedaTemporal}
+                  onChange={(e) => setBusquedaTemporal(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      setBusqueda(busquedaTemporal);
+                    }
+                  }}
+                  style={{ paddingRight: '120px' }}
+                />
+                <button
+                  onClick={() => setBusqueda(busquedaTemporal)}
+                  style={{
+                    position: 'absolute',
+                    right: '8px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    cursor: 'pointer',
+                    color: 'white',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-50%)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+                  }}
+                  title="Buscar"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                  </svg>
+                  Buscar
+                </button>
+              </div>
+              {busqueda && (
+                <small className="text-muted d-block mt-2">
+                  Mostrando {estudiantesListFiltrados.length} de {estudiantesList.length} estudiantes
+                  <button
+                    onClick={() => {
+                      setBusqueda("");
+                      setBusquedaTemporal("");
+                    }}
+                    style={{
+                      marginLeft: '10px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: darkMode ? '#4dabf7' : '#0d6efd',
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    Limpiar búsqueda
+                  </button>
+                </small>
+              )}
             </div>
           </div>
         </div>
@@ -454,7 +567,7 @@ const Persona = () => {
             <h5 className="mb-0">📋 Lista de Estudiantes</h5>
           </div>
           <div className="card-body-custom">
-            {estudiantesList.length > 0 ? (
+            {estudiantesListFiltrados.length > 0 ? (
               <div className="table-responsive">
                 <table className="table-modern">
                   <thead>
@@ -467,7 +580,7 @@ const Persona = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {estudiantesList.map((val, key) => (
+                    {estudiantesListFiltrados.map((val, key) => (
                       <tr key={key} className="table-row-hover">
                         <td className="td-id">
                           <span className="badge-id">{val.Persona_Id}</span>

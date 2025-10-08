@@ -71,6 +71,13 @@ app.put("/actualizarEncargados", (req, res) => {
   const Encargado_EstadoCivil = req.body.Encargado_EstadoCivil;
   const Encargados_Id = req.body.Encargados_Id; 
 
+  console.log('📥 Servidor recibió datos para actualizar:', {
+    Encargados_Id,
+    Escolaridad_Id,
+    Ocupacion_Id,
+    Parentesco_Id
+  }); 
+
   connection.query(
     "UPDATE Encargados SET  Encargados_Nombre=?,Encargado_Nombre2=?,Encargado_Apellido1=?,Encargado_Apellido2=?, Encargados_LugarTrabajo=?,  Escolaridad_Id=?,  Ocupacion_Id=?,  Parentesco_Id=?,  Encargado_ViveEstudiante=?, Encargado_Telefono=?, Encargado_EstadoCivil=? WHERE Encargados_Id=?",
     [ 

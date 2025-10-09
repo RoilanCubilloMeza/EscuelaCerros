@@ -1,9 +1,17 @@
 // Configuración centralizada de la API
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
+// Determinar el entorno
+const esDesarrollo = API_BASE_URL.includes('localhost');
+
 // Mostrar en consola qué servidor se está usando
-console.log('🌐 API URL:', API_BASE_URL);
-console.log('🔧 Modo:', API_BASE_URL.includes('localhost') ? 'DESARROLLO LOCAL' : 'PRODUCCIÓN');
+console.log('═══════════════════════════════════════════════════');
+console.log('🚀 Configuración de API - Escuela Cerros');
+console.log('═══════════════════════════════════════════════════');
+console.log('🌐 URL del Backend:', API_BASE_URL);
+console.log('🔧 Modo:', esDesarrollo ? '🏠 DESARROLLO LOCAL' : '☁️ PRODUCCIÓN');
+console.log('📝 Fuente:', process.env.NODE_ENV === 'production' ? '.env.production' : '.env.local');
+console.log('═══════════════════════════════════════════════════');
 
 export default API_BASE_URL;
 

@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 import API_BASE_URL from "../config/api";
+import authService from "../services/authService";
 
 const JustificacionProfesor = () => {
   const { darkMode } = useTheme();
@@ -14,6 +15,14 @@ const JustificacionProfesor = () => {
   const [Asistencia_Tipo, setTipo] = useState("");
   const [Asistencia_List, setAsistenciaList] = useState([]);
   const [editar, setEditar] = useState(false);
+  
+  // Estados para las notificaciones - Obtener ID del profesor del login
+  const currentUser = authService.getCurrentUser();
+  const profesorId = currentUser?.profesorId || null;
+  const nombreProfesor = currentUser?.nombreCompleto || currentUser?.username || "";
+  
+  const [notificaciones, setNotificaciones] = useState([]);
+  const [mostrarNotificaciones, setMostrarNotificaciones] = useState(true);
 
   const add = () => {
     if (
@@ -60,6 +69,94 @@ const JustificacionProfesor = () => {
     }
   };
 
+  // Obtener notificaciones del profesor
+  const obtenerNotificaciones = async () => {
+    try {
+      console.log('🔍 Obteniendo notificaciones para profesor ID:', profesorId);
+      
+      const response = await fetch(
+        `${API_BASE_URL}/obtenerNotificacionesNoLeidas/${profesorId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al obtener notificaciones");
+      }
+
+      const data = await response.json();
+      console.log('📬 Notificaciones recibidas:', data);
+      console.log('📊 Cantidad de notificaciones:', data.length);
+      
+      // Debug: Mostrar detalles de cada notificación
+      data.forEach((notif, index) => {
+        console.log(`\n📋 Notificación ${index + 1}:`, {
+          ID: notif.Notificacion_Id,
+          Estudiante_ID: notif.Estudiante_Id,
+          Nombre: `${notif.Persona_Nombre} ${notif.Persona_PApellido} ${notif.Persona_SApellido}`,
+          Tipo: notif.Notificacion_Tipo,
+          Mensaje: notif.Notificacion_Mensaje
+        });
+      });
+      
+      setNotificaciones(data);
+    } catch (error) {
+      console.error("Error al obtener notificaciones:", error);
+    }
+  };
+
+  // Marcar notificación como leída
+  const marcarComoLeida = async (notificacionId) => {
+    try {
+      await Axios.put(
+        `${API_BASE_URL}/marcarNotificacionLeida/${notificacionId}`
+      );
+      
+      // Actualizar ambas listas
+      obtenerNotificaciones(); // Actualizar notificaciones
+      getLista(); // Actualizar lista de justificaciones
+      
+      Swal.fire({
+        icon: "success",
+        title: "Justificación revisada",
+        html: "<i>La justificación ha sido marcada como revisada y se agregó a la lista.</i>",
+        timer: 2500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.error("Error al marcar notificación:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo marcar la notificación como leída.",
+      });
+    }
+  };
+
+  // Marcar todas como leídas
+  const marcarTodasLeidas = async () => {
+    try {
+      await Axios.put(`${API_BASE_URL}/marcarTodasLeidas/${profesorId}`);
+      
+      // Actualizar ambas listas
+      obtenerNotificaciones(); // Actualizar notificaciones
+      getLista(); // Actualizar lista de justificaciones
+      
+      Swal.fire({
+        icon: "success",
+        title: "Todas las justificaciones revisadas",
+        html: "<i>Todas las justificaciones han sido marcadas como revisadas.</i>",
+        timer: 2500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.error("Error al marcar todas como leídas:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudieron marcar todas las notificaciones.",
+      });
+    }
+  };
+
   const editarAsistencia = (val) => {
     setEditar(true);
     setAsistenciaId(val.Asistencia_Id);
@@ -70,6 +167,8 @@ const JustificacionProfesor = () => {
 
   useEffect(() => {
     getLista();
+    obtenerNotificaciones(); // Cargar notificaciones al iniciar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const actualizar = () => {
@@ -181,6 +280,246 @@ const JustificacionProfesor = () => {
           </div>
         </div>
 
+        {/* Sección de Notificaciones - Justificaciones Nuevas */}
+        {profesorId ? (
+          <>
+            {notificaciones.length > 0 && mostrarNotificaciones && (
+              <div className="noticias-form-card mb-4" style={{
+                background: darkMode 
+                  ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%)'
+                  : 'linear-gradient(135deg, rgba(219, 234, 254, 0.8) 0%, rgba(191, 219, 254, 0.4) 100%)',
+                border: `2px solid ${darkMode ? '#3b82f6' : '#60a5fa'}`,
+                boxShadow: '0 8px 16px rgba(59, 130, 246, 0.2)'
+              }}>
+                <div className="card-header-custom" style={{
+                  background: darkMode 
+                    ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+                    : 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+                  color: 'white'
+                }}>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="mb-0">
+                      <span style={{ fontSize: '1.3rem', marginRight: '10px' }}>🔔</span>
+                      Justificaciones Nuevas ({notificaciones.length})
+                    </h5>
+                    <div className="d-flex gap-2">
+                      <button
+                        className="btn btn-sm btn-light"
+                        onClick={marcarTodasLeidas}
+                        title="Marcar todas como leídas"
+                      >
+                        <span style={{ marginRight: '5px' }}>✓✓</span>
+                        Todas leídas
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline-light"
+                        onClick={() => setMostrarNotificaciones(false)}
+                      >
+                        Ocultar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="card-body-custom" style={{ padding: '24px' }}>
+                  {/* Banner del profesor */}
+                  <div className="mb-4" style={{
+                    background: darkMode ? 'rgba(34, 197, 94, 0.15)' : 'rgba(34, 197, 94, 0.1)',
+                    border: `2px solid ${darkMode ? '#22c55e' : '#86efac'}`,
+                    borderRadius: '12px',
+                    padding: '16px'
+                  }}>
+                    <div className="d-flex align-items-center gap-3">
+                      <span style={{ fontSize: '32px' }}>👨‍🏫</span>
+                      <div>
+                        <div style={{ 
+                          color: darkMode ? '#86efac' : '#16a34a', 
+                          fontWeight: 'bold',
+                          fontSize: '1.1rem'
+                        }}>
+                          Prof. {nombreProfesor}
+                        </div>
+                        <div style={{ 
+                          fontSize: '0.9rem',
+                          color: darkMode ? '#cbd5e0' : '#64748b'
+                        }}>
+                          Estas justificaciones requieren tu revisión
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Lista de Notificaciones como Cards */}
+                  <div className="notificaciones-lista" style={{ 
+                    display: 'grid',
+                    gap: '16px',
+                    maxHeight: '500px', 
+                    overflowY: 'auto',
+                    paddingRight: '8px'
+                  }}>
+                    {notificaciones.map((notif, index) => (
+                      <div 
+                        key={index} 
+                        className={`notification-card ${darkMode ? 'dark' : 'light'}`}
+                        style={{ 
+                          background: darkMode ? 'rgba(30, 41, 59, 0.6)' : 'white',
+                          border: `1px solid ${darkMode ? '#475569' : '#e2e8f0'}`,
+                          borderRadius: '12px',
+                          padding: '20px',
+                          transition: 'all 0.3s ease',
+                          boxShadow: darkMode 
+                            ? '0 4px 6px rgba(0,0,0,0.3)' 
+                            : '0 2px 8px rgba(0,0,0,0.08)',
+                          cursor: 'pointer'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                          e.currentTarget.style.boxShadow = darkMode
+                            ? '0 8px 16px rgba(0,0,0,0.4)'
+                            : '0 4px 12px rgba(0,0,0,0.15)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = darkMode
+                            ? '0 4px 6px rgba(0,0,0,0.3)'
+                            : '0 2px 8px rgba(0,0,0,0.08)';
+                        }}
+                      >
+                        <div className="d-flex justify-content-between align-items-start gap-3">
+                          <div className="flex-grow-1">
+                            {/* Encabezado con estudiante */}
+                            <div className="d-flex align-items-center gap-2 mb-3">
+                              <span style={{ fontSize: '24px' }}>👨‍🎓</span>
+                              <h6 className="mb-0" style={{ 
+                                fontSize: '1.1rem',
+                                fontWeight: 'bold',
+                                color: darkMode ? '#f1f5f9' : '#1e293b'
+                              }}>
+                                {notif.Persona_Nombre} {notif.Persona_PApellido} {notif.Persona_SApellido}
+                              </h6>
+                            </div>
+
+                            {/* Información de la justificación */}
+                            <div className="mb-3" style={{
+                              background: darkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(239, 246, 255, 0.8)',
+                              padding: '12px',
+                              borderRadius: '8px',
+                              borderLeft: `4px solid ${darkMode ? '#3b82f6' : '#60a5fa'}`
+                            }}>
+                              <div className="d-flex align-items-center gap-2 mb-2">
+                                <span style={{ fontSize: '18px' }}>📋</span>
+                                <strong style={{ color: darkMode ? '#93c5fd' : '#2563eb' }}>
+                                  {notif.Notificacion_Tipo}
+                                </strong>
+                              </div>
+                              
+                              <div className="mb-2" style={{
+                                fontSize: '0.95rem',
+                                color: darkMode ? '#e2e8f0' : '#475569',
+                                lineHeight: '1.6'
+                              }}>
+                                <strong>Motivo:</strong>
+                                <div style={{ 
+                                  marginTop: '6px',
+                                  paddingLeft: '12px',
+                                  fontStyle: 'italic'
+                                }}>
+                                  "{notif.Notificacion_Mensaje}"
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Fecha */}
+                            <div className="d-flex align-items-center gap-2" style={{
+                              fontSize: '0.85rem',
+                              color: darkMode ? '#94a3b8' : '#64748b'
+                            }}>
+                              <span>📅</span>
+                              <span>
+                                {new Date(notif.Notificacion_Fecha).toLocaleString('es-ES', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Botón de marcar como leída */}
+                          <div className="d-flex flex-column gap-2">
+                            <button
+                              className="btn btn-success"
+                              onClick={() => marcarComoLeida(notif.Notificacion_Id)}
+                              title="Marcar como leída y mover a la lista"
+                              style={{
+                                minWidth: '120px',
+                                fontWeight: 'bold',
+                                padding: '10px 16px'
+                              }}
+                            >
+                              <span style={{ marginRight: '6px' }}>✓</span>
+                              Revisada
+                            </button>
+                            <div style={{
+                              fontSize: '0.75rem',
+                              color: darkMode ? '#94a3b8' : '#64748b',
+                              textAlign: 'center'
+                            }}>
+                              Se agregará a la lista
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Botón para mostrar notificaciones ocultas */}
+            {notificaciones.length > 0 && !mostrarNotificaciones && (
+              <div className="mb-4">
+                <button
+                  className="btn btn-lg btn-info d-flex align-items-center gap-2"
+                  onClick={() => setMostrarNotificaciones(true)}
+                  style={{
+                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  <span style={{ fontSize: '1.5rem' }}>🔔</span>
+                  <span>Mostrar Justificaciones Nuevas ({notificaciones.length})</span>
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="alert alert-warning mb-4" style={{
+            background: darkMode ? 'rgba(251, 191, 36, 0.15)' : 'rgba(251, 191, 36, 0.1)',
+            border: `1px solid ${darkMode ? '#f59e0b' : '#fbbf24'}`,
+            borderRadius: '12px',
+            padding: '16px'
+          }}>
+            <div className="d-flex align-items-start gap-3">
+              <span style={{ fontSize: '24px' }}>⚠️</span>
+              <div>
+                <strong style={{ color: darkMode ? '#fbbf24' : '#d97706' }}>
+                  Sesión no identificada
+                </strong>
+                <p className="mb-0 mt-1" style={{ 
+                  fontSize: '0.9rem',
+                  color: darkMode ? '#e9ecef' : '#4a5568'
+                }}>
+                  No se pudo identificar tu información de profesor. Por favor, cierra sesión e inicia sesión nuevamente.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Form Card */}
         <div className="noticias-form-card mb-5">
           <div className="card-header-custom">
@@ -286,10 +625,18 @@ const JustificacionProfesor = () => {
           </div>
         </div>
 
-        {/* Table Card */}
+        {/* Table Card - Lista de Todas las Justificaciones */}
         <div className="noticias-table-card">
           <div className="card-header-custom">
-            <h5 className="mb-0">📋 Lista de Justificaciones</h5>
+            <div className="d-flex justify-content-between align-items-center">
+              <h5 className="mb-0">
+                <span style={{ marginRight: '10px' }}>📋</span>
+                Historial de Justificaciones
+              </h5>
+              <span className="badge bg-primary" style={{ fontSize: '0.9rem', padding: '8px 16px' }}>
+                {Asistencia_List.length} Total
+              </span>
+            </div>
           </div>
           <div className="card-body-custom">
             {Asistencia_List.length > 0 ? (
@@ -297,11 +644,11 @@ const JustificacionProfesor = () => {
                 <table className="table-modern">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Fecha</th>
-                      <th>Justificación</th>
-                      <th>Tipo</th>
-                      <th className="text-end">Acciones</th>
+                      <th style={{ width: '60px' }}>ID</th>
+                      <th style={{ width: '120px' }}>Fecha</th>
+                      <th style={{ minWidth: '200px' }}>Estudiante / Justificación</th>
+                      <th style={{ width: '150px' }}>Tipo</th>
+                      <th style={{ width: '150px' }} className="text-end">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -310,10 +657,69 @@ const JustificacionProfesor = () => {
                         <td className="td-id">
                           <span className="badge-id">{val.Asistencia_Id}</span>
                         </td>
-                        <td>{val.Asistencia_FActual}</td>
+                        <td>
+                          <div style={{ fontSize: '0.9rem' }}>
+                            <div style={{ fontWeight: 'bold' }}>
+                              {new Date(val.Asistencia_FActual).toLocaleDateString('es-ES', {
+                                day: '2-digit',
+                                month: 'short'
+                              })}
+                            </div>
+                            <div style={{ 
+                              fontSize: '0.8rem', 
+                              color: darkMode ? '#94a3b8' : '#64748b' 
+                            }}>
+                              {new Date(val.Asistencia_FActual).toLocaleDateString('es-ES', {
+                                year: 'numeric'
+                              })}
+                            </div>
+                          </div>
+                        </td>
                         <td className="td-nombre">
                           <div className="nombre-wrapper">
-                            <span className="nombre-text">{val.Asistencia_Justificacion}</span>
+                            {/* Mostrar nombre del estudiante si está disponible */}
+                            {val.Persona_Nombre ? (
+                              <>
+                                <div style={{
+                                  fontWeight: 'bold',
+                                  fontSize: '0.95rem',
+                                  marginBottom: '6px',
+                                  color: darkMode ? '#f1f5f9' : '#1e293b'
+                                }}>
+                                  �‍🎓 {val.Persona_Nombre} {val.Persona_PApellido} {val.Persona_SApellido}
+                                </div>
+                                <div style={{
+                                  fontSize: '0.85rem',
+                                  color: darkMode ? '#cbd5e0' : '#64748b',
+                                  fontStyle: 'italic',
+                                  lineHeight: '1.4'
+                                }}>
+                                  {val.Asistencia_Justificacion}
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <div style={{
+                                  fontWeight: 'bold',
+                                  fontSize: '0.95rem',
+                                  marginBottom: '6px',
+                                  color: darkMode ? '#f1f5f9' : '#1e293b'
+                                }}>
+                                  �📚 {val.Asistencia_Justificacion?.split('-')[0]?.trim() || 'Estudiante'}
+                                </div>
+                                <div style={{
+                                  fontSize: '0.85rem',
+                                  color: darkMode ? '#cbd5e0' : '#64748b',
+                                  fontStyle: 'italic',
+                                  lineHeight: '1.4'
+                                }}>
+                                  {val.Asistencia_Justificacion?.includes('-') 
+                                    ? val.Asistencia_Justificacion.split('-').slice(1).join('-').trim()
+                                    : val.Asistencia_Justificacion
+                                  }
+                                </div>
+                              </>
+                            )}
                           </div>
                         </td>
                         <td>
@@ -321,9 +727,20 @@ const JustificacionProfesor = () => {
                             val.Asistencia_Tipo === 'justificada' ? 'bg-success' :
                             val.Asistencia_Tipo === 'injustificada' ? 'bg-danger' :
                             val.Asistencia_Tipo === 'enfermedad' ? 'bg-warning text-dark' :
-                            'bg-info text-dark'
-                          }`}>
-                            {val.Asistencia_Tipo}
+                            val.Asistencia_Tipo === 'medica' ? 'bg-info text-dark' :
+                            val.Asistencia_Tipo === 'Familia' ? 'bg-primary' :
+                            'bg-secondary'
+                          }`} style={{ 
+                            padding: '6px 12px',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold'
+                          }}>
+                            {val.Asistencia_Tipo === 'justificada' && '✓ Justificada'}
+                            {val.Asistencia_Tipo === 'injustificada' && '✗ Injustificada'}
+                            {val.Asistencia_Tipo === 'enfermedad' && '🏥 Enfermedad'}
+                            {val.Asistencia_Tipo === 'medica' && '⚕️ Médica'}
+                            {val.Asistencia_Tipo === 'Familia' && '👨‍👩‍👧 Familiar'}
+                            {!['justificada', 'injustificada', 'enfermedad', 'medica', 'Familia'].includes(val.Asistencia_Tipo) && val.Asistencia_Tipo}
                           </span>
                         </td>
                         <td>
@@ -359,6 +776,9 @@ const JustificacionProfesor = () => {
               <div className="empty-state">
                 <div className="empty-icon">📭</div>
                 <p>No hay justificaciones registradas</p>
+                <small style={{ color: darkMode ? '#94a3b8' : '#64748b' }}>
+                  Las justificaciones revisadas aparecerán aquí
+                </small>
               </div>
             )}
           </div>

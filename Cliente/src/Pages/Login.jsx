@@ -42,15 +42,36 @@ const Login = () => {
         Usuarios_contraseña,
       });
 
-      const { token, Roles_Id, username } = response.data;
+      const { 
+        token, 
+        Roles_Id, 
+        username, 
+        nombreCompleto, 
+        Persona_Id, 
+        Estudiante_Id, 
+        Profesor_Id 
+      } = response.data;
 
       // Usar el servicio de autenticación para establecer la sesión con tiempo de expiración
-      authService.setSession(token, username || Usuarios_Nombre, Roles_Id);
+      authService.setSession(token, username || Usuarios_Nombre, Roles_Id, {
+        nombreCompleto,
+        Persona_Id,
+        Estudiante_Id,
+        Profesor_Id,
+      });
+
+      console.log('👤 Usuario logueado:', {
+        username,
+        nombreCompleto,
+        Roles_Id,
+        Estudiante_Id,
+        Profesor_Id
+      });
 
       // Mostrar mensaje de éxito con información de duración de sesión
       Swal.fire({
         title: "Login exitoso",
-        html: `<i>¡Hola, <strong>${username || Usuarios_Nombre}!</strong> Bienvenido(a)<br><small>Tu sesión expirará en 1 hora</small></i>`,
+        html: `<i>¡Hola, <strong>${nombreCompleto || username || Usuarios_Nombre}!</strong> Bienvenido(a)<br><small>Tu sesión expirará en 1 hora</small></i>`,
         icon: "success",
         timer: 3000,
       });

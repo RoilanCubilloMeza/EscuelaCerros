@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express.Router();
+const bcrypt = require("bcrypt");
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -29,7 +30,7 @@ app.post("/verificarDuplicados", (req, res) => {
 
       // Verificar cédula
       connection.query(
-        "SELECT Persona_Cedula FROM Persona WHERE Persona_Cedula = ?",
+        "SELECT Persona_Cedula FROM Personas WHERE Persona_Cedula = ?",
         [Persona_Cedula],
         (err, cedulaResult) => {
           if (err) {
@@ -46,7 +47,7 @@ app.post("/verificarDuplicados", (req, res) => {
 
           // Verificar correo
           connection.query(
-            "SELECT Persona_Correo FROM Persona WHERE Persona_Correo = ?",
+            "SELECT Persona_Correo FROM Personas WHERE Persona_Correo = ?",
             [Persona_Correo],
             (err, correoResult) => {
               if (err) {
@@ -74,7 +75,7 @@ app.post("/verificarDuplicados", (req, res) => {
   );
 });
 
-app.post("/createUsuarioslogin", (req, res) => {
+app.post("/createUsuarioslogin", async (req, res) => {
   const usuarios_Nombre = req.body.usuarios_Nombre;
   const Usuarios_contraseña = req.body.Usuarios_contraseña;
   const Roles_Id= req.body.Roles_Id;
@@ -82,30 +83,39 @@ app.post("/createUsuarioslogin", (req, res) => {
   const Pregunta_Seguridad = req.body.Pregunta_Seguridad || null;
   const Respuesta_Seguridad = req.body.Respuesta_Seguridad || null;
  
- 
-  connection.query(
-    "INSERT INTO Usuarios(Usuarios_Nombre,Usuarios_contraseña,Roles_Id,Persona_Id,Pregunta_Seguridad,Respuesta_Seguridad) VALUES (?,?,?,?,?,?)",
-    [
-      usuarios_Nombre,
-      Usuarios_contraseña,
-      Roles_Id,
-      Persona_Id,
-      Pregunta_Seguridad,
-      Respuesta_Seguridad,
-    ],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Error al crear el Usuario");
-      } else {
-        res.send("Usuario creado exitosamente");
+  try {
+    // Generar salt y encriptar contraseña
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(Usuarios_contraseña, saltRounds);
+    console.log('🔒 Contraseña encriptada con bcrypt');
+
+    connection.query(
+      "INSERT INTO Usuarios(Usuarios_Nombre,Usuarios_contraseña,Roles_Id,Persona_Id,Pregunta_Seguridad,Respuesta_Seguridad) VALUES (?,?,?,?,?,?)",
+      [
+        usuarios_Nombre,
+        hashedPassword, // Guardamos la contraseña encriptada
+        Roles_Id,
+        Persona_Id,
+        Pregunta_Seguridad,
+        Respuesta_Seguridad,
+      ],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send("Error al crear el Usuario");
+        } else {
+          res.send("Usuario creado exitosamente");
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.error('❌ Error al encriptar contraseña:', error);
+    res.status(500).send("Error al procesar la contraseña");
+  }
 });
 
 // Endpoint específico para registro de nuevos usuarios
-app.post("/createRegistroUsuario", (req, res) => {
+app.post("/createRegistroUsuario", async (req, res) => {
   const { 
     Usuarios_Nombre, 
     Usuarios_contraseña, 
@@ -121,28 +131,38 @@ app.post("/createRegistroUsuario", (req, res) => {
     });
   }
 
-  // Si no se proporciona Roles_Id, usar 3 (rol de estudiante por defecto)
-  const rolId = Roles_Id || 3;
+  try {
+    // Generar salt y encriptar contraseña
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(Usuarios_contraseña, saltRounds);
+    console.log('🔒 Contraseña de registro encriptada');
 
-  connection.query(
-    "INSERT INTO Usuarios(Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id, Pregunta_Seguridad, Respuesta_Seguridad) VALUES (?,?,?,?,?,?)",
-    [Usuarios_Nombre, Usuarios_contraseña, rolId, Persona_Id, Pregunta_Seguridad, Respuesta_Seguridad],
-    (err, result) => {
-      if (err) {
-        console.error("Error al crear el usuario:", err);
-        return res.status(500).json({ 
-          error: "Error al crear el usuario",
-          details: err.message 
-        });
-      } else {
-        console.log("Usuario registrado exitosamente con ID:", result.insertId);
-        return res.json({ 
-          message: "Usuario registrado exitosamente",
-          usuarioId: result.insertId 
-        });
+    // Si no se proporciona Roles_Id, usar 3 (rol de estudiante por defecto)
+    const rolId = Roles_Id || 3;
+
+    connection.query(
+      "INSERT INTO Usuarios(Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id, Pregunta_Seguridad, Respuesta_Seguridad) VALUES (?,?,?,?,?,?)",
+      [Usuarios_Nombre, hashedPassword, rolId, Persona_Id, Pregunta_Seguridad, Respuesta_Seguridad],
+      (err, result) => {
+        if (err) {
+          console.error("Error al crear el usuario:", err);
+          return res.status(500).json({ 
+            error: "Error al crear el usuario",
+            details: err.message 
+          });
+        } else {
+          console.log("Usuario registrado exitosamente con ID:", result.insertId);
+          return res.json({ 
+            message: "Usuario registrado exitosamente",
+            usuarioId: result.insertId 
+          });
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.error('❌ Error al encriptar contraseña en registro:', error);
+    res.status(500).json({ error: "Error al procesar la contraseña" });
+  }
 });
 
 
@@ -156,7 +176,7 @@ app.get("/obtenerUsuariosLogin", (req, res) => {
   });
 });
 
-app.put("/actualizarUsuariosLogin", (req, res) => {
+app.put("/actualizarUsuariosLogin", async (req, res) => {
   const Usuarios_Id = req.body.Usuarios_Id;
   const usuarios_Nombre = req.body.usuarios_Nombre;
   const Usuarios_contraseña = req.body.Usuarios_contraseña;
@@ -165,27 +185,49 @@ app.put("/actualizarUsuariosLogin", (req, res) => {
   const Pregunta_Seguridad = req.body.Pregunta_Seguridad || null;
   const Respuesta_Seguridad = req.body.Respuesta_Seguridad || null;
   
-  connection.query(
-    "UPDATE Usuarios SET Usuarios_Nombre=?,Usuarios_contraseña=?,Roles_Id=?,Persona_Id=?,Pregunta_Seguridad=?,Respuesta_Seguridad=? WHERE Usuarios_Id=?",
-    [
-        usuarios_Nombre,
-        Usuarios_contraseña,
-        Roles_Id,
-        Persona_Id,
-        Pregunta_Seguridad,
-        Respuesta_Seguridad,
-        Usuarios_Id
-        
-    ],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Error al actualizar el Usuario");
-      } else {
-        res.send("Usuario actualizado exitosamente");
-      }
+  try {
+    // Si la contraseña no ha cambiado (viene encriptada), no la encriptamos de nuevo
+    // Si es una contraseña nueva (texto plano corto), la encriptamos
+    let finalPassword = Usuarios_contraseña;
+    
+    // Detectar si es una contraseña nueva (texto plano) o ya está hasheada
+    // Las contraseñas de bcrypt empiezan con $2b$ y tienen 60 caracteres
+    const esBcryptHash = Usuarios_contraseña && Usuarios_contraseña.startsWith('$2b$') && Usuarios_contraseña.length === 60;
+    
+    if (!esBcryptHash) {
+      // Es una contraseña nueva, encriptarla
+      const saltRounds = 10;
+      finalPassword = await bcrypt.hash(Usuarios_contraseña, saltRounds);
+      console.log('🔒 Contraseña actualizada y encriptada');
+    } else {
+      console.log('✅ Contraseña ya estaba encriptada, no se modificó');
     }
-  );
+
+    connection.query(
+      "UPDATE Usuarios SET Usuarios_Nombre=?,Usuarios_contraseña=?,Roles_Id=?,Persona_Id=?,Pregunta_Seguridad=?,Respuesta_Seguridad=? WHERE Usuarios_Id=?",
+      [
+          usuarios_Nombre,
+          finalPassword,
+          Roles_Id,
+          Persona_Id,
+          Pregunta_Seguridad,
+          Respuesta_Seguridad,
+          Usuarios_Id
+          
+      ],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send("Error al actualizar el Usuario");
+        } else {
+          res.send("Usuario actualizado exitosamente");
+        }
+      }
+    );
+  } catch (error) {
+    console.error('❌ Error al procesar contraseña en actualización:', error);
+    res.status(500).send("Error al procesar la contraseña");
+  }
 });
 
 app.delete("/deleteUsuariosLogin/:Usuarios_Id", (req, res) => {
@@ -283,38 +325,51 @@ app.post("/verificarRespuesta", (req, res) => {
 });
 
 // Endpoint para cambiar la contraseña
-app.post("/cambiarContrasena", (req, res) => {
+app.post("/cambiarContrasena", async (req, res) => {
   const { usuarioId, nuevaContraseña } = req.body;
 
   console.log("Intentando cambiar contraseña para usuario:", usuarioId);
 
-  connection.query(
-    "UPDATE Usuarios SET Usuarios_contraseña = ? WHERE Usuarios_Id = ?",
-    [nuevaContraseña, usuarioId],
-    (err, result) => {
-      if (err) {
-        console.error("Error al cambiar contraseña:", err);
-        return res.status(500).json({ 
-          error: "Error al cambiar contraseña",
-          message: err.message 
-        });
-      }
+  try {
+    // Encriptar la nueva contraseña
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(nuevaContraseña, saltRounds);
+    console.log('🔒 Nueva contraseña encriptada para cambio');
 
-      console.log("Resultado de actualización:", result);
+    connection.query(
+      "UPDATE Usuarios SET Usuarios_contraseña = ? WHERE Usuarios_Id = ?",
+      [hashedPassword, usuarioId],
+      (err, result) => {
+        if (err) {
+          console.error("Error al cambiar contraseña:", err);
+          return res.status(500).json({ 
+            error: "Error al cambiar contraseña",
+            message: err.message 
+          });
+        }
 
-      if (result.affectedRows > 0) {
-        return res.json({ 
-          success: true,
-          message: "Contraseña actualizada exitosamente" 
-        });
-      } else {
-        return res.status(404).json({ 
-          success: false,
-          message: "Usuario no encontrado" 
-        });
+        console.log("Resultado de actualización:", result);
+
+        if (result.affectedRows > 0) {
+          return res.json({ 
+            success: true,
+            message: "Contraseña actualizada exitosamente" 
+          });
+        } else {
+          return res.status(404).json({ 
+            success: false,
+            message: "Usuario no encontrado" 
+          });
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.error('❌ Error al encriptar nueva contraseña:', error);
+    res.status(500).json({ 
+      error: "Error al procesar la contraseña",
+      message: error.message 
+    });
+  }
 });
 
 // Endpoint para obtener pregunta de seguridad del usuario actual

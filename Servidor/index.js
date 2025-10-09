@@ -35,6 +35,7 @@ app.use(require('./services/Noticias'))
 app.use(require('./services/Notas'))
 app.use(require('./services/NotasFinales'))
 app.use(require('./services/Profesores'))
+app.use(require('./services/Notificaciones')) // 📬 Nuevo servicio
 
 
 app.listen(process.env.PORT||3001,() => {

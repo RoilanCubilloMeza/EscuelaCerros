@@ -4,7 +4,7 @@ const SESSION_DURATION = 60 * 60 * 1000; // 1 hora en milisegundos
 
 export const authService = {
   // Establecer sesión con tiempo de expiración
-  setSession: (token, username, userRole) => {
+  setSession: (token, username, userRole, additionalData = {}) => {
     const loginTime = new Date().getTime();
     const expirationTime = loginTime + SESSION_DURATION;
 
@@ -13,6 +13,20 @@ export const authService = {
     localStorage.setItem("userRole", userRole);
     localStorage.setItem("loginTime", loginTime.toString());
     localStorage.setItem("expirationTime", expirationTime.toString());
+    
+    // Guardar información adicional del usuario
+    if (additionalData.nombreCompleto) {
+      localStorage.setItem("nombreCompleto", additionalData.nombreCompleto);
+    }
+    if (additionalData.Persona_Id) {
+      localStorage.setItem("personaId", additionalData.Persona_Id.toString());
+    }
+    if (additionalData.Estudiante_Id) {
+      localStorage.setItem("estudianteId", additionalData.Estudiante_Id.toString());
+    }
+    if (additionalData.Profesor_Id) {
+      localStorage.setItem("profesorId", additionalData.Profesor_Id.toString());
+    }
   },
 
   // Verificar si la sesión es válida
@@ -52,6 +66,10 @@ export const authService = {
     localStorage.removeItem("userRole");
     localStorage.removeItem("loginTime");
     localStorage.removeItem("expirationTime");
+    localStorage.removeItem("nombreCompleto");
+    localStorage.removeItem("personaId");
+    localStorage.removeItem("estudianteId");
+    localStorage.removeItem("profesorId");
   },
 
   // Obtener información del usuario actual
@@ -63,7 +81,11 @@ export const authService = {
     return {
       token: localStorage.getItem("token"),
       username: localStorage.getItem("username"),
+      nombreCompleto: localStorage.getItem("nombreCompleto"),
       userRole: parseInt(localStorage.getItem("userRole")),
+      personaId: localStorage.getItem("personaId") ? parseInt(localStorage.getItem("personaId")) : null,
+      estudianteId: localStorage.getItem("estudianteId") ? parseInt(localStorage.getItem("estudianteId")) : null,
+      profesorId: localStorage.getItem("profesorId") ? parseInt(localStorage.getItem("profesorId")) : null,
     };
   },
 

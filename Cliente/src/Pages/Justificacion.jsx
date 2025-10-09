@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
 import API_BASE_URL from "../config/api";
+import authService from "../services/authService";
 
 const Justificacion = () => {
   const { darkMode } = useTheme();
@@ -12,6 +13,11 @@ const Justificacion = () => {
   const [Asistencia_justificacion, setJustificacion] = useState("");
   const [Asistencia_Tipo, setTipo] = useState("");
   const [Referidos, setReferidos] = useState("");
+  
+  // Obtener información del usuario logueado
+  const currentUser = authService.getCurrentUser();
+  const Estudiante_Id = currentUser?.estudianteId || null;
+  const nombreEstudiante = currentUser?.nombreCompleto || currentUser?.username || "";
 
   const [camposVacios, setCamposVacios] = useState(false);
 
@@ -25,18 +31,28 @@ const Justificacion = () => {
       return;
     }
 
+    // Verificar que el usuario esté logueado como estudiante
+    if (!Estudiante_Id) {
+      Swal.fire({
+        icon: "error",
+        title: "Error de sesión",
+        text: "No se pudo identificar tu información de estudiante. Por favor, inicia sesión nuevamente.",
+      });
+      return;
+    }
+
     Axios.post(`${API_BASE_URL}/createJustificacion`, {
       Asistencia_FActual: Asistencia_FActual,
-      Asistencia_justificacion: Asistencia_justificacion,
+      Asistencia_Justificacion: Asistencia_justificacion, // Cambiar el nombre para que coincida con el backend
       Asistencia_Tipo: Asistencia_Tipo,
       Referidos: Referidos,
-    }).then(() => {
+      Estudiante_Id: Estudiante_Id, // 📬 Enviar ID del estudiante automáticamente
+    }).then((response) => {
+      console.log('✅ Respuesta del servidor:', response.data);
       Swal.fire({
-        title: "<strong >Guardado exitoso</strong>",
+        title: "<strong>Guardado exitoso</strong>",
         html:
-          "<i>Justificación <strong>" +
-          Asistencia_justificacion +
-          "</strong> registrada.</i>",
+          "<i>Justificación registrada y <strong>notificación enviada a tu profesor</strong>.</i>",
         icon: "success",
         timer: 3000,
       });
@@ -45,6 +61,13 @@ const Justificacion = () => {
       setTipo("");
       setReferidos("");
       setCamposVacios(false); 
+    }).catch((error) => {
+      console.error('❌ Error al crear justificación:', error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo crear la justificación. " + (error.response?.data || error.message),
+      });
     });
   };
 
@@ -99,8 +122,60 @@ const Justificacion = () => {
             <h5 className="mb-0">➕ Registrar Justificación</h5>
           </div>
           <div className="card-body-custom">
+            {/* Banner informativo con datos del estudiante */}
+            <div className="alert alert-success mb-4" style={{
+              background: darkMode ? 'rgba(72, 187, 120, 0.15)' : 'rgba(72, 187, 120, 0.1)',
+              border: `1px solid ${darkMode ? '#48bb78' : '#9ae6b4'}`,
+              borderRadius: '12px',
+              padding: '16px'
+            }}>
+              <div className="d-flex align-items-start gap-3">
+                <span style={{ fontSize: '24px' }}>�</span>
+                <div className="flex-grow-1">
+                  <strong style={{ color: darkMode ? '#68d391' : '#2f855a' }}>
+                    Sesión activa
+                  </strong>
+                  <p className="mb-1 mt-2" style={{ 
+                    fontSize: '0.95rem',
+                    color: darkMode ? '#e9ecef' : '#4a5568'
+                  }}>
+                    <strong>Estudiante:</strong> {nombreEstudiante}
+                  </p>
+                  <p className="mb-0" style={{ 
+                    fontSize: '0.85rem',
+                    color: darkMode ? '#cbd5e0' : '#718096'
+                  }}>
+                    Tu justificación será enviada automáticamente a tu profesor encargado.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Alerta informativa sobre la notificación */}
+            <div className="alert alert-info-custom mb-4" style={{
+              background: darkMode ? 'rgba(66, 153, 225, 0.1)' : 'rgba(66, 153, 225, 0.05)',
+              border: `1px solid ${darkMode ? '#4299e1' : '#bee3f8'}`,
+              borderRadius: '12px',
+              padding: '16px'
+            }}>
+              <div className="d-flex align-items-start gap-3">
+                <span style={{ fontSize: '24px' }}>📬</span>
+                <div>
+                  <strong style={{ color: darkMode ? '#4dabf7' : '#2b6cb0' }}>
+                    Notificación Automática
+                  </strong>
+                  <p className="mb-0 mt-1" style={{ 
+                    fontSize: '0.9rem',
+                    color: darkMode ? '#e9ecef' : '#4a5568'
+                  }}>
+                    Cuando envíes tu justificación, se notificará automáticamente a tu profesor encargado.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <div className="form-group-modern">
                   <label htmlFor="Asistencia_Tipo" className="form-label-modern">
                     <span className="label-icon">📋</span>
@@ -123,11 +198,11 @@ const Justificacion = () => {
                 </div>
               </div>
 
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <div className="form-group-modern">
                   <label htmlFor="Asistencia_FActual" className="form-label-modern">
                     <span className="label-icon">📅</span>
-                    Fecha de Justificación
+                    Fecha de Ausencia
                   </label>
                   <input
                     type="date"

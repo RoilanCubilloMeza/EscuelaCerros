@@ -7,7 +7,19 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 var cors = require('cors')
-app.use(cors())
+
+// Configuración de CORS para permitir Vercel y localhost
+const corsOptions = {
+  origin: [
+    'https://escuela-cerros.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions))
 
 //cargamos el archivo de rutas
 app.use(require('./services/Encargado'));

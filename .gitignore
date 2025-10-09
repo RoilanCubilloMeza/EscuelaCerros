@@ -2,12 +2,16 @@
 node_modules/
 package-lock.json
 
-# Variables de entorno - NUNCA subir al repositorio
-.env
+# Variables de entorno con SECRETOS - NUNCA subir al repositorio
 .env.local
-.env.production
+.env.development.local
+.env.test.local
+.env.production.local
 Servidor/.env
-Cliente/.env
+Cliente/.env.local
+
+# Variables de entorno de producción SIN secretos - OK para subir
+# Cliente/.env.production (se sube para Vercel)
 
 # Logs
 logs/

@@ -8,100 +8,154 @@ const { connection } = require("../config");
 
 // Variable para verificar si las columnas nuevas existen
 let columnasExtendidas = false;
+let verificacionEnProgreso = false;
 
 // Función para agregar columnas si no existen
 const agregarColumnasExtendidas = () => {
-  // Verificar si existe la columna Profesor_Id
-  connection.query(
-    "SHOW COLUMNS FROM Estudiantes LIKE 'Profesor_Id'",
-    (err, result) => {
-      if (err) {
-        console.error("Error al verificar columna Profesor_Id:", err);
-        return;
-      }
+  if (verificacionEnProgreso) {
+    console.log("⚠ Verificación ya en progreso, esperando...");
+    return;
+  }
 
-      if (result.length === 0) {
-        // La columna no existe, agregarla
-        connection.query(
-          "ALTER TABLE Estudiantes ADD COLUMN Profesor_Id INT NULL COMMENT 'FK a tabla Profesores'",
-          (err) => {
-            if (err) {
-              console.error("Error al agregar columna Profesor_Id:", err);
-            } else {
-              console.log("✓ Columna Profesor_Id agregada exitosamente");
-              // Crear índice
-              connection.query(
-                "CREATE INDEX idx_profesor_id ON Estudiantes(Profesor_Id)",
-                (err) => {
-                  if (err && err.code !== 'ER_DUP_KEYNAME') {
-                    console.error("Error al crear índice idx_profesor_id:", err);
-                  }
-                }
-              );
-            }
-          }
-        );
-      }
+  verificacionEnProgreso = true;
+
+  connection.getConnection((connErr, conn) => {
+    if (connErr) {
+      console.warn("⚠️ No se pudo verificar columnas extendidas (conexión no disponible)");
+      verificacionEnProgreso = false;
+      return;
     }
-  );
 
-  // Verificar si existe la columna Grado_Id
-  connection.query(
-    "SHOW COLUMNS FROM Estudiantes LIKE 'Grado_Id'",
-    (err, result) => {
-      if (err) {
-        console.error("Error al verificar columna Grado_Id:", err);
-        return;
-      }
+    // Verificar si existe la columna Profesor_Id
+    conn.query(
+      "SHOW COLUMNS FROM Estudiantes LIKE 'Profesor_Id'",
+      (err, result) => {
+        if (err) {
+          console.warn("⚠️ Error al verificar columna Profesor_Id:", err.code);
+          conn.release();
+          verificacionEnProgreso = false;
+          return;
+        }
 
-      if (result.length === 0) {
-        // La columna no existe, agregarla
-        connection.query(
-          "ALTER TABLE Estudiantes ADD COLUMN Grado_Id INT NULL COMMENT 'FK a tabla Grado'",
-          (err) => {
-            if (err) {
-              console.error("Error al agregar columna Grado_Id:", err);
-            } else {
-              console.log("✓ Columna Grado_Id agregada exitosamente");
-              // Crear índice
-              connection.query(
-                "CREATE INDEX idx_grado_id ON Estudiantes(Grado_Id)",
-                (err) => {
-                  if (err && err.code !== 'ER_DUP_KEYNAME') {
-                    console.error("Error al crear índice idx_grado_id:", err);
+        if (result.length === 0) {
+          // La columna no existe, agregarla
+          conn.query(
+            "ALTER TABLE Estudiantes ADD COLUMN Profesor_Id INT NULL COMMENT 'FK a tabla Profesores'",
+            (err) => {
+              if (err) {
+                console.warn("⚠️ Error al agregar columna Profesor_Id:", err.code);
+              } else {
+                console.log("✓ Columna Profesor_Id agregada exitosamente");
+                // Crear índice
+                conn.query(
+                  "CREATE INDEX idx_profesor_id ON Estudiantes(Profesor_Id)",
+                  (err) => {
+                    if (err && err.code !== 'ER_DUP_KEYNAME') {
+                      console.warn("⚠️ Error al crear índice idx_profesor_id:", err.code);
+                    }
                   }
-                }
-              );
+                );
+              }
             }
-          }
-        );
+          );
+        }
       }
-    }
-  );
+    );
 
-  // Verificar nuevamente después de 2 segundos para actualizar el estado
-  setTimeout(verificarColumnasExtendidas, 2000);
+    // Verificar si existe la columna Grado_Id
+    conn.query(
+      "SHOW COLUMNS FROM Estudiantes LIKE 'Grado_Id'",
+      (err, result) => {
+        conn.release();
+        
+        if (err) {
+          console.warn("⚠️ Error al verificar columna Grado_Id:", err.code);
+          verificacionEnProgreso = false;
+          return;
+        }
+
+        if (result.length === 0) {
+          // La columna no existe, agregarla
+          connection.getConnection((connErr2, conn2) => {
+            if (connErr2) {
+              verificacionEnProgreso = false;
+              return;
+            }
+            
+            conn2.query(
+              "ALTER TABLE Estudiantes ADD COLUMN Grado_Id INT NULL COMMENT 'FK a tabla Grado'",
+              (err) => {
+                if (err) {
+                  console.warn("⚠️ Error al agregar columna Grado_Id:", err.code);
+                  conn2.release();
+                  verificacionEnProgreso = false;
+                } else {
+                  console.log("✓ Columna Grado_Id agregada exitosamente");
+                  // Crear índice
+                  conn2.query(
+                    "CREATE INDEX idx_grado_id ON Estudiantes(Grado_Id)",
+                    (err) => {
+                      conn2.release();
+                      if (err && err.code !== 'ER_DUP_KEYNAME') {
+                        console.warn("⚠️ Error al crear índice idx_grado_id:", err.code);
+                      }
+                      verificacionEnProgreso = false;
+                    }
+                  );
+                }
+              }
+            );
+          });
+        } else {
+          verificacionEnProgreso = false;
+        }
+      }
+    );
+  });
 };
 
 // Verificar si existen las columnas Profesor_Id y Grado_Id
 const verificarColumnasExtendidas = () => {
-  connection.query(
-    "SHOW COLUMNS FROM Estudiantes LIKE 'Profesor_Id'",
-    (err, result) => {
-      if (!err && result.length > 0) {
-        columnasExtendidas = true;
-        console.log("✓ Columnas extendidas (Profesor_Id, Grado_Id) detectadas en Estudiantes");
-      } else {
-        columnasExtendidas = false;
-        console.log("⚠ Columnas extendidas no detectadas. Agregando automáticamente...");
-        agregarColumnasExtendidas();
-      }
+  if (verificacionEnProgreso) {
+    return; // No hacer nada si ya hay una verificación en progreso
+  }
+
+  connection.getConnection((connErr, conn) => {
+    if (connErr) {
+      console.warn("⚠️ No se pudo verificar columnas extendidas (conexión no disponible)");
+      columnasExtendidas = false;
+      return;
     }
-  );
+
+    conn.query(
+      "SHOW COLUMNS FROM Estudiantes LIKE 'Profesor_Id'",
+      (err, result) => {
+        conn.release();
+        
+        if (err) {
+          console.warn("⚠️ Error al verificar columnas:", err.code);
+          columnasExtendidas = false;
+          return;
+        }
+
+        if (result.length > 0) {
+          columnasExtendidas = true;
+          console.log("✓ Columnas extendidas (Profesor_Id, Grado_Id) detectadas en Estudiantes");
+        } else {
+          columnasExtendidas = false;
+          console.log("⚠ Columnas extendidas no detectadas. Agregando automáticamente...");
+          agregarColumnasExtendidas();
+        }
+      }
+    );
+  });
 };
 
-// Ejecutar verificación al cargar el módulo
-verificarColumnasExtendidas();
+// Ejecutar verificación al cargar el módulo después de un delay
+// Esto permite que el pool de conexiones se estabilice
+setTimeout(() => {
+  verificarColumnasExtendidas();
+}, 2000);
 
 app.post("/createMatricula", (req, res) => {
   const { Persona_Id, Estudiantes_Estado, Adecuacion_Id, Residencia_ID, Enfermedades_Id, Estudiantes_Grado, Encargados_Id, Profesor_Id, Grado_Id } = req.body;

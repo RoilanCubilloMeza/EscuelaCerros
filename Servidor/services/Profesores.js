@@ -21,16 +21,24 @@ const crearTablaProfesores = () => {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `;
 
-  connection.query(query, (err, result) => {
-    if (err) {
-      console.error("Error al crear tabla Profesores:", err);
-    } else {
-      console.log("✓ Tabla Profesores verificada/creada exitosamente");
+  connection.getConnection((connErr, conn) => {
+    if (connErr) {
+      console.warn("⚠️ No se pudo verificar tabla Profesores (conexión no disponible)");
+      return;
     }
+    
+    conn.query(query, (err, result) => {
+      conn.release();
+      if (err) {
+        console.warn("⚠️ No se pudo verificar tabla Profesores:", err.code);
+      } else {
+        console.log("✓ Tabla Profesores verificada/creada exitosamente");
+      }
+    });
   });
 };
 
-// Ejecutar al cargar el módulo
+// Ejecutar al cargar el módulo (no bloqueante)
 crearTablaProfesores();
 
 // Crear un nuevo profesor

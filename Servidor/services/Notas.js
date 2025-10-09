@@ -24,16 +24,24 @@ const crearTablaMatriculaNotas = () => {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   `;
 
-  connection.query(createTableQuery, (error) => {
-    if (error) {
-      console.error("Error al crear tabla Matricula_Notas:", error);
-    } else {
-      console.log("✓ Tabla Matricula_Notas verificada/creada");
+  connection.getConnection((connErr, conn) => {
+    if (connErr) {
+      console.warn("⚠️ No se pudo verificar tabla Matricula_Notas (conexión no disponible)");
+      return;
     }
+    
+    conn.query(createTableQuery, (error) => {
+      conn.release();
+      if (error) {
+        console.warn("⚠️ No se pudo verificar tabla Matricula_Notas:", error.code);
+      } else {
+        console.log("✓ Tabla Matricula_Notas verificada/creada");
+      }
+    });
   });
 };
 
-// Ejecutar al iniciar el módulo
+// Ejecutar al iniciar el módulo (no bloqueante)
 crearTablaMatriculaNotas();
 
 // Helper function para convertir periodo a formato numérico si es texto

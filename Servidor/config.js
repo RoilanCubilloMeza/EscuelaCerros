@@ -2,12 +2,11 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-
 const mysql = require('mysql2');
-let connection;
 
 try {
-    exports.connection = mysql.createConnection({
+    exports.connection = mysql.createPool({
+        connectionLimit: 5,
         host: process.env.DBHOST,
         port: process.env.DBPORT || 3306,
         user: process.env.DBUSER,
@@ -17,9 +16,11 @@ try {
         ssl: {
             rejectUnauthorized: false
         },
-        connectTimeout: 20000
+        connectTimeout: 60000,
+        waitForConnections: true,
+        queueLimit: 0
     });
-    console.log("conexión exitosa con la db");
+    console.log("✅ Pool de conexiones configurado correctamente");
 } catch (error) {
-    console.log("Error al conectar con la base de datos", error);
+    console.log("❌ Error al configurar pool de conexiones:", error);
 }

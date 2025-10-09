@@ -45,3 +45,4 @@ credentials.json
 Cliente/.env.example
 Servidor/.env
 
+Cliente/.env

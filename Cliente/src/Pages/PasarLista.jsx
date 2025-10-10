@@ -624,8 +624,10 @@ const PasarLista = () => {
         const nombreTareaDelDia = primeraTarea.Nombre_Tarea;
         const materiaIdDelDia = primeraTarea.Materia_Id;
         
-        // Cargar datos de esa tarea
+        // Cargar datos de esa tarea Y activar modo edición
         cargarTareaPorNombre(nombreTareaDelDia, materiaIdDelDia, fechaTarea, false);
+        // Activar modo edición automáticamente si hay datos
+        setEditandoTarea(true);
       } else {
         // No hay tareas ese día, limpiar
         setTareasData({});
@@ -633,6 +635,7 @@ const PasarLista = () => {
         setMateriaId("");
         setModoEdicion(false);
         setRegistroEditando(null);
+        setEditandoTarea(false); // Desactivar modo edición si no hay datos
       }
     } catch (error) {
       console.error("Error al cargar tareas del día:", error);
@@ -655,8 +658,10 @@ const PasarLista = () => {
         const materiaIdDelDia = primerExamen.Materia_Id;
         const periodoDelDia = primerExamen.Periodo;
         
-        // Cargar datos de ese examen
+        // Cargar datos de ese examen Y activar modo edición
         cargarExamenPorNombre(nombreExamenDelDia, materiaIdDelDia, periodoDelDia, fechaExamen, false);
+        // Activar modo edición automáticamente si hay datos
+        setEditandoExamen(true);
       } else {
         // No hay exámenes ese día, limpiar
         setExamenData({});
@@ -665,6 +670,7 @@ const PasarLista = () => {
         setPeriodoExamen(1);
         setModoEdicion(false);
         setRegistroEditando(null);
+        setEditandoExamen(false); // Desactivar modo edición si no hay datos
       }
     } catch (error) {
       console.error("Error al cargar exámenes del día:", error);
@@ -687,8 +693,10 @@ const PasarLista = () => {
         const materiaIdDelDia = primerCotidiano.Materia_Id;
         const periodoDelDia = primerCotidiano.Periodo;
         
-        // Cargar datos de ese cotidiano
+        // Cargar datos de ese cotidiano Y activar modo edición
         cargarCotidianoPorNombre(nombreCotidianoDelDia, materiaIdDelDia, periodoDelDia, fechaCotidiano, false);
+        // Activar modo edición automáticamente si hay datos
+        setEditandoCotidiano(true);
       } else {
         // No hay cotidianos ese día, limpiar
         setCotidianoData({});
@@ -697,6 +705,7 @@ const PasarLista = () => {
         setPeriodoCotidiano(1);
         setModoEdicion(false);
         setRegistroEditando(null);
+        setEditandoCotidiano(false); // Desactivar modo edición si no hay datos
       }
     } catch (error) {
       console.error("Error al cargar cotidianos del día:", error);
@@ -1622,6 +1631,7 @@ const PasarLista = () => {
                             setFechaTarea(new Date().toISOString().split("T")[0]);
                             setModoEdicion(false);
                             setRegistroEditando(null);
+                            setEditandoTarea(false); // Desactivar modo edición
                           }}
                         >
                           ➕ Nueva Tarea
@@ -1658,7 +1668,15 @@ const PasarLista = () => {
                           className="form-control-modern"
                           placeholder="Ej: Tarea de Matemáticas #3"
                           value={nombreTarea}
-                          onChange={(e) => setNombreTarea(e.target.value)}
+                          onChange={(e) => {
+                            setNombreTarea(e.target.value);
+                            // Si se cambia manualmente el nombre, desactivar modo edición
+                            if (editandoTarea && registroEditando?.nombreTarea !== e.target.value) {
+                              setEditandoTarea(false);
+                              setModoEdicion(false);
+                              setRegistroEditando(null);
+                            }
+                          }}
                         />
                       </div>
                     </div>
@@ -1974,6 +1992,7 @@ const PasarLista = () => {
                             setPeriodoExamen(1);
                             setModoEdicion(false);
                             setRegistroEditando(null);
+                            setEditandoExamen(false); // Desactivar modo edición
                           }}
                         >
                           ➕ Nuevo Examen
@@ -2010,7 +2029,15 @@ const PasarLista = () => {
                           className="form-control-modern"
                           placeholder="Ej: Examen Parcial 1"
                           value={nombreExamen}
-                          onChange={(e) => setNombreExamen(e.target.value)}
+                          onChange={(e) => {
+                            setNombreExamen(e.target.value);
+                            // Si se cambia manualmente el nombre, desactivar modo edición
+                            if (editandoExamen && registroEditando?.nombreExamen !== e.target.value) {
+                              setEditandoExamen(false);
+                              setModoEdicion(false);
+                              setRegistroEditando(null);
+                            }
+                          }}
                         />
                       </div>
                     </div>
@@ -2339,6 +2366,7 @@ const PasarLista = () => {
                             setPeriodoCotidiano(1);
                             setModoEdicion(false);
                             setRegistroEditando(null);
+                            setEditandoCotidiano(false); // Desactivar modo edición
                           }}
                         >
                           ➕ Nuevo Cotidiano
@@ -2375,7 +2403,15 @@ const PasarLista = () => {
                           className="form-control-modern"
                           placeholder="Ej: Trabajo en Clase 1"
                           value={nombreCotidiano}
-                          onChange={(e) => setNombreCotidiano(e.target.value)}
+                          onChange={(e) => {
+                            setNombreCotidiano(e.target.value);
+                            // Si se cambia manualmente el nombre, desactivar modo edición
+                            if (editandoCotidiano && registroEditando?.nombreCotidiano !== e.target.value) {
+                              setEditandoCotidiano(false);
+                              setModoEdicion(false);
+                              setRegistroEditando(null);
+                            }
+                          }}
                         />
                       </div>
                     </div>

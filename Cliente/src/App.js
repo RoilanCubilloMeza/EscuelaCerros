@@ -41,6 +41,9 @@ import Notas from "./Pages/Notas";
 import NotasEstudiante from "./Pages/NotasEstudiante";
 import NotasFinales from "./Pages/NotasFinales";
 import JustificacionProfesor from "./Pages/JustificacionProfesor";
+import PasarLista from "./Pages/PasarLista";
+import ConfiguracionPorcentajes from "./Pages/ConfiguracionPorcentajes";
+
 function App() {
   const [refresh, setRefresh] = useState(false);
   const isAuthenticated = localStorage.getItem("token") !== null;
@@ -263,6 +266,22 @@ function App() {
               element={
                 <ProfesorRoute>
                   <ProfesorDashboard />
+                </ProfesorRoute>
+              }
+            />
+            <Route
+              path="/PasarLista"
+              element={
+                <ProfesorRoute>
+                  <PasarLista />
+                </ProfesorRoute>
+              }
+            />
+            <Route
+              path="/ConfiguracionPorcentajes"
+              element={
+                <ProfesorRoute>
+                  <ConfiguracionPorcentajes />
                 </ProfesorRoute>
               }
             />

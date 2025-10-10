@@ -48,6 +48,8 @@ app.use(require('./services/Notas'))
 app.use(require('./services/NotasFinales'))
 app.use(require('./services/Profesores'))
 app.use(require('./services/Notificaciones')) // 📬 Nuevo servicio
+app.use(require('./services/AsistenciaEstudiantes')) // 📋 Gestión de asistencia y tareas
+app.use(require('./services/ConfiguracionPorcentajes')) // 📊 Configuración de porcentajes
 
 
 app.listen(process.env.PORT||3001,() => {

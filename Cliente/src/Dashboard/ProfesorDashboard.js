@@ -9,6 +9,7 @@ import {
   FaClipboardList,
   FaStickyNote,
   FaChalkboardTeacher,
+  FaCog,
 } from "react-icons/fa";
 
 const CategoryCard = ({ category, icon, path, gradient }) => {
@@ -54,6 +55,14 @@ const ProfesorDashboard = () => {
   }, [darkMode]);
 
   const teacherItems = [
+    {
+      category: "Pasar Lista",
+      icon: <FaClipboardCheck size={32} />,
+      path: "/PasarLista",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)"
+        : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    },
     {
       category: "Asistencia",
       icon: <FaClipboardCheck size={32} />,
@@ -109,6 +118,14 @@ const ProfesorDashboard = () => {
       gradient: darkMode
         ? "linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)"
         : "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    },
+    {
+      category: "Configurar Porcentajes",
+      icon: <FaCog size={32} />,
+      path: "/ConfiguracionPorcentajes",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)"
+        : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     },
   ];
 

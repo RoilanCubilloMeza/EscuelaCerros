@@ -56,7 +56,25 @@ const PasarLista = () => {
   const [historialTareas, setHistorialTareas] = useState([]);
   const [historialExamenes, setHistorialExamenes] = useState([]);
   const [historialCotidianos, setHistorialCotidianos] = useState([]);
-  const [mostrarHistorial, setMostrarHistorial] = useState(false);
+  const [mostrarHistorial, setMostrarHistorial] = useState(true); // Mostrar por defecto
+  
+  // Estados para edición de registros existentes
+  const [modoEdicion, setModoEdicion] = useState(false);
+  const [registroEditando, setRegistroEditando] = useState(null);
+  
+  // Estados específicos para saber si estamos editando cada tipo
+  const [editandoTarea, setEditandoTarea] = useState(false);
+  const [editandoExamen, setEditandoExamen] = useState(false);
+  const [editandoCotidiano, setEditandoCotidiano] = useState(false);
+  
+  // Flags para controlar auto-carga (evitar conflictos al hacer clic en Editar)
+  const [deshabilitarAutoLoadTarea, setDeshabilitarAutoLoadTarea] = useState(false);
+  const [deshabilitarAutoLoadExamen, setDeshabilitarAutoLoadExamen] = useState(false);
+  const [deshabilitarAutoLoadCotidiano, setDeshabilitarAutoLoadCotidiano] = useState(false);
+  
+  // Estados para filtros de historial
+  const [filtroMateriaHistorial, setFiltroMateriaHistorial] = useState("");
+  const [filtroPeriodoHistorial, setFiltroPeriodoHistorial] = useState("");
 
   // Obtener el ID del profesor logueado
   useEffect(() => {
@@ -207,7 +225,7 @@ const PasarLista = () => {
     }
   }, [profesorId]);
 
-  // Cargar historial de tareas
+  // Cargar historial de tareas (con filtros opcionales)
   const cargarHistorialTareas = useCallback(async () => {
     if (!profesorId) return;
     
@@ -249,6 +267,442 @@ const PasarLista = () => {
     }
   }, [profesorId]);
 
+  // Función para cargar datos de tarea específica desde historial
+  const cargarTareaPorNombre = useCallback(async (nombreTarea, materiaId, fecha, desdeBotonEditar = false) => {
+    console.log("🔍 cargarTareaPorNombre llamada con:", { nombreTarea, materiaId, fecha, desdeBotonEditar, profesorId });
+    if (!profesorId || !nombreTarea) {
+      console.log("⚠️ Saliendo porque falta profesorId o nombreTarea");
+      return;
+    }
+    
+    // Si viene desde botón Editar, deshabilitar auto-load ANTES de hacer cualquier cambio
+    if (desdeBotonEditar) {
+      console.log("🔒 Deshabilitando auto-load de tareas");
+      setDeshabilitarAutoLoadTarea(true);
+      // Esperar un frame para asegurar que el estado se actualice
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+    
+    try {
+      const url = `${API_BASE_URL}/obtenerTareaPorNombre/${profesorId}/${encodeURIComponent(nombreTarea)}/${fecha}`;
+      console.log("📡 Haciendo petición a:", url);
+      const response = await Axios.get(url);
+      console.log("✅ Respuesta recibida:", response.data);
+      console.log("📊 Cantidad de registros:", response.data.length);
+      
+      if (response.data.length > 0) {
+        const tareasMap = {};
+        response.data.forEach((registro) => {
+          console.log("📝 Procesando estudiante:", registro.Estudiante_Id, registro);
+          tareasMap[registro.Estudiante_Id] = {
+            estado: registro.Estado || "No Entregado",
+            calificacion: registro.Calificacion || "",
+            observaciones: registro.Observaciones || "",
+          };
+        });
+        
+        console.log("🗂️ Mapa de tareas creado:", tareasMap);
+        console.log("🔄 Actualizando estados...");
+        
+        // Normalizar la fecha a formato YYYY-MM-DD (sin timestamp)
+        const fechaNormalizada = fecha.split('T')[0];
+        console.log("📅 Fecha normalizada:", fechaNormalizada, "desde:", fecha);
+        
+        setTareasData(tareasMap);
+        setNombreTarea(nombreTarea);
+        setMateriaId(materiaId || "");
+        
+        // Solo actualizar la fecha si es diferente (para evitar disparar useEffect innecesariamente)
+        if (fechaTarea !== fechaNormalizada) {
+          console.log("📅 Cambiando fecha de", fechaTarea, "a", fechaNormalizada);
+          setFechaTarea(fechaNormalizada);
+        } else {
+          console.log("📅 Fecha ya es correcta:", fechaNormalizada);
+        }
+        
+        setModoEdicion(true);
+        setRegistroEditando({ tipo: 'tarea', nombreTarea, materiaId, fecha });
+        
+        // Activar modo edición de tarea si viene desde botón Editar
+        if (desdeBotonEditar) {
+          setEditandoTarea(true);
+          console.log("✏️ Modo edición de tarea activado");
+        }
+        
+        console.log("✅ Estados actualizados correctamente");
+        
+        // Solo mostrar alerta y scroll si se hace clic en botón "Editar"
+        if (desdeBotonEditar) {
+          // Cambiar a la pestaña de tareas
+          setActiveTab("tareas");
+          
+          // Hacer scroll después de un breve delay para que la pestaña cambie primero
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 100);
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos Cargados',
+            text: `Editando: ${nombreTarea} - ${response.data.length} estudiantes cargados`,
+            timer: 2500,
+            showConfirmButton: false
+          });
+        }
+      } else {
+        console.log("⚠️ No se encontraron datos para esta tarea");
+        // Si no hay datos, limpiar la tabla
+        setTareasData({});
+        setModoEdicion(false);
+        setRegistroEditando(null);
+        
+        if (desdeBotonEditar) {
+          Swal.fire({
+            icon: 'info',
+            title: 'Sin datos',
+            text: 'No se encontraron registros para esta tarea'
+          });
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error al cargar tarea:", error);
+      if (desdeBotonEditar) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los datos de la tarea: ' + (error.response?.data?.error || error.message)
+        });
+      }
+    } finally {
+      // Reactivar auto-load después de un breve delay
+      if (desdeBotonEditar) {
+        setTimeout(() => {
+          setDeshabilitarAutoLoadTarea(false);
+        }, 500);
+      }
+    }
+  }, [profesorId, fechaTarea]);
+
+  // Función para cargar datos de examen específico desde historial
+  const cargarExamenPorNombre = useCallback(async (nombreExamen, materiaId, periodo, fecha, desdeBotonEditar = false) => {
+    console.log("🔍 cargarExamenPorNombre llamada con:", { nombreExamen, materiaId, periodo, fecha, desdeBotonEditar, profesorId });
+    if (!profesorId || !nombreExamen) {
+      console.log("⚠️ Saliendo porque falta profesorId o nombreExamen");
+      return;
+    }
+    
+    // Si viene desde botón Editar, deshabilitar auto-load ANTES de hacer cualquier cambio
+    if (desdeBotonEditar) {
+      console.log("🔒 Deshabilitando auto-load de exámenes");
+      setDeshabilitarAutoLoadExamen(true);
+      // Esperar un frame para asegurar que el estado se actualice
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+    
+    try {
+      const url = `${API_BASE_URL}/obtenerExamenPorNombre/${profesorId}/${encodeURIComponent(nombreExamen)}/${periodo}/${fecha}`;
+      console.log("📡 Haciendo petición a:", url);
+      const response = await Axios.get(url);
+      console.log("✅ Respuesta recibida:", response.data);
+      console.log("📊 Cantidad de registros:", response.data.length);
+      
+      if (response.data.length > 0) {
+        const examenMap = {};
+        response.data.forEach((registro) => {
+          console.log("📝 Procesando estudiante:", registro.Estudiante_Id, registro);
+          examenMap[registro.Estudiante_Id] = {
+            calificacion: registro.Calificacion || "",
+            observaciones: registro.Observaciones || "",
+          };
+        });
+        
+        console.log("🗂️ Mapa de exámenes creado:", examenMap);
+        
+        // Normalizar la fecha a formato YYYY-MM-DD (sin timestamp)
+        const fechaNormalizada = fecha.split('T')[0];
+        console.log("📅 Fecha normalizada:", fechaNormalizada, "desde:", fecha);
+        
+        setExamenData(examenMap);
+        setNombreExamen(nombreExamen);
+        setMateriaExamen(materiaId || "");
+        setPeriodoExamen(periodo);
+        
+        // Solo actualizar la fecha si es diferente (para evitar disparar useEffect innecesariamente)
+        if (fechaExamen !== fechaNormalizada) {
+          console.log("📅 Cambiando fecha de", fechaExamen, "a", fechaNormalizada);
+          setFechaExamen(fechaNormalizada);
+        } else {
+          console.log("📅 Fecha ya es correcta:", fechaNormalizada);
+        }
+        
+        setModoEdicion(true);
+        setRegistroEditando({ tipo: 'examen', nombreExamen, materiaId, periodo, fecha });
+        
+        // Activar modo edición de examen si viene desde botón Editar
+        if (desdeBotonEditar) {
+          setEditandoExamen(true);
+          console.log("✏️ Modo edición de examen activado");
+        }
+        
+        console.log("✅ Estados actualizados correctamente");
+        
+        // Solo mostrar alerta y scroll si se hace clic en botón "Editar"
+        if (desdeBotonEditar) {
+          // Cambiar a la pestaña de examen
+          setActiveTab("examen");
+          
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 100);
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos Cargados',
+            text: `Editando: ${nombreExamen} - ${response.data.length} estudiantes cargados`,
+            timer: 2500,
+            showConfirmButton: false
+          });
+        }
+      } else {
+        console.log("⚠️ No se encontraron datos para este examen");
+        setExamenData({});
+        setModoEdicion(false);
+        setRegistroEditando(null);
+        
+        if (desdeBotonEditar) {
+          Swal.fire({
+            icon: 'info',
+            title: 'Sin datos',
+            text: 'No se encontraron registros para este examen'
+          });
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error al cargar examen:", error);
+      if (desdeBotonEditar) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los datos del examen: ' + (error.response?.data?.error || error.message)
+        });
+      }
+    } finally {
+      // Reactivar auto-load después de un breve delay
+      if (desdeBotonEditar) {
+        setTimeout(() => {
+          setDeshabilitarAutoLoadExamen(false);
+        }, 500);
+      }
+    }
+  }, [profesorId, fechaExamen]);
+
+  // Función para cargar datos de cotidiano específico desde historial
+  const cargarCotidianoPorNombre = useCallback(async (nombreCotidiano, materiaId, periodo, fecha, desdeBotonEditar = false) => {
+    console.log("🔍 cargarCotidianoPorNombre llamada con:", { nombreCotidiano, materiaId, periodo, fecha, desdeBotonEditar, profesorId });
+    if (!profesorId || !nombreCotidiano) {
+      console.log("⚠️ Saliendo porque falta profesorId o nombreCotidiano");
+      return;
+    }
+    
+    // Si viene desde botón Editar, deshabilitar auto-load ANTES de hacer cualquier cambio
+    if (desdeBotonEditar) {
+      console.log("🔒 Deshabilitando auto-load de cotidianos");
+      setDeshabilitarAutoLoadCotidiano(true);
+      // Esperar un frame para asegurar que el estado se actualice
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+    
+    try {
+      const url = `${API_BASE_URL}/obtenerCotidianoPorNombre/${profesorId}/${encodeURIComponent(nombreCotidiano)}/${periodo}/${fecha}`;
+      console.log("📡 Haciendo petición a:", url);
+      const response = await Axios.get(url);
+      console.log("✅ Respuesta recibida:", response.data);
+      console.log("📊 Cantidad de registros:", response.data.length);
+      
+      if (response.data.length > 0) {
+        const cotidianoMap = {};
+        response.data.forEach((registro) => {
+          console.log("📝 Procesando estudiante:", registro.Estudiante_Id, registro);
+          cotidianoMap[registro.Estudiante_Id] = {
+            calificacion: registro.Calificacion || "",
+            observaciones: registro.Observaciones || "",
+          };
+        });
+        
+        console.log("🗂️ Mapa de cotidianos creado:", cotidianoMap);
+        
+        // Normalizar la fecha a formato YYYY-MM-DD (sin timestamp)
+        const fechaNormalizada = fecha.split('T')[0];
+        console.log("📅 Fecha normalizada:", fechaNormalizada, "desde:", fecha);
+        
+        setCotidianoData(cotidianoMap);
+        setNombreCotidiano(nombreCotidiano);
+        setMateriaCotidiano(materiaId || "");
+        setPeriodoCotidiano(periodo);
+        
+        // Solo actualizar la fecha si es diferente (para evitar disparar useEffect innecesariamente)
+        if (fechaCotidiano !== fechaNormalizada) {
+          console.log("📅 Cambiando fecha de", fechaCotidiano, "a", fechaNormalizada);
+          setFechaCotidiano(fechaNormalizada);
+        } else {
+          console.log("📅 Fecha ya es correcta:", fechaNormalizada);
+        }
+        
+        setModoEdicion(true);
+        setRegistroEditando({ tipo: 'cotidiano', nombreCotidiano, materiaId, periodo, fecha });
+        
+        // Activar modo edición de cotidiano si viene desde botón Editar
+        if (desdeBotonEditar) {
+          setEditandoCotidiano(true);
+          console.log("✏️ Modo edición de cotidiano activado");
+        }
+        
+        console.log("✅ Estados actualizados correctamente");
+        
+        // Solo mostrar alerta y scroll si se hace clic en botón "Editar"
+        if (desdeBotonEditar) {
+          // Cambiar a la pestaña de cotidiano
+          setActiveTab("cotidiano");
+          
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 100);
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos Cargados',
+            text: `Editando: ${nombreCotidiano} - ${response.data.length} estudiantes cargados`,
+            timer: 2500,
+            showConfirmButton: false
+          });
+        }
+      } else {
+        console.log("⚠️ No se encontraron datos para este cotidiano");
+        setCotidianoData({});
+        setModoEdicion(false);
+        setRegistroEditando(null);
+        
+        if (desdeBotonEditar) {
+          Swal.fire({
+            icon: 'info',
+            title: 'Sin datos',
+            text: 'No se encontraron registros para este cotidiano'
+          });
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error al cargar cotidiano:", error);
+      if (desdeBotonEditar) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los datos del cotidiano: ' + (error.response?.data?.error || error.message)
+        });
+      }
+    } finally {
+      // Reactivar auto-load después de un breve delay
+      if (desdeBotonEditar) {
+        setTimeout(() => {
+          setDeshabilitarAutoLoadCotidiano(false);
+        }, 500);
+      }
+    }
+  }, [profesorId, fechaCotidiano]);
+
+  // Cargar tareas del día (similar a asistencia) - cargar automáticamente al cambiar fecha
+  const cargarTareasDelDia = useCallback(async () => {
+    if (!profesorId || !fechaTarea) return;
+    
+    try {
+      const response = await Axios.get(
+        `${API_BASE_URL}/obtenerTareasProfesor/${profesorId}/${fechaTarea}`
+      );
+      
+      if (response.data.length > 0) {
+        // Tomar la primera tarea del día
+        const primeraTarea = response.data[0];
+        const nombreTareaDelDia = primeraTarea.Nombre_Tarea;
+        const materiaIdDelDia = primeraTarea.Materia_Id;
+        
+        // Cargar datos de esa tarea
+        cargarTareaPorNombre(nombreTareaDelDia, materiaIdDelDia, fechaTarea, false);
+      } else {
+        // No hay tareas ese día, limpiar
+        setTareasData({});
+        setNombreTarea("");
+        setMateriaId("");
+        setModoEdicion(false);
+        setRegistroEditando(null);
+      }
+    } catch (error) {
+      console.error("Error al cargar tareas del día:", error);
+    }
+  }, [profesorId, fechaTarea, cargarTareaPorNombre]);
+
+  // Cargar exámenes del día (similar a asistencia) - cargar automáticamente al cambiar fecha
+  const cargarExamenesDelDia = useCallback(async () => {
+    if (!profesorId || !fechaExamen) return;
+    
+    try {
+      const response = await Axios.get(
+        `${API_BASE_URL}/obtenerExamenesPorFecha/${profesorId}/${fechaExamen}`
+      );
+      
+      if (response.data.length > 0) {
+        // Tomar el primer examen del día
+        const primerExamen = response.data[0];
+        const nombreExamenDelDia = primerExamen.Nombre_Examen;
+        const materiaIdDelDia = primerExamen.Materia_Id;
+        const periodoDelDia = primerExamen.Periodo;
+        
+        // Cargar datos de ese examen
+        cargarExamenPorNombre(nombreExamenDelDia, materiaIdDelDia, periodoDelDia, fechaExamen, false);
+      } else {
+        // No hay exámenes ese día, limpiar
+        setExamenData({});
+        setNombreExamen("");
+        setMateriaExamen("");
+        setPeriodoExamen(1);
+        setModoEdicion(false);
+        setRegistroEditando(null);
+      }
+    } catch (error) {
+      console.error("Error al cargar exámenes del día:", error);
+    }
+  }, [profesorId, fechaExamen, cargarExamenPorNombre]);
+
+  // Cargar cotidianos del día (similar a asistencia) - cargar automáticamente al cambiar fecha
+  const cargarCotidianosDelDia = useCallback(async () => {
+    if (!profesorId || !fechaCotidiano) return;
+    
+    try {
+      const response = await Axios.get(
+        `${API_BASE_URL}/obtenerCotidianosPorFecha/${profesorId}/${fechaCotidiano}`
+      );
+      
+      if (response.data.length > 0) {
+        // Tomar el primer cotidiano del día
+        const primerCotidiano = response.data[0];
+        const nombreCotidianoDelDia = primerCotidiano.Nombre_Cotidiano;
+        const materiaIdDelDia = primerCotidiano.Materia_Id;
+        const periodoDelDia = primerCotidiano.Periodo;
+        
+        // Cargar datos de ese cotidiano
+        cargarCotidianoPorNombre(nombreCotidianoDelDia, materiaIdDelDia, periodoDelDia, fechaCotidiano, false);
+      } else {
+        // No hay cotidianos ese día, limpiar
+        setCotidianoData({});
+        setNombreCotidiano("");
+        setMateriaCotidiano("");
+        setPeriodoCotidiano(1);
+        setModoEdicion(false);
+        setRegistroEditando(null);
+      }
+    } catch (error) {
+      console.error("Error al cargar cotidianos del día:", error);
+    }
+  }, [profesorId, fechaCotidiano, cargarCotidianoPorNombre]);
+
   useEffect(() => {
     if (profesorId) {
       cargarEstudiantes();
@@ -267,6 +721,45 @@ const PasarLista = () => {
     }
   }, [profesorId, fechaAsistencia, cargarAsistenciaDelDia]);
 
+  // Cargar tareas cuando cambia la fecha (igual que asistencia)
+  useEffect(() => {
+    console.log("🔄 useEffect de tareas detectó cambio:", { profesorId, fechaTarea, deshabilitado: deshabilitarAutoLoadTarea });
+    if (profesorId && fechaTarea && !deshabilitarAutoLoadTarea) {
+      console.log("✅ Ejecutando cargarTareasDelDia");
+      // Si el usuario cambia la fecha manualmente (no desde Editar), salir del modo edición
+      setEditandoTarea(false);
+      cargarTareasDelDia();
+    } else {
+      console.log("⏸️ Auto-load de tareas deshabilitado o faltan datos");
+    }
+  }, [profesorId, fechaTarea, cargarTareasDelDia, deshabilitarAutoLoadTarea]);
+
+  // Cargar exámenes cuando cambia la fecha (igual que asistencia)
+  useEffect(() => {
+    console.log("🔄 useEffect de exámenes detectó cambio:", { profesorId, fechaExamen, deshabilitado: deshabilitarAutoLoadExamen });
+    if (profesorId && fechaExamen && !deshabilitarAutoLoadExamen) {
+      console.log("✅ Ejecutando cargarExamenesDelDia");
+      // Si el usuario cambia la fecha manualmente (no desde Editar), salir del modo edición
+      setEditandoExamen(false);
+      cargarExamenesDelDia();
+    } else {
+      console.log("⏸️ Auto-load de exámenes deshabilitado o faltan datos");
+    }
+  }, [profesorId, fechaExamen, cargarExamenesDelDia, deshabilitarAutoLoadExamen]);
+
+  // Cargar cotidianos cuando cambia la fecha (igual que asistencia)
+  useEffect(() => {
+    console.log("🔄 useEffect de cotidianos detectó cambio:", { profesorId, fechaCotidiano, deshabilitado: deshabilitarAutoLoadCotidiano });
+    if (profesorId && fechaCotidiano && !deshabilitarAutoLoadCotidiano) {
+      console.log("✅ Ejecutando cargarCotidianosDelDia");
+      // Si el usuario cambia la fecha manualmente (no desde Editar), salir del modo edición
+      setEditandoCotidiano(false);
+      cargarCotidianosDelDia();
+    } else {
+      console.log("⏸️ Auto-load de cotidianos deshabilitado o faltan datos");
+    }
+  }, [profesorId, fechaCotidiano, cargarCotidianosDelDia, deshabilitarAutoLoadCotidiano]);
+  
   const handleAsistenciaChange = (estudianteId, campo, valor) => {
     setAsistenciaData((prev) => ({
       ...prev,
@@ -375,24 +868,40 @@ const PasarLista = () => {
     }));
 
     try {
-      await Axios.post(`${API_BASE_URL}/registrarEntregaTareas`, {
+      // Usar endpoint diferente según si es creación o actualización
+      const endpoint = editandoTarea 
+        ? `${API_BASE_URL}/actualizarEntregaTareas`
+        : `${API_BASE_URL}/registrarEntregaTareas`;
+      
+      const metodo = editandoTarea ? 'put' : 'post';
+      
+      const datosEnviar = {
         entregas,
         profesorId,
         nombreTarea,
         fecha: fechaTarea,
         materiaId: materiaId || null,
+      };
+      
+      console.log(`📤 Enviando ${metodo.toUpperCase()} a ${endpoint}:`, {
+        ...datosEnviar,
+        entregas: `${datosEnviar.entregas.length} estudiantes`,
+        editandoTarea
       });
+      
+      await Axios[metodo](endpoint, datosEnviar);
 
       Swal.fire({
         icon: "success",
         title: "¡Éxito!",
-        text: "Control de tareas registrado correctamente.",
+        text: editandoTarea ? "Tarea actualizada correctamente." : "Control de tareas registrado correctamente.",
         timer: 2000,
       });
       
-      // Limpiar el formulario
+      // Limpiar el formulario y desactivar modo edición
       setNombreTarea("");
       setMateriaId("");
+      setEditandoTarea(false);
       const tareasInicial = {};
       estudiantes.forEach((est) => {
         tareasInicial[est.Estudiantes_id] = {
@@ -466,7 +975,14 @@ const PasarLista = () => {
     }
 
     try {
-      await Axios.post(`${API_BASE_URL}/registrarCalificacionesExamen`, {
+      // Usar endpoint diferente según si es creación o actualización
+      const endpoint = editandoExamen 
+        ? `${API_BASE_URL}/actualizarCalificacionesExamen`
+        : `${API_BASE_URL}/registrarCalificacionesExamen`;
+      
+      const metodo = editandoExamen ? 'put' : 'post';
+      
+      await Axios[metodo](endpoint, {
         calificaciones,
         profesorId,
         nombreExamen,
@@ -478,13 +994,14 @@ const PasarLista = () => {
       Swal.fire({
         icon: "success",
         title: "¡Éxito!",
-        text: "Calificaciones de examen registradas correctamente.",
+        text: editandoExamen ? "Examen actualizado correctamente." : "Calificaciones de examen registradas correctamente.",
         timer: 2000,
       });
       
-      // Limpiar el formulario
+      // Limpiar el formulario y desactivar modo edición
       setNombreExamen("");
       setMateriaExamen("");
+      setEditandoExamen(false);
       const examenInicial = {};
       estudiantes.forEach((est) => {
         examenInicial[est.Estudiantes_id] = {
@@ -557,7 +1074,14 @@ const PasarLista = () => {
     }
 
     try {
-      await Axios.post(`${API_BASE_URL}/registrarCalificacionesCotidiano`, {
+      // Usar endpoint diferente según si es creación o actualización
+      const endpoint = editandoCotidiano 
+        ? `${API_BASE_URL}/actualizarCalificacionesCotidiano`
+        : `${API_BASE_URL}/registrarCalificacionesCotidiano`;
+      
+      const metodo = editandoCotidiano ? 'put' : 'post';
+      
+      await Axios[metodo](endpoint, {
         calificaciones,
         profesorId,
         nombreCotidiano,
@@ -569,13 +1093,14 @@ const PasarLista = () => {
       Swal.fire({
         icon: "success",
         title: "¡Éxito!",
-        text: "Calificaciones de cotidiano registradas correctamente.",
+        text: editandoCotidiano ? "Cotidiano actualizado correctamente." : "Calificaciones de cotidiano registradas correctamente.",
         timer: 2000,
       });
       
-      // Limpiar el formulario
+      // Limpiar el formulario y desactivar modo edición
       setNombreCotidiano("");
       setMateriaCotidiano("");
+      setEditandoCotidiano(false);
       const cotidianoInicial = {};
       estudiantes.forEach((est) => {
         cotidianoInicial[est.Estudiantes_id] = {
@@ -616,6 +1141,120 @@ const PasarLista = () => {
       };
     });
     setTareasData(nuevasTareas);
+  };
+
+  // Función para eliminar tarea completa
+  const eliminarTarea = async (nombreTarea, materiaId, fecha) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      html: `Se eliminará la tarea <strong>"${nombreTarea}"</strong> del día <strong>${new Date(fecha).toLocaleDateString('es-ES')}</strong> para todos los estudiantes.<br><br>Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await Axios.delete(`${API_BASE_URL}/eliminarTareaPorNombre/${profesorId}/${encodeURIComponent(nombreTarea)}/${fecha}`);
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Eliminado',
+          text: 'La tarea ha sido eliminada correctamente',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        
+        // Recargar historial
+        cargarHistorialTareas();
+      } catch (error) {
+        console.error("Error al eliminar tarea:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo eliminar la tarea: ' + (error.response?.data?.error || error.message)
+        });
+      }
+    }
+  };
+
+  // Función para eliminar examen completo
+  const eliminarExamen = async (nombreExamen, materiaId, periodo, fecha) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      html: `Se eliminará el examen <strong>"${nombreExamen}"</strong> del día <strong>${new Date(fecha).toLocaleDateString('es-ES')}</strong> (Periodo ${periodo}) para todos los estudiantes.<br><br>Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await Axios.delete(`${API_BASE_URL}/eliminarExamenPorNombre/${profesorId}/${encodeURIComponent(nombreExamen)}/${periodo}/${fecha}`);
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Eliminado',
+          text: 'El examen ha sido eliminado correctamente',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        
+        // Recargar historial
+        cargarHistorialExamenes();
+      } catch (error) {
+        console.error("Error al eliminar examen:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo eliminar el examen: ' + (error.response?.data?.error || error.message)
+        });
+      }
+    }
+  };
+
+  // Función para eliminar cotidiano completo
+  const eliminarCotidiano = async (nombreCotidiano, materiaId, periodo, fecha) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      html: `Se eliminará el cotidiano <strong>"${nombreCotidiano}"</strong> del día <strong>${new Date(fecha).toLocaleDateString('es-ES')}</strong> (Periodo ${periodo}) para todos los estudiantes.<br><br>Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await Axios.delete(`${API_BASE_URL}/eliminarCotidianoPorNombre/${profesorId}/${encodeURIComponent(nombreCotidiano)}/${periodo}/${fecha}`);
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Eliminado',
+          text: 'El cotidiano ha sido eliminado correctamente',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        
+        // Recargar historial
+        cargarHistorialCotidianos();
+      } catch (error) {
+        console.error("Error al eliminar cotidiano:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo eliminar el cotidiano: ' + (error.response?.data?.error || error.message)
+        });
+      }
+    }
   };
 
   useEffect(() => {
@@ -967,7 +1606,29 @@ const PasarLista = () => {
             {activeTab === "tareas" && (
               <div className="noticias-form-card">
                 <div className="card-header-custom">
-                  <h5 className="mb-0">📝 Control de Entrega de Tareas</h5>
+                  <div className="d-flex justify-content-between align-items-center flex-wrap">
+                    <h5 className="mb-0">📝 Control de Entrega de Tareas</h5>
+                    {modoEdicion && registroEditando?.tipo === 'tarea' && (
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="badge bg-warning text-dark" style={{ fontSize: '0.9rem', padding: '8px 12px' }}>
+                          ⚠️ Modo Edición: {registroEditando.nombreTarea}
+                        </span>
+                        <button
+                          className="btn btn-sm btn-success"
+                          onClick={() => {
+                            setTareasData({});
+                            setNombreTarea("");
+                            setMateriaId("");
+                            setFechaTarea(new Date().toISOString().split("T")[0]);
+                            setModoEdicion(false);
+                            setRegistroEditando(null);
+                          }}
+                        >
+                          ➕ Nueva Tarea
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="card-body-custom">
                   {/* Formulario de información de tarea */}
@@ -1145,7 +1806,7 @@ const PasarLista = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      Guardar Control de Tareas
+                      {editandoTarea ? "✏️ Actualizar Tarea" : "💾 Guardar Control de Tareas"}
                     </button>
                     
                     <button
@@ -1167,6 +1828,30 @@ const PasarLista = () => {
                         }}>
                           📊 Historial de Tareas Registradas
                         </div>
+                        
+                        {/* Filtros para Tareas */}
+                        <div className="card-body border-bottom">
+                          <div className="row g-2">
+                            <div className="col-md-6">
+                              <label className="form-label" style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+                                🔍 Filtrar por Materia:
+                              </label>
+                              <select
+                                className="form-select form-select-sm"
+                                value={filtroMateriaHistorial}
+                                onChange={(e) => setFiltroMateriaHistorial(e.target.value)}
+                              >
+                                <option value="">Todas las materias</option>
+                                {materias.map((materia) => (
+                                  <option key={materia.Materias_id} value={materia.Materias_id}>
+                                    {materia.Materias_Nombre}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        
                         <div className="card-body p-0">
                           {historialTareas.length === 0 ? (
                             <div className="text-center py-4 text-muted">
@@ -1185,10 +1870,19 @@ const PasarLista = () => {
                                     <th className="text-center">Tarde</th>
                                     <th className="text-center">% Entrega</th>
                                     <th>Última Actualización</th>
+                                    <th className="text-center">Acciones</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {historialTareas.map((registro, index) => {
+                                  {historialTareas
+                                    .filter((registro) => {
+                                      // Filtrar por materia si hay filtro activo
+                                      if (filtroMateriaHistorial && registro.materia_id !== parseInt(filtroMateriaHistorial)) {
+                                        return false;
+                                      }
+                                      return true;
+                                    })
+                                    .map((registro, index) => {
                                     const total = registro.entregados + registro.no_entregados + registro.entregados_tarde;
                                     const porcentaje = total > 0 ? Math.round((registro.entregados / total) * 100) : 0;
                                     
@@ -1226,6 +1920,24 @@ const PasarLista = () => {
                                         <td className="text-muted" style={{ fontSize: '0.85rem' }}>
                                           {new Date(registro.ultima_actualizacion).toLocaleString('es-ES')}
                                         </td>
+                                        <td className="text-center">
+                                          <div className="d-flex gap-2 justify-content-center">
+                                            <button
+                                              className="btn btn-sm btn-primary"
+                                              onClick={() => cargarTareaPorNombre(registro.nombre_tarea, registro.materia_id, registro.fecha, true)}
+                                              title="Editar esta tarea"
+                                            >
+                                              ✏️ Editar
+                                            </button>
+                                            <button
+                                              className="btn btn-sm btn-danger"
+                                              onClick={() => eliminarTarea(registro.nombre_tarea, registro.materia_id, registro.fecha)}
+                                              title="Eliminar esta tarea"
+                                            >
+                                              🗑️ Eliminar
+                                            </button>
+                                          </div>
+                                        </td>
                                       </tr>
                                     );
                                   })}
@@ -1245,7 +1957,30 @@ const PasarLista = () => {
             {activeTab === "examen" && (
               <div className="noticias-form-card">
                 <div className="card-header-custom">
-                  <h5 className="mb-0">📄 Calificaciones de Examen</h5>
+                  <div className="d-flex justify-content-between align-items-center flex-wrap">
+                    <h5 className="mb-0">📄 Calificaciones de Examen</h5>
+                    {modoEdicion && registroEditando?.tipo === 'examen' && (
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="badge bg-warning text-dark" style={{ fontSize: '0.9rem', padding: '8px 12px' }}>
+                          ⚠️ Modo Edición: {registroEditando.nombreExamen}
+                        </span>
+                        <button
+                          className="btn btn-sm btn-success"
+                          onClick={() => {
+                            setExamenData({});
+                            setNombreExamen("");
+                            setMateriaExamen("");
+                            setFechaExamen(new Date().toISOString().split("T")[0]);
+                            setPeriodoExamen(1);
+                            setModoEdicion(false);
+                            setRegistroEditando(null);
+                          }}
+                        >
+                          ➕ Nuevo Examen
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="card-body-custom">
                   {/* Formulario de información del examen */}
@@ -1411,7 +2146,7 @@ const PasarLista = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      Guardar Calificaciones de Examen
+                      {editandoExamen ? "✏️ Actualizar Examen" : "💾 Guardar Calificaciones de Examen"}
                     </button>
                     
                     <button
@@ -1433,6 +2168,46 @@ const PasarLista = () => {
                         }}>
                           📊 Historial de Exámenes Registrados
                         </div>
+                        
+                        {/* Filtros para Exámenes */}
+                        <div className="card-body border-bottom">
+                          <div className="row g-2">
+                            <div className="col-md-6">
+                              <label className="form-label" style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+                                🔍 Filtrar por Materia:
+                              </label>
+                              <select
+                                className="form-select form-select-sm"
+                                value={filtroMateriaHistorial}
+                                onChange={(e) => setFiltroMateriaHistorial(e.target.value)}
+                              >
+                                <option value="">Todas las materias</option>
+                                {materias.map((materia) => (
+                                  <option key={materia.Materias_id} value={materia.Materias_id}>
+                                    {materia.Materias_Nombre}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="col-md-6">
+                              <label className="form-label" style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+                                📊 Filtrar por Periodo:
+                              </label>
+                              <select
+                                className="form-select form-select-sm"
+                                value={filtroPeriodoHistorial}
+                                onChange={(e) => setFiltroPeriodoHistorial(e.target.value)}
+                              >
+                                <option value="">Todos los periodos</option>
+                                <option value="1">1er Periodo</option>
+                                <option value="2">2do Periodo</option>
+                                <option value="3">3er Periodo</option>
+                                <option value="4">4to Periodo</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        
                         <div className="card-body p-0">
                           {historialExamenes.length === 0 ? (
                             <div className="text-center py-4 text-muted">
@@ -1452,10 +2227,23 @@ const PasarLista = () => {
                                     <th className="text-center">Calificación Mayor</th>
                                     <th className="text-center">Calificación Menor</th>
                                     <th>Última Actualización</th>
+                                    <th className="text-center">Acciones</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {historialExamenes.map((registro, index) => {
+                                  {historialExamenes
+                                    .filter((registro) => {
+                                      // Filtrar por materia si hay filtro activo
+                                      if (filtroMateriaHistorial && registro.materia_id !== parseInt(filtroMateriaHistorial)) {
+                                        return false;
+                                      }
+                                      // Filtrar por periodo si hay filtro activo
+                                      if (filtroPeriodoHistorial && registro.periodo !== parseInt(filtroPeriodoHistorial)) {
+                                        return false;
+                                      }
+                                      return true;
+                                    })
+                                    .map((registro, index) => {
                                     const promedio = parseFloat(registro.promedio) || 0;
                                     const mayor = parseFloat(registro.calificacion_mayor) || 0;
                                     const menor = parseFloat(registro.calificacion_menor) || 0;
@@ -1497,6 +2285,24 @@ const PasarLista = () => {
                                         <td className="text-muted" style={{ fontSize: '0.85rem' }}>
                                           {new Date(registro.ultima_actualizacion).toLocaleString('es-ES')}
                                         </td>
+                                        <td className="text-center">
+                                          <div className="d-flex gap-2 justify-content-center">
+                                            <button
+                                              className="btn btn-sm btn-primary"
+                                              onClick={() => cargarExamenPorNombre(registro.nombre_examen, registro.materia_id, registro.periodo, registro.fecha, true)}
+                                              title="Editar este examen"
+                                            >
+                                              ✏️ Editar
+                                            </button>
+                                            <button
+                                              className="btn btn-sm btn-danger"
+                                              onClick={() => eliminarExamen(registro.nombre_examen, registro.materia_id, registro.periodo, registro.fecha)}
+                                              title="Eliminar este examen"
+                                            >
+                                              🗑️ Eliminar
+                                            </button>
+                                          </div>
+                                        </td>
                                       </tr>
                                     );
                                   })}
@@ -1516,7 +2322,30 @@ const PasarLista = () => {
             {activeTab === "cotidiano" && (
               <div className="noticias-form-card">
                 <div className="card-header-custom">
-                  <h5 className="mb-0">📚 Calificaciones de Cotidiano</h5>
+                  <div className="d-flex justify-content-between align-items-center flex-wrap">
+                    <h5 className="mb-0">📚 Calificaciones de Cotidiano</h5>
+                    {modoEdicion && registroEditando?.tipo === 'cotidiano' && (
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="badge bg-warning text-dark" style={{ fontSize: '0.9rem', padding: '8px 12px' }}>
+                          ⚠️ Modo Edición: {registroEditando.nombreCotidiano}
+                        </span>
+                        <button
+                          className="btn btn-sm btn-success"
+                          onClick={() => {
+                            setCotidianoData({});
+                            setNombreCotidiano("");
+                            setMateriaCotidiano("");
+                            setFechaCotidiano(new Date().toISOString().split("T")[0]);
+                            setPeriodoCotidiano(1);
+                            setModoEdicion(false);
+                            setRegistroEditando(null);
+                          }}
+                        >
+                          ➕ Nuevo Cotidiano
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="card-body-custom">
                   {/* Formulario de información del cotidiano */}
@@ -1682,7 +2511,7 @@ const PasarLista = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      Guardar Calificaciones de Cotidiano
+                      {editandoCotidiano ? "✏️ Actualizar Cotidiano" : "💾 Guardar Calificaciones de Cotidiano"}
                     </button>
                     
                     <button
@@ -1704,6 +2533,46 @@ const PasarLista = () => {
                         }}>
                           📊 Historial de Cotidianos Registrados
                         </div>
+                        
+                        {/* Filtros para Cotidianos */}
+                        <div className="card-body border-bottom">
+                          <div className="row g-2">
+                            <div className="col-md-6">
+                              <label className="form-label" style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+                                🔍 Filtrar por Materia:
+                              </label>
+                              <select
+                                className="form-select form-select-sm"
+                                value={filtroMateriaHistorial}
+                                onChange={(e) => setFiltroMateriaHistorial(e.target.value)}
+                              >
+                                <option value="">Todas las materias</option>
+                                {materias.map((materia) => (
+                                  <option key={materia.Materias_id} value={materia.Materias_id}>
+                                    {materia.Materias_Nombre}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="col-md-6">
+                              <label className="form-label" style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+                                📊 Filtrar por Periodo:
+                              </label>
+                              <select
+                                className="form-select form-select-sm"
+                                value={filtroPeriodoHistorial}
+                                onChange={(e) => setFiltroPeriodoHistorial(e.target.value)}
+                              >
+                                <option value="">Todos los periodos</option>
+                                <option value="1">1er Periodo</option>
+                                <option value="2">2do Periodo</option>
+                                <option value="3">3er Periodo</option>
+                                <option value="4">4to Periodo</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        
                         <div className="card-body p-0">
                           {historialCotidianos.length === 0 ? (
                             <div className="text-center py-4 text-muted">
@@ -1723,10 +2592,23 @@ const PasarLista = () => {
                                     <th className="text-center">Calificación Mayor</th>
                                     <th className="text-center">Calificación Menor</th>
                                     <th>Última Actualización</th>
+                                    <th className="text-center">Acciones</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {historialCotidianos.map((registro, index) => {
+                                  {historialCotidianos
+                                    .filter((registro) => {
+                                      // Filtrar por materia si hay filtro activo
+                                      if (filtroMateriaHistorial && registro.materia_id !== parseInt(filtroMateriaHistorial)) {
+                                        return false;
+                                      }
+                                      // Filtrar por periodo si hay filtro activo
+                                      if (filtroPeriodoHistorial && registro.periodo !== parseInt(filtroPeriodoHistorial)) {
+                                        return false;
+                                      }
+                                      return true;
+                                    })
+                                    .map((registro, index) => {
                                     const promedio = parseFloat(registro.promedio) || 0;
                                     const mayor = parseFloat(registro.calificacion_mayor) || 0;
                                     const menor = parseFloat(registro.calificacion_menor) || 0;
@@ -1767,6 +2649,24 @@ const PasarLista = () => {
                                         </td>
                                         <td className="text-muted" style={{ fontSize: '0.85rem' }}>
                                           {new Date(registro.ultima_actualizacion).toLocaleString('es-ES')}
+                                        </td>
+                                        <td className="text-center">
+                                          <div className="d-flex gap-2 justify-content-center">
+                                            <button
+                                              className="btn btn-sm btn-primary"
+                                              onClick={() => cargarCotidianoPorNombre(registro.nombre_cotidiano, registro.materia_id, registro.periodo, registro.fecha, true)}
+                                              title="Editar este cotidiano"
+                                            >
+                                              ✏️ Editar
+                                            </button>
+                                            <button
+                                              className="btn btn-sm btn-danger"
+                                              onClick={() => eliminarCotidiano(registro.nombre_cotidiano, registro.materia_id, registro.periodo, registro.fecha)}
+                                              title="Eliminar este cotidiano"
+                                            >
+                                              🗑️ Eliminar
+                                            </button>
+                                          </div>
                                         </td>
                                       </tr>
                                     );

@@ -339,11 +339,14 @@ app.post("/registrarEntregaTareas", (req, res) => {
     return res.status(400).json({ error: "Datos de entregas inválidos" });
   }
 
+  // Normalizar fecha para INSERT
+  const fechaNormalizada = fecha.split('T')[0];
+
   const values = entregas.map(e => [
     e.estudianteId,
     profesorId,
     materiaId || null,
-    fecha,
+    fechaNormalizada,
     nombreTarea,
     e.estado,
     e.calificacion || null,
@@ -367,6 +370,81 @@ app.post("/registrarEntregaTareas", (req, res) => {
         registros: result.affectedRows
       });
     }
+  });
+});
+
+// Actualizar entrega de tareas (múltiples estudiantes) - Solo para edición
+app.put("/actualizarEntregaTareas", (req, res) => {
+  const { entregas, profesorId, nombreTarea, fecha, materiaId } = req.body;
+  
+  if (!entregas || !Array.isArray(entregas) || entregas.length === 0) {
+    return res.status(400).json({ error: "Datos de entregas inválidos" });
+  }
+
+  // Normalizar fecha para UPDATE
+  const fechaNormalizada = fecha.split('T')[0];
+  
+  console.log("🔄 actualizarEntregaTareas - Parámetros:", {
+    profesorId,
+    nombreTarea,
+    fechaNormalizada,
+    materiaId,
+    totalEntregas: entregas.length
+  });
+
+  // Primero eliminar TODOS los registros con ese nombre, profesor y fecha (sin importar la materia)
+  const deleteQuery = `
+    DELETE FROM Control_Tareas 
+    WHERE Profesor_Id = ? 
+      AND Nombre_Tarea = ? 
+      AND DATE(Fecha) = ?
+  `;
+
+  connection.query(deleteQuery, [profesorId, nombreTarea, fechaNormalizada], (deleteErr, deleteResult) => {
+    if (deleteErr) {
+      console.error("❌ Error al eliminar registros antiguos:", deleteErr);
+      return res.status(500).json({ error: "Error al actualizar entrega de tareas" });
+    }
+
+    console.log(`✅ Registros eliminados: ${deleteResult.affectedRows}`);
+
+    // Solo insertar si eliminó algo (seguridad)
+    if (deleteResult.affectedRows === 0) {
+      console.warn("⚠️ No se encontraron registros para eliminar - puede ser un registro nuevo");
+    }
+
+    // Luego insertar los nuevos registros
+    const values = entregas.map(e => [
+      e.estudianteId,
+      profesorId,
+      materiaId || null,
+      fechaNormalizada,
+      nombreTarea,
+      e.estado,
+      e.calificacion || null,
+      e.observaciones || null
+    ]);
+
+    const insertQuery = `
+      INSERT INTO Control_Tareas 
+      (Estudiante_Id, Profesor_Id, Materia_Id, Fecha, Nombre_Tarea, Estado, Calificacion, Observaciones)
+      VALUES ?
+    `;
+
+    connection.query(insertQuery, [values], (insertErr, insertResult) => {
+      if (insertErr) {
+        console.error("❌ Error al insertar nuevos registros:", insertErr);
+        res.status(500).json({ error: "Error al actualizar entrega de tareas" });
+      } else {
+        console.log(`✅ Nuevos registros insertados: ${insertResult.affectedRows}`);
+        res.json({ 
+          success: true, 
+          message: "Entrega de tareas actualizada exitosamente",
+          registrosEliminados: deleteResult.affectedRows,
+          registrosInsertados: insertResult.affectedRows
+        });
+      }
+    });
   });
 });
 
@@ -547,6 +625,9 @@ app.post("/registrarCalificacionesExamen", (req, res) => {
     return res.status(400).json({ error: "No se enviaron calificaciones" });
   }
 
+  // Normalizar fecha para INSERT
+  const fechaNormalizada = fecha.split('T')[0];
+
   const queries = calificaciones.map((cal) => {
     return new Promise((resolve, reject) => {
       // Verificar si ya existe una calificación para este estudiante en esta fecha
@@ -579,7 +660,7 @@ app.post("/registrarCalificacionesExamen", (req, res) => {
                 cal.estudianteId,
                 profesorId,
                 materiaId || null,
-                fecha,
+                fechaNormalizada,
                 nombreExamen,
                 cal.calificacion,
                 periodo || 1,
@@ -609,6 +690,82 @@ app.post("/registrarCalificacionesExamen", (req, res) => {
         error: "Error al registrar calificaciones de examen" 
       });
     });
+});
+
+// Actualizar calificaciones de examen (múltiples estudiantes) - Solo para edición
+app.put("/actualizarCalificacionesExamen", (req, res) => {
+  const { calificaciones, profesorId, materiaId, nombreExamen, fecha, periodo } = req.body;
+  
+  if (!calificaciones || calificaciones.length === 0) {
+    return res.status(400).json({ error: "No se enviaron calificaciones" });
+  }
+
+  // Normalizar fecha
+  const fechaNormalizada = fecha.split('T')[0];
+  
+  console.log("🔄 actualizarCalificacionesExamen - Parámetros:", {
+    profesorId,
+    nombreExamen,
+    periodo,
+    fechaNormalizada,
+    materiaId,
+    totalCalificaciones: calificaciones.length
+  });
+
+  // Primero eliminar TODOS los registros con ese nombre, periodo, profesor y fecha
+  const deleteQuery = `
+    DELETE FROM Calificaciones_Examen 
+    WHERE Profesor_Id = ? 
+      AND Nombre_Examen = ? 
+      AND Periodo = ?
+      AND DATE(Fecha) = ?
+  `;
+
+  connection.query(deleteQuery, [profesorId, nombreExamen, periodo, fechaNormalizada], (deleteErr, deleteResult) => {
+    if (deleteErr) {
+      console.error("❌ Error al eliminar registros antiguos:", deleteErr);
+      return res.status(500).json({ error: "Error al actualizar calificaciones de examen" });
+    }
+
+    console.log(`✅ Registros de examen eliminados: ${deleteResult.affectedRows}`);
+    
+    if (deleteResult.affectedRows === 0) {
+      console.warn("⚠️ No se encontraron registros para eliminar - puede ser un registro nuevo");
+    }
+
+    // Luego insertar los nuevos registros
+    const values = calificaciones.map(cal => [
+      cal.estudianteId,
+      profesorId,
+      materiaId || null,
+      fechaNormalizada,
+      nombreExamen,
+      cal.calificacion,
+      periodo,
+      cal.observaciones || null
+    ]);
+
+    const insertQuery = `
+      INSERT INTO Calificaciones_Examen 
+      (Estudiante_Id, Profesor_Id, Materia_Id, Fecha, Nombre_Examen, Calificacion, Periodo, Observaciones)
+      VALUES ?
+    `;
+
+    connection.query(insertQuery, [values], (insertErr, insertResult) => {
+      if (insertErr) {
+        console.error("❌ Error al insertar nuevas calificaciones:", insertErr);
+        res.status(500).json({ error: "Error al actualizar calificaciones de examen" });
+      } else {
+        console.log(`✅ Nuevas calificaciones insertadas: ${insertResult.affectedRows}`);
+        res.json({ 
+          success: true, 
+          message: "Calificaciones de examen actualizadas exitosamente",
+          registrosEliminados: deleteResult.affectedRows,
+          registrosInsertados: insertResult.affectedRows
+        });
+      }
+    });
+  });
 });
 
 // Obtener calificaciones de examen por fecha y nombre
@@ -646,6 +803,9 @@ app.post("/registrarCalificacionesCotidiano", (req, res) => {
     return res.status(400).json({ error: "No se enviaron calificaciones" });
   }
 
+  // Normalizar fecha para INSERT
+  const fechaNormalizada = fecha.split('T')[0];
+
   const queries = calificaciones.map((cal) => {
     return new Promise((resolve, reject) => {
       // Verificar si ya existe una calificación para este estudiante en esta fecha
@@ -678,7 +838,7 @@ app.post("/registrarCalificacionesCotidiano", (req, res) => {
                 cal.estudianteId,
                 profesorId,
                 materiaId || null,
-                fecha,
+                fechaNormalizada,
                 nombreCotidiano,
                 cal.calificacion,
                 periodo || 1,
@@ -708,6 +868,82 @@ app.post("/registrarCalificacionesCotidiano", (req, res) => {
         error: "Error al registrar calificaciones de cotidiano" 
       });
     });
+});
+
+// Actualizar calificaciones de cotidiano (múltiples estudiantes) - Solo para edición
+app.put("/actualizarCalificacionesCotidiano", (req, res) => {
+  const { calificaciones, profesorId, materiaId, nombreCotidiano, fecha, periodo } = req.body;
+  
+  if (!calificaciones || calificaciones.length === 0) {
+    return res.status(400).json({ error: "No se enviaron calificaciones" });
+  }
+
+  // Normalizar fecha
+  const fechaNormalizada = fecha.split('T')[0];
+  
+  console.log("🔄 actualizarCalificacionesCotidiano - Parámetros:", {
+    profesorId,
+    nombreCotidiano,
+    periodo,
+    fechaNormalizada,
+    materiaId,
+    totalCalificaciones: calificaciones.length
+  });
+
+  // Primero eliminar TODOS los registros con ese nombre, periodo, profesor y fecha
+  const deleteQuery = `
+    DELETE FROM Calificaciones_Cotidiano 
+    WHERE Profesor_Id = ? 
+      AND Nombre_Cotidiano = ? 
+      AND Periodo = ?
+      AND DATE(Fecha) = ?
+  `;
+
+  connection.query(deleteQuery, [profesorId, nombreCotidiano, periodo, fechaNormalizada], (deleteErr, deleteResult) => {
+    if (deleteErr) {
+      console.error("❌ Error al eliminar registros antiguos:", deleteErr);
+      return res.status(500).json({ error: "Error al actualizar calificaciones de cotidiano" });
+    }
+
+    console.log(`✅ Registros de cotidiano eliminados: ${deleteResult.affectedRows}`);
+    
+    if (deleteResult.affectedRows === 0) {
+      console.warn("⚠️ No se encontraron registros para eliminar - puede ser un registro nuevo");
+    }
+
+    // Luego insertar los nuevos registros
+    const values = calificaciones.map(cal => [
+      cal.estudianteId,
+      profesorId,
+      materiaId || null,
+      fechaNormalizada,
+      nombreCotidiano,
+      cal.calificacion,
+      periodo,
+      cal.observaciones || null
+    ]);
+
+    const insertQuery = `
+      INSERT INTO Calificaciones_Cotidiano 
+      (Estudiante_Id, Profesor_Id, Materia_Id, Fecha, Nombre_Cotidiano, Calificacion, Periodo, Observaciones)
+      VALUES ?
+    `;
+
+    connection.query(insertQuery, [values], (insertErr, insertResult) => {
+      if (insertErr) {
+        console.error("❌ Error al insertar nuevas calificaciones:", insertErr);
+        res.status(500).json({ error: "Error al actualizar calificaciones de cotidiano" });
+      } else {
+        console.log(`✅ Nuevas calificaciones insertadas: ${insertResult.affectedRows}`);
+        res.json({ 
+          success: true, 
+          message: "Calificaciones de cotidiano actualizadas exitosamente",
+          registrosEliminados: deleteResult.affectedRows,
+          registrosInsertados: insertResult.affectedRows
+        });
+      }
+    });
+  });
 });
 
 // Obtener calificaciones de cotidiano por fecha y nombre
@@ -1017,6 +1253,7 @@ app.get("/obtenerHistorialTareas/:profesorId", (req, res) => {
     SELECT 
       ct.Fecha as fecha,
       ct.Nombre_Tarea as nombre_tarea,
+      ct.Materia_Id as materia_id,
       m.Materias_Nombre as materia_nombre,
       COUNT(*) as total_registros,
       SUM(CASE WHEN ct.Estado = 'Entregado' THEN 1 ELSE 0 END) as entregados,
@@ -1026,7 +1263,7 @@ app.get("/obtenerHistorialTareas/:profesorId", (req, res) => {
     FROM Control_Tareas ct
     LEFT JOIN Materias m ON ct.Materia_Id = m.Materias_id
     WHERE ct.Profesor_Id = ?
-    GROUP BY ct.Fecha, ct.Nombre_Tarea, m.Materias_Nombre
+    GROUP BY ct.Fecha, ct.Nombre_Tarea, ct.Materia_Id, m.Materias_Nombre
     ORDER BY ct.Fecha DESC
     LIMIT 50
   `;
@@ -1048,6 +1285,7 @@ app.get("/obtenerHistorialExamenes/:profesorId", (req, res) => {
     SELECT 
       ce.Fecha as fecha,
       ce.Nombre_Examen as nombre_examen,
+      ce.Materia_Id as materia_id,
       m.Materias_Nombre as materia_nombre,
       ce.Periodo as periodo,
       COUNT(*) as total_evaluados,
@@ -1058,7 +1296,7 @@ app.get("/obtenerHistorialExamenes/:profesorId", (req, res) => {
     FROM Calificaciones_Examen ce
     LEFT JOIN Materias m ON ce.Materia_Id = m.Materias_id
     WHERE ce.Profesor_Id = ?
-    GROUP BY ce.Fecha, ce.Nombre_Examen, m.Materias_Nombre, ce.Periodo
+    GROUP BY ce.Fecha, ce.Nombre_Examen, ce.Materia_Id, m.Materias_Nombre, ce.Periodo
     ORDER BY ce.Fecha DESC
     LIMIT 50
   `;
@@ -1080,6 +1318,7 @@ app.get("/obtenerHistorialCotidianos/:profesorId", (req, res) => {
     SELECT 
       cc.Fecha as fecha,
       cc.Nombre_Cotidiano as nombre_cotidiano,
+      cc.Materia_Id as materia_id,
       m.Materias_Nombre as materia_nombre,
       cc.Periodo as periodo,
       COUNT(*) as total_evaluados,
@@ -1090,7 +1329,7 @@ app.get("/obtenerHistorialCotidianos/:profesorId", (req, res) => {
     FROM Calificaciones_Cotidiano cc
     LEFT JOIN Materias m ON cc.Materia_Id = m.Materias_id
     WHERE cc.Profesor_Id = ?
-    GROUP BY cc.Fecha, cc.Nombre_Cotidiano, m.Materias_Nombre, cc.Periodo
+    GROUP BY cc.Fecha, cc.Nombre_Cotidiano, cc.Materia_Id, m.Materias_Nombre, cc.Periodo
     ORDER BY cc.Fecha DESC
     LIMIT 50
   `;
@@ -1101,6 +1340,298 @@ app.get("/obtenerHistorialCotidianos/:profesorId", (req, res) => {
       return res.status(500).json({ error: "Error al obtener historial" });
     }
     res.json(result);
+  });
+});
+
+// ============================================
+// 🔍 ENDPOINTS: Cargar datos específicos para edición
+// ============================================
+
+// Cargar datos de tarea específica por nombre y fecha
+// Cargar datos de tarea específica por nombre y fecha
+app.get("/obtenerTareaPorNombre/:profesorId/:nombreTarea/:fecha", (req, res) => {
+  const { profesorId, nombreTarea, fecha } = req.params;
+  
+  // Normalizar fecha para comparar solo la parte de fecha (sin hora)
+  const fechaNormalizada = fecha.split('T')[0];
+  
+  console.log("🔍 obtenerTareaPorNombre - Parámetros recibidos:", {
+    profesorId,
+    nombreTarea: decodeURIComponent(nombreTarea),
+    fechaOriginal: fecha,
+    fechaNormalizada
+  });
+  
+  const query = `
+    SELECT 
+      ct.Estudiante_Id,
+      ct.Estado,
+      ct.Calificacion,
+      ct.Observaciones
+    FROM Control_Tareas ct
+    WHERE ct.Profesor_Id = ? 
+      AND ct.Nombre_Tarea = ?
+      AND DATE(ct.Fecha) = ?
+    ORDER BY ct.Estudiante_Id
+  `;
+  
+  connection.query(query, [profesorId, decodeURIComponent(nombreTarea), fechaNormalizada], (err, result) => {
+    if (err) {
+      console.error("❌ Error al cargar tarea:", err);
+      return res.status(500).json({ error: "Error al cargar tarea" });
+    }
+    console.log(`✅ Tarea encontrada: ${result.length} registros`);
+    res.json(result);
+  });
+});
+
+// Cargar datos de examen específico por nombre, periodo y fecha
+app.get("/obtenerExamenPorNombre/:profesorId/:nombreExamen/:periodo/:fecha", (req, res) => {
+  const { profesorId, nombreExamen, periodo, fecha } = req.params;
+  
+  // Normalizar fecha para comparar solo la parte de fecha (sin hora)
+  const fechaNormalizada = fecha.split('T')[0];
+  
+  console.log("🔍 obtenerExamenPorNombre - Parámetros recibidos:", {
+    profesorId,
+    nombreExamen: decodeURIComponent(nombreExamen),
+    periodo,
+    fechaOriginal: fecha,
+    fechaNormalizada
+  });
+  
+  const query = `
+    SELECT 
+      ce.Estudiante_Id,
+      ce.Calificacion,
+      ce.Observaciones,
+      ce.Nombre_Examen
+    FROM Calificaciones_Examen ce
+    WHERE ce.Profesor_Id = ? 
+      AND ce.Nombre_Examen = ?
+      AND ce.Periodo = ?
+      AND DATE(ce.Fecha) = ?
+    ORDER BY ce.Estudiante_Id
+  `;
+  
+  const params = [profesorId, decodeURIComponent(nombreExamen), periodo, fechaNormalizada];
+  console.log("📊 Ejecutando query con parámetros:", params);
+  
+  connection.query(query, params, (err, result) => {
+    if (err) {
+      console.error("❌ Error al cargar examen:", err);
+      return res.status(500).json({ error: "Error al cargar examen" });
+    }
+    console.log(`✅ Examen encontrado: ${result.length} registros`);
+    if (result.length > 0) {
+      console.log("📝 Primer registro:", result[0]);
+    }
+    res.json(result);
+  });
+});
+
+// Cargar datos de cotidiano específico por nombre, periodo y fecha
+app.get("/obtenerCotidianoPorNombre/:profesorId/:nombreCotidiano/:periodo/:fecha", (req, res) => {
+  const { profesorId, nombreCotidiano, periodo, fecha } = req.params;
+  
+  // Normalizar fecha para comparar solo la parte de fecha (sin hora)
+  const fechaNormalizada = fecha.split('T')[0];
+  
+  console.log("🔍 obtenerCotidianoPorNombre - Parámetros recibidos:", {
+    profesorId,
+    nombreCotidiano: decodeURIComponent(nombreCotidiano),
+    periodo,
+    fechaOriginal: fecha,
+    fechaNormalizada
+  });
+  
+  const query = `
+    SELECT 
+      cc.Estudiante_Id,
+      cc.Calificacion,
+      cc.Observaciones
+    FROM Calificaciones_Cotidiano cc
+    WHERE cc.Profesor_Id = ? 
+      AND cc.Nombre_Cotidiano = ?
+      AND cc.Periodo = ?
+      AND DATE(cc.Fecha) = ?
+    ORDER BY cc.Estudiante_Id
+  `;
+  
+  connection.query(query, [profesorId, decodeURIComponent(nombreCotidiano), periodo, fechaNormalizada], (err, result) => {
+    if (err) {
+      console.error("❌ Error al cargar cotidiano:", err);
+      return res.status(500).json({ error: "Error al cargar cotidiano" });
+    }
+    console.log(`✅ Cotidiano encontrado: ${result.length} registros`);
+    res.json(result);
+  });
+});
+
+// ========== ENDPOINTS PARA CARGAR POR FECHA (SIN NOMBRE ESPECÍFICO) ==========
+
+// Obtener exámenes de una fecha específica (todos los nombres de ese día)
+app.get("/obtenerExamenesPorFecha/:profesorId/:fecha", (req, res) => {
+  const { profesorId, fecha } = req.params;
+  
+  const query = `
+    SELECT 
+      ce.*,
+      CONCAT(p.Persona_Nombre, ' ', p.Persona_PApellido, ' ', p.Persona_SApellido) as NombreEstudiante,
+      m.Materias_Nombre
+    FROM Calificaciones_Examen ce
+    INNER JOIN Estudiantes e ON ce.Estudiante_Id = e.Estudiantes_id
+    INNER JOIN Personas p ON e.Persona_Id = p.Persona_Id
+    LEFT JOIN Materias m ON ce.Materia_Id = m.Materias_id
+    WHERE ce.Profesor_Id = ? AND ce.Fecha = ?
+    ORDER BY ce.Nombre_Examen, p.Persona_Nombre, p.Persona_PApellido
+  `;
+  
+  connection.query(query, [profesorId, fecha], (err, result) => {
+    if (err) {
+      console.error("Error al obtener exámenes por fecha:", err);
+      res.status(500).json({ error: "Error al obtener exámenes" });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+// Obtener cotidianos de una fecha específica (todos los nombres de ese día)
+app.get("/obtenerCotidianosPorFecha/:profesorId/:fecha", (req, res) => {
+  const { profesorId, fecha } = req.params;
+  
+  const query = `
+    SELECT 
+      cc.*,
+      CONCAT(p.Persona_Nombre, ' ', p.Persona_PApellido, ' ', p.Persona_SApellido) as NombreEstudiante,
+      m.Materias_Nombre
+    FROM Calificaciones_Cotidiano cc
+    INNER JOIN Estudiantes e ON cc.Estudiante_Id = e.Estudiantes_id
+    INNER JOIN Personas p ON e.Persona_Id = p.Persona_Id
+    LEFT JOIN Materias m ON cc.Materia_Id = m.Materias_id
+    WHERE cc.Profesor_Id = ? AND cc.Fecha = ?
+    ORDER BY cc.Nombre_Cotidiano, p.Persona_Nombre, p.Persona_PApellido
+  `;
+  
+  connection.query(query, [profesorId, fecha], (err, result) => {
+    if (err) {
+      console.error("Error al obtener cotidianos por fecha:", err);
+      res.status(500).json({ error: "Error al obtener cotidianos" });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+// ========== ENDPOINTS DE ELIMINACIÓN POR NOMBRE ==========
+
+// Eliminar todas las tareas con un nombre específico y fecha
+app.delete("/eliminarTareaPorNombre/:profesorId/:nombreTarea/:fecha", (req, res) => {
+  const { profesorId, nombreTarea, fecha } = req.params;
+  
+  // Normalizar fecha para comparación
+  const fechaNormalizada = fecha.split('T')[0];
+  
+  console.log("🗑️ eliminarTareaPorNombre - Parámetros:", {
+    profesorId,
+    nombreTarea,
+    fecha: fechaNormalizada
+  });
+  
+  const query = `
+    DELETE FROM Control_Tareas 
+    WHERE Profesor_Id = ? 
+      AND Nombre_Tarea = ? 
+      AND DATE(Fecha) = ?
+  `;
+  
+  connection.query(query, [profesorId, nombreTarea, fechaNormalizada], (err, result) => {
+    if (err) {
+      console.error("❌ Error al eliminar tarea:", err);
+      res.status(500).json({ error: "Error al eliminar tarea" });
+    } else {
+      console.log(`✅ Tareas eliminadas: ${result.affectedRows} registros`);
+      res.json({ 
+        success: true, 
+        message: "Tarea eliminada exitosamente",
+        affectedRows: result.affectedRows 
+      });
+    }
+  });
+});
+
+// Eliminar todos los exámenes con un nombre específico, periodo y fecha
+app.delete("/eliminarExamenPorNombre/:profesorId/:nombreExamen/:periodo/:fecha", (req, res) => {
+  const { profesorId, nombreExamen, periodo, fecha } = req.params;
+  
+  // Normalizar fecha para comparación
+  const fechaNormalizada = fecha.split('T')[0];
+  
+  console.log("🗑️ eliminarExamenPorNombre - Parámetros:", {
+    profesorId,
+    nombreExamen,
+    periodo,
+    fecha: fechaNormalizada
+  });
+  
+  const query = `
+    DELETE FROM Calificaciones_Examen 
+    WHERE Profesor_Id = ? 
+      AND Nombre_Examen = ? 
+      AND Periodo = ?
+      AND DATE(Fecha) = ?
+  `;
+  
+  connection.query(query, [profesorId, nombreExamen, periodo, fechaNormalizada], (err, result) => {
+    if (err) {
+      console.error("❌ Error al eliminar examen:", err);
+      res.status(500).json({ error: "Error al eliminar examen" });
+    } else {
+      console.log(`✅ Exámenes eliminados: ${result.affectedRows} registros`);
+      res.json({ 
+        success: true, 
+        message: "Examen eliminado exitosamente",
+        affectedRows: result.affectedRows 
+      });
+    }
+  });
+});
+
+// Eliminar todos los cotidianos con un nombre específico, periodo y fecha
+app.delete("/eliminarCotidianoPorNombre/:profesorId/:nombreCotidiano/:periodo/:fecha", (req, res) => {
+  const { profesorId, nombreCotidiano, periodo, fecha } = req.params;
+  
+  // Normalizar fecha para comparación
+  const fechaNormalizada = fecha.split('T')[0];
+  
+  console.log("🗑️ eliminarCotidianoPorNombre - Parámetros:", {
+    profesorId,
+    nombreCotidiano,
+    periodo,
+    fecha: fechaNormalizada
+  });
+  
+  const query = `
+    DELETE FROM Calificaciones_Cotidiano 
+    WHERE Profesor_Id = ? 
+      AND Nombre_Cotidiano = ? 
+      AND Periodo = ?
+      AND DATE(Fecha) = ?
+  `;
+  
+  connection.query(query, [profesorId, nombreCotidiano, periodo, fechaNormalizada], (err, result) => {
+    if (err) {
+      console.error("❌ Error al eliminar cotidiano:", err);
+      res.status(500).json({ error: "Error al eliminar cotidiano" });
+    } else {
+      console.log(`✅ Cotidianos eliminados: ${result.affectedRows} registros`);
+      res.json({ 
+        success: true, 
+        message: "Cotidiano eliminado exitosamente",
+        affectedRows: result.affectedRows 
+      });
+    }
   });
 });
 

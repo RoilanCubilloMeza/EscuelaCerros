@@ -67,10 +67,10 @@ const PasarLista = () => {
   const [editandoExamen, setEditandoExamen] = useState(false);
   const [editandoCotidiano, setEditandoCotidiano] = useState(false);
   
-  // Flags para controlar auto-carga (evitar conflictos al hacer clic en Editar)
-  const [deshabilitarAutoLoadTarea, setDeshabilitarAutoLoadTarea] = useState(false);
-  const [deshabilitarAutoLoadExamen, setDeshabilitarAutoLoadExamen] = useState(false);
-  const [deshabilitarAutoLoadCotidiano, setDeshabilitarAutoLoadCotidiano] = useState(false);
+  // Flags para controlar auto-carga (YA NO SE USAN - carga automática deshabilitada)
+  // const [deshabilitarAutoLoadTarea, setDeshabilitarAutoLoadTarea] = useState(false);
+  // const [deshabilitarAutoLoadExamen, setDeshabilitarAutoLoadExamen] = useState(false);
+  // const [deshabilitarAutoLoadCotidiano, setDeshabilitarAutoLoadCotidiano] = useState(false);
   
   // Estados para filtros de historial
   const [filtroMateriaHistorial, setFiltroMateriaHistorial] = useState("");
@@ -275,13 +275,12 @@ const PasarLista = () => {
       return;
     }
     
-    // Si viene desde botón Editar, deshabilitar auto-load ANTES de hacer cualquier cambio
-    if (desdeBotonEditar) {
-      console.log("🔒 Deshabilitando auto-load de tareas");
-      setDeshabilitarAutoLoadTarea(true);
-      // Esperar un frame para asegurar que el estado se actualice
-      await new Promise(resolve => setTimeout(resolve, 0));
-    }
+    // Ya no se usa auto-load, se removió esta funcionalidad
+    // if (desdeBotonEditar) {
+    //   console.log("🔒 Deshabilitando auto-load de tareas");
+    //   setDeshabilitarAutoLoadTarea(true);
+    //   await new Promise(resolve => setTimeout(resolve, 0));
+    // }
     
     try {
       const url = `${API_BASE_URL}/obtenerTareaPorNombre/${profesorId}/${encodeURIComponent(nombreTarea)}/${fecha}`;
@@ -374,12 +373,12 @@ const PasarLista = () => {
         });
       }
     } finally {
-      // Reactivar auto-load después de un breve delay
-      if (desdeBotonEditar) {
-        setTimeout(() => {
-          setDeshabilitarAutoLoadTarea(false);
-        }, 500);
-      }
+      // Ya no se usa auto-load
+      // if (desdeBotonEditar) {
+      //   setTimeout(() => {
+      //     setDeshabilitarAutoLoadTarea(false);
+      //   }, 500);
+      // }
     }
   }, [profesorId, fechaTarea]);
 
@@ -391,13 +390,12 @@ const PasarLista = () => {
       return;
     }
     
-    // Si viene desde botón Editar, deshabilitar auto-load ANTES de hacer cualquier cambio
-    if (desdeBotonEditar) {
-      console.log("🔒 Deshabilitando auto-load de exámenes");
-      setDeshabilitarAutoLoadExamen(true);
-      // Esperar un frame para asegurar que el estado se actualice
-      await new Promise(resolve => setTimeout(resolve, 0));
-    }
+    // Ya no se usa auto-load, se removió esta funcionalidad
+    // if (desdeBotonEditar) {
+    //   console.log("🔒 Deshabilitando auto-load de exámenes");
+    //   setDeshabilitarAutoLoadExamen(true);
+    //   await new Promise(resolve => setTimeout(resolve, 0));
+    // }
     
     try {
       const url = `${API_BASE_URL}/obtenerExamenPorNombre/${profesorId}/${encodeURIComponent(nombreExamen)}/${periodo}/${fecha}`;
@@ -487,12 +485,12 @@ const PasarLista = () => {
         });
       }
     } finally {
-      // Reactivar auto-load después de un breve delay
-      if (desdeBotonEditar) {
-        setTimeout(() => {
-          setDeshabilitarAutoLoadExamen(false);
-        }, 500);
-      }
+      // Ya no se usa auto-load
+      // if (desdeBotonEditar) {
+      //   setTimeout(() => {
+      //     setDeshabilitarAutoLoadExamen(false);
+      //   }, 500);
+      // }
     }
   }, [profesorId, fechaExamen]);
 
@@ -504,13 +502,12 @@ const PasarLista = () => {
       return;
     }
     
-    // Si viene desde botón Editar, deshabilitar auto-load ANTES de hacer cualquier cambio
-    if (desdeBotonEditar) {
-      console.log("🔒 Deshabilitando auto-load de cotidianos");
-      setDeshabilitarAutoLoadCotidiano(true);
-      // Esperar un frame para asegurar que el estado se actualice
-      await new Promise(resolve => setTimeout(resolve, 0));
-    }
+    // Ya no se usa auto-load, se removió esta funcionalidad
+    // if (desdeBotonEditar) {
+    //   console.log("🔒 Deshabilitando auto-load de cotidianos");
+    //   setDeshabilitarAutoLoadCotidiano(true);
+    //   await new Promise(resolve => setTimeout(resolve, 0));
+    // }
     
     try {
       const url = `${API_BASE_URL}/obtenerCotidianoPorNombre/${profesorId}/${encodeURIComponent(nombreCotidiano)}/${periodo}/${fecha}`;
@@ -600,16 +597,17 @@ const PasarLista = () => {
         });
       }
     } finally {
-      // Reactivar auto-load después de un breve delay
-      if (desdeBotonEditar) {
-        setTimeout(() => {
-          setDeshabilitarAutoLoadCotidiano(false);
-        }, 500);
-      }
+      // Ya no se usa auto-load
+      // if (desdeBotonEditar) {
+      //   setTimeout(() => {
+      //     setDeshabilitarAutoLoadCotidiano(false);
+      //   }, 500);
+      // }
     }
   }, [profesorId, fechaCotidiano]);
 
-  // Cargar tareas del día (similar a asistencia) - cargar automáticamente al cambiar fecha
+  // FUNCIONES DE CARGA AUTOMÁTICA YA NO SE USAN - Se comentan para evitar warnings
+  /*
   const cargarTareasDelDia = useCallback(async () => {
     if (!profesorId || !fechaTarea) return;
     
@@ -711,6 +709,7 @@ const PasarLista = () => {
       console.error("Error al cargar cotidianos del día:", error);
     }
   }, [profesorId, fechaCotidiano, cargarCotidianoPorNombre]);
+  */
 
   useEffect(() => {
     if (profesorId) {
@@ -730,44 +729,41 @@ const PasarLista = () => {
     }
   }, [profesorId, fechaAsistencia, cargarAsistenciaDelDia]);
 
-  // Cargar tareas cuando cambia la fecha (igual que asistencia)
-  useEffect(() => {
-    console.log("🔄 useEffect de tareas detectó cambio:", { profesorId, fechaTarea, deshabilitado: deshabilitarAutoLoadTarea });
-    if (profesorId && fechaTarea && !deshabilitarAutoLoadTarea) {
-      console.log("✅ Ejecutando cargarTareasDelDia");
-      // Si el usuario cambia la fecha manualmente (no desde Editar), salir del modo edición
-      setEditandoTarea(false);
-      cargarTareasDelDia();
-    } else {
-      console.log("⏸️ Auto-load de tareas deshabilitado o faltan datos");
-    }
-  }, [profesorId, fechaTarea, cargarTareasDelDia, deshabilitarAutoLoadTarea]);
+  // NOTA: Carga automática de tareas, exámenes y cotidianos deshabilitada
+  // Solo se cargan cuando el usuario hace clic en "Editar" desde el historial
+  
+  // useEffect(() => {
+  //   console.log("🔄 useEffect de tareas detectó cambio:", { profesorId, fechaTarea, deshabilitado: deshabilitarAutoLoadTarea });
+  //   if (profesorId && fechaTarea && !deshabilitarAutoLoadTarea) {
+  //     console.log("✅ Ejecutando cargarTareasDelDia");
+  //     setEditandoTarea(false);
+  //     cargarTareasDelDia();
+  //   } else {
+  //     console.log("⏸️ Auto-load de tareas deshabilitado o faltan datos");
+  //   }
+  // }, [profesorId, fechaTarea, cargarTareasDelDia, deshabilitarAutoLoadTarea]);
 
-  // Cargar exámenes cuando cambia la fecha (igual que asistencia)
-  useEffect(() => {
-    console.log("🔄 useEffect de exámenes detectó cambio:", { profesorId, fechaExamen, deshabilitado: deshabilitarAutoLoadExamen });
-    if (profesorId && fechaExamen && !deshabilitarAutoLoadExamen) {
-      console.log("✅ Ejecutando cargarExamenesDelDia");
-      // Si el usuario cambia la fecha manualmente (no desde Editar), salir del modo edición
-      setEditandoExamen(false);
-      cargarExamenesDelDia();
-    } else {
-      console.log("⏸️ Auto-load de exámenes deshabilitado o faltan datos");
-    }
-  }, [profesorId, fechaExamen, cargarExamenesDelDia, deshabilitarAutoLoadExamen]);
+  // useEffect(() => {
+  //   console.log("🔄 useEffect de exámenes detectó cambio:", { profesorId, fechaExamen, deshabilitado: deshabilitarAutoLoadExamen });
+  //   if (profesorId && fechaExamen && !deshabilitarAutoLoadExamen) {
+  //     console.log("✅ Ejecutando cargarExamenesDelDia");
+  //     setEditandoExamen(false);
+  //     cargarExamenesDelDia();
+  //   } else {
+  //     console.log("⏸️ Auto-load de exámenes deshabilitado o faltan datos");
+  //   }
+  // }, [profesorId, fechaExamen, cargarExamenesDelDia, deshabilitarAutoLoadExamen]);
 
-  // Cargar cotidianos cuando cambia la fecha (igual que asistencia)
-  useEffect(() => {
-    console.log("🔄 useEffect de cotidianos detectó cambio:", { profesorId, fechaCotidiano, deshabilitado: deshabilitarAutoLoadCotidiano });
-    if (profesorId && fechaCotidiano && !deshabilitarAutoLoadCotidiano) {
-      console.log("✅ Ejecutando cargarCotidianosDelDia");
-      // Si el usuario cambia la fecha manualmente (no desde Editar), salir del modo edición
-      setEditandoCotidiano(false);
-      cargarCotidianosDelDia();
-    } else {
-      console.log("⏸️ Auto-load de cotidianos deshabilitado o faltan datos");
-    }
-  }, [profesorId, fechaCotidiano, cargarCotidianosDelDia, deshabilitarAutoLoadCotidiano]);
+  // useEffect(() => {
+  //   console.log("🔄 useEffect de cotidianos detectó cambio:", { profesorId, fechaCotidiano, deshabilitado: deshabilitarAutoLoadCotidiano });
+  //   if (profesorId && fechaCotidiano && !deshabilitarAutoLoadCotidiano) {
+  //     console.log("✅ Ejecutando cargarCotidianosDelDia");
+  //     setEditandoCotidiano(false);
+  //     cargarCotidianosDelDia();
+  //   } else {
+  //     console.log("⏸️ Auto-load de cotidianos deshabilitado o faltan datos");
+  //   }
+  // }, [profesorId, fechaCotidiano, cargarCotidianosDelDia, deshabilitarAutoLoadCotidiano]);
   
   const handleAsistenciaChange = (estudianteId, campo, valor) => {
     setAsistenciaData((prev) => ({

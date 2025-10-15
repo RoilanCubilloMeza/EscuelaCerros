@@ -53,3 +53,5 @@ Servidor/.env
 
 Cliente/.env
 Cliente/.env.production
+/Cliente
+*.production

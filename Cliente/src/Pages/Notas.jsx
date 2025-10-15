@@ -533,7 +533,7 @@ const Notas = () => {
               <div className="col-md-6">
                 <label className="form-label fw-bold">
                   <FaCalendarAlt className="me-2" />
-                  Periodo: <span className="text-muted">(Opcional)</span>
+                  Semestre: <span className="text-muted">(Opcional)</span>
                 </label>
                 <select
                   className="form-select"
@@ -541,11 +541,10 @@ const Notas = () => {
                   onChange={(event) => setNota_Periodo(event.target.value)}
                 >
                   <option value="">
-                    Todos los periodos
+                    Todos los semestres
                   </option>
-                  <option value="1">I Periodo</option>
-                  <option value="2">II Periodo</option>
-                  <option value="3">III Periodo</option>
+                  <option value="1">I Semestre</option>
+                  <option value="2">II Semestre</option>
                 </select>
               </div>
 
@@ -605,8 +604,8 @@ const Notas = () => {
                     <strong>🔍 Filtros activos:</strong>{' '}
                     Estudiante seleccionado
                     {Materias_id && ', Materia específica'}
-                    {Nota_Periodo && ', Periodo específico'}
-                    {!Materias_id && !Nota_Periodo && ' (mostrará todas las materias y periodos)'}
+                    {Nota_Periodo && ', Semestre específico'}
+                    {!Materias_id && !Nota_Periodo && ' (mostrará todas las materias y semestres)'}
                   </div>
                 </div>
               </div>
@@ -1003,7 +1002,7 @@ const Notas = () => {
           </Link>
         </div>
 
-        {/* Tabla de Resultados Agrupada por Periodo */}
+        {/* Tabla de Resultados Agrupada por Semestre */}
         {NotasFinales_List.length > 0 && (
           <div className="card">
             <div className="card-header" style={{
@@ -1017,19 +1016,19 @@ const Notas = () => {
               Resultados Encontrados ({NotasFinales_List.length} nota(s))
             </div>
             <div className="card-body p-0">
-              {/* Agrupar por periodo */}
-              {[1, 2, 3].map((periodo) => {
+              {/* Agrupar por semestre */}
+              {[1, 2].map((periodo) => {
                 const notasPeriodo = NotasFinales_List.filter(
                   (n) => parseInt(n.Nota_Periodo) === periodo
                 );
                 
                 if (notasPeriodo.length === 0) return null;
 
-                const periodoTexto = periodo === 1 ? 'I Periodo' : periodo === 2 ? 'II Periodo' : 'III Periodo';
+                const periodoTexto = periodo === 1 ? 'I Semestre' : 'II Semestre';
                 
                 return (
                   <div key={periodo} className="mb-4">
-                    {/* Encabezado del Periodo */}
+                    {/* Encabezado del Semestre */}
                     <div className="px-3 py-2" style={{
                       background: darkMode 
                         ? 'rgba(102, 126, 234, 0.15)' 
@@ -1042,7 +1041,7 @@ const Notas = () => {
                       </h5>
                     </div>
 
-                    {/* Tabla del Periodo */}
+                    {/* Tabla del Semestre */}
                     <div className="table-responsive">
                       <table className={`table table-hover mb-0 ${darkMode ? 'table-dark' : ''}`}>
                         <thead>
@@ -1050,7 +1049,7 @@ const Notas = () => {
                             background: darkMode ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)',
                             fontSize: '0.9rem'
                           }}>
-                            <th style={{ width: '25%' }}>Materia</th>
+                            <th style={{ width: '25%' }}>Materia / Estudiante</th>
                             <th className="text-center" style={{ width: '12%' }}>
                               <FaUserCheck className="me-1" style={{ fontSize: '0.85rem' }} />
                               Asistencia<br/>

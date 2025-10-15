@@ -1,13 +1,15 @@
 /**
  * Configuración centralizada de la API
  */
-import logger from '../utils/logger';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
-const isDevelopment = API_BASE_URL.includes('localhost');
+const isDevelopment = process.env.NODE_ENV === 'development';
 
-logger.info('🌐 Backend URL:', API_BASE_URL);
-logger.info('🔧 Modo:', isDevelopment ? 'DESARROLLO LOCAL' : 'PRODUCCIÓN');
+// Solo log en desarrollo
+if (isDevelopment) {
+  console.log('🌐 Backend URL:', API_BASE_URL);
+  console.log('🔧 Modo:', isDevelopment ? 'DESARROLLO LOCAL' : 'PRODUCCIÓN');
+}
 
 export default API_BASE_URL;
 

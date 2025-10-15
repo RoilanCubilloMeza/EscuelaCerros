@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { UserProvider } from "./components/UserContext";
 import { ThemeProvider } from "./components/Theme";
@@ -45,9 +45,11 @@ import PasarLista from "./Pages/PasarLista";
 import ConfiguracionPorcentajes from "./Pages/ConfiguracionPorcentajes";
 
 function App() {
-  const [refresh, setRefresh] = useState(false);
+  // const [refresh, setRefresh] = useState(false);
   const isAuthenticated = localStorage.getItem("token") !== null;
 
+  // Timer desactivado - no se estaba usando
+  /*
   useEffect(() => {
     const interval = setInterval(() => {
       setRefresh((prevRefresh) => !prevRefresh);
@@ -55,6 +57,7 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
+  */
 
   return (
     <BrowserRouter>

@@ -38,7 +38,6 @@ const Notas = () => {
   const [Matricula, setMatricula] = useState([]);
   const [NotasFinales_List, setNotasFinales_List] = useState([]);
   const [editingNotaId, setEditingNotaId] = useState(null);
-  const [profesorId, setProfesorId] = useState(null);
   const [configuracionCargada, setConfiguracionCargada] = useState(false);
   const [estadisticas, setEstadisticas] = useState(null);
   const [cargandoEstadisticas, setCargandoEstadisticas] = useState(false);
@@ -69,7 +68,6 @@ const Notas = () => {
     const profesorIdStorage = localStorage.getItem("profesorId");
     if (profesorIdStorage) {
       const id = parseInt(profesorIdStorage);
-      setProfesorId(id);
       cargarConfiguracionPorcentajes(id);
     }
   }, []);
@@ -162,17 +160,16 @@ const Notas = () => {
     }
   };
 
-  // Calcular nota total automáticamente basada en porcentajes
+  // Calcular nota total automáticamente - los valores ya son porcentajes directos
   useEffect(() => {
-    // Convertir las calificaciones de 0-100 a la proporción del porcentaje
-    const asistenciaCalc = (parseFloat(VA_Valor) || 0) * (Asistencia_Porcentaje / 100);
-    const tareasCalc = (parseFloat(Tareas_Puntos) || 0) * (Tareas_Porcentaje / 100);
-    const cotidianoCalc = (parseFloat(Cotidiano_Puntos) || 0) * (Cotidiano_Porcentaje / 100);
-    const examenCalc = (parseFloat(Examen_Puntos) || 0) * (Examen_Porcentaje / 100);
+    // Los valores ingresados ya son los porcentajes obtenidos, solo sumarlos
+    const calculoTotal = (parseFloat(VA_Valor) || 0) + 
+                        (parseFloat(Tareas_Puntos) || 0) + 
+                        (parseFloat(Cotidiano_Puntos) || 0) + 
+                        (parseFloat(Examen_Puntos) || 0);
     
-    const calculoTotal = asistenciaCalc + tareasCalc + cotidianoCalc + examenCalc;
     setNota_Total(Math.round(calculoTotal * 100) / 100); // Redondear a 2 decimales
-  }, [VA_Valor, Cotidiano_Puntos, Tareas_Puntos, Examen_Puntos, Asistencia_Porcentaje, Tareas_Porcentaje, Cotidiano_Porcentaje, Examen_Porcentaje]);
+  }, [VA_Valor, Cotidiano_Puntos, Tareas_Puntos, Examen_Puntos]);
 
   const getListaMatricula = async () => {
     try {
@@ -204,10 +201,29 @@ const Notas = () => {
   };
 
   const buscarNotas = async () => {
+    // Validar que al menos el estudiante esté seleccionado
+    if (!Estudiantes_id) {
+      Swal.fire({
+        icon: "warning",
+        title: "Estudiante requerido",
+        text: "Debe seleccionar al menos un estudiante para buscar.",
+      });
+      return;
+    }
+
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/notasDetalladas?Estudiantes_id=${Estudiantes_id}&Materias_id=${Materias_id}&Nota_Periodo=${Nota_Periodo}`
-      );
+      // Construir URL con parámetros opcionales
+      let url = `${API_BASE_URL}/notasDetalladas?Estudiantes_id=${Estudiantes_id}`;
+      
+      // Agregar filtros opcionales solo si están seleccionados
+      if (Materias_id) {
+        url += `&Materias_id=${Materias_id}`;
+      }
+      if (Nota_Periodo) {
+        url += `&Nota_Periodo=${Nota_Periodo}`;
+      }
+
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -215,17 +231,30 @@ const Notas = () => {
       setNotasFinales_List(data);
 
       if (data.length > 0) {
+        // Mensaje personalizado según filtros aplicados
+        let mensaje = `Se encontraron ${data.length} nota(s)`;
+        if (Materias_id && Nota_Periodo) {
+          mensaje += " con todos los filtros aplicados";
+        } else if (Materias_id) {
+          mensaje += " para la materia seleccionada";
+        } else if (Nota_Periodo) {
+          mensaje += " para el periodo seleccionado";
+        } else {
+          mensaje += " (todas las materias y periodos)";
+        }
+
         Swal.fire({
           icon: "success",
           title: "Resultados encontrados",
-          text: `Se encontraron ${data.length} resultados.`,
+          text: mensaje,
+          timer: 2500,
         });
-        console.log("NF",NotasFinales_List)
+        console.log("NF",NotasFinales_List);
       } else {
         Swal.fire({
           icon: "warning",
           title: "Sin resultados",
-          text: "No se encontraron resultados para los criterios de búsqueda.",
+          text: "No se encontraron notas para los criterios de búsqueda.",
         });
       }
     } catch (error) {
@@ -459,7 +488,7 @@ const Notas = () => {
               <div className="col-md-6">
                 <label className="form-label fw-bold">
                   <FaUser className="me-2" />
-                  Estudiante:
+                  Estudiante: <span className="text-danger">*</span>
                 </label>
                 <select
                   className="form-select"
@@ -467,7 +496,7 @@ const Notas = () => {
                   onChange={(event) => setEstudiante_id(event.target.value)}
                   required
                 >
-                  <option value="" disabled>
+                  <option value="">
                     Seleccione un estudiante
                   </option>
                   {Matricula.map((option) => (
@@ -482,16 +511,15 @@ const Notas = () => {
               <div className="col-md-6">
                 <label className="form-label fw-bold">
                   <FaBook className="me-2" />
-                  Materia:
+                  Materia: <span className="text-muted">(Opcional)</span>
                 </label>
                 <select
                   className="form-select"
                   value={Materias_id}
                   onChange={(event) => setMaterias_id(event.target.value)}
-                  required
                 >
-                  <option value="" disabled>
-                    Seleccione una materia
+                  <option value="">
+                    Todas las materias
                   </option>
                   {Materias_List.map((option) => (
                     <option key={option.Materias_id} value={option.Materias_id}>
@@ -505,16 +533,15 @@ const Notas = () => {
               <div className="col-md-6">
                 <label className="form-label fw-bold">
                   <FaCalendarAlt className="me-2" />
-                  Periodo:
+                  Periodo: <span className="text-muted">(Opcional)</span>
                 </label>
                 <select
                   className="form-select"
                   value={Nota_Periodo}
                   onChange={(event) => setNota_Periodo(event.target.value)}
-                  required
                 >
-                  <option value="" disabled>
-                    Seleccione un periodo
+                  <option value="">
+                    Todos los periodos
                   </option>
                   <option value="1">I Periodo</option>
                   <option value="2">II Periodo</option>
@@ -524,15 +551,32 @@ const Notas = () => {
 
               {/* Botón Buscar */}
               <div className="col-md-6 d-flex align-items-end gap-2">
-                <button className="btn btn-primary flex-grow-1" onClick={buscarNotas}>
+                <button 
+                  className="btn btn-primary flex-grow-1" 
+                  onClick={buscarNotas}
+                  disabled={!Estudiantes_id}
+                  title="Buscar notas del estudiante (materia y periodo opcionales)"
+                >
                   <FaCalculator className="me-2" />
                   Buscar Notas
                 </button>
+                {(Materias_id || Nota_Periodo) && (
+                  <button 
+                    className="btn btn-outline-secondary" 
+                    onClick={() => {
+                      setMaterias_id("");
+                      setNota_Periodo("");
+                    }}
+                    title="Limpiar filtros de materia y periodo"
+                  >
+                    🔄 Limpiar Filtros
+                  </button>
+                )}
                 <button 
                   className="btn btn-success flex-grow-1" 
                   onClick={cargarEstadisticasEstudiante}
                   disabled={!Estudiantes_id || !Materias_id || !Nota_Periodo || cargandoEstadisticas}
-                  title="Calcular automáticamente basado en todas las evaluaciones registradas"
+                  title="Calcular automáticamente requiere: estudiante, materia y periodo"
                 >
                   {cargandoEstadisticas ? (
                     <>
@@ -547,6 +591,26 @@ const Notas = () => {
                 </button>
               </div>
             </div>
+
+            {/* Info sobre filtros activos */}
+            {Estudiantes_id && (
+              <div className="mt-3">
+                <div className="alert alert-info mb-0 d-flex align-items-center justify-content-between" style={{
+                  background: darkMode ? 'rgba(66, 153, 225, 0.1)' : 'rgba(66, 153, 225, 0.05)',
+                  border: `1px solid ${darkMode ? '#4299e1' : '#bee3f8'}`,
+                  borderRadius: '8px',
+                  fontSize: '0.9rem'
+                }}>
+                  <div>
+                    <strong>🔍 Filtros activos:</strong>{' '}
+                    Estudiante seleccionado
+                    {Materias_id && ', Materia específica'}
+                    {Nota_Periodo && ', Periodo específico'}
+                    {!Materias_id && !Nota_Periodo && ' (mostrará todas las materias y periodos)'}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -708,8 +772,8 @@ const Notas = () => {
                   borderRadius: '8px',
                   fontSize: '0.9rem'
                 }}>
-                  <strong>💡 Instrucción:</strong> Ingresa las calificaciones de 0 a 100 en cada categoría. 
-                  El sistema calculará automáticamente la nota final según tus porcentajes configurados.
+                  <strong>💡 Instrucción:</strong> Ingresa el porcentaje obtenido en cada categoría. 
+                  Por ejemplo: Si obtuvo 18% de los 20% de tareas, ingresa <strong>18</strong>.
                 </div>
                 
                 <div className="row g-3">
@@ -717,20 +781,39 @@ const Notas = () => {
                   <div className="col-md-6 col-lg-3">
                     <label className="form-label fw-bold">
                       <FaUserCheck className="me-2" />
-                      Asistencia ({Asistencia_Porcentaje}%):
+                      Asistencia (Peso: {Asistencia_Porcentaje}%)
                     </label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={VA_Valor}
-                      onChange={(e) => setVA_Valor(parseFloat(e.target.value) || 0)}
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      placeholder="0-100"
-                    />
+                    <div className="input-group">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={VA_Valor === 0 ? '' : VA_Valor}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value);
+                          if (e.target.value === '' || isNaN(value)) {
+                            setVA_Valor(0);
+                          } else if (value > Asistencia_Porcentaje) {
+                            setVA_Valor(Asistencia_Porcentaje);
+                          } else if (value < 0) {
+                            setVA_Valor(0);
+                          } else {
+                            setVA_Valor(value);
+                          }
+                        }}
+                        onFocus={(e) => {
+                          if (e.target.value === '0' || VA_Valor === 0) {
+                            e.target.select();
+                          }
+                        }}
+                        min="0"
+                        max={Asistencia_Porcentaje}
+                        step="0.1"
+                        placeholder={`0-${Asistencia_Porcentaje}`}
+                      />
+                      <span className="input-group-text">%</span>
+                    </div>
                     <small className="text-muted">
-                      Aporte: {((VA_Valor || 0) * Asistencia_Porcentaje / 100).toFixed(2)} pts
+                      Obtuvo <strong>{VA_Valor || 0}%</strong> de {Asistencia_Porcentaje}% posibles
                     </small>
                   </div>
 
@@ -738,20 +821,39 @@ const Notas = () => {
                   <div className="col-md-6 col-lg-3">
                     <label className="form-label fw-bold">
                       <FaTasks className="me-2" />
-                      Tareas ({Tareas_Porcentaje}%):
+                      Tareas (Peso: {Tareas_Porcentaje}%)
                     </label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={Tareas_Puntos}
-                      onChange={(e) => setTareas_Puntos(parseFloat(e.target.value) || 0)}
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      placeholder="0-100"
-                    />
+                    <div className="input-group">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={Tareas_Puntos === 0 ? '' : Tareas_Puntos}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value);
+                          if (e.target.value === '' || isNaN(value)) {
+                            setTareas_Puntos(0);
+                          } else if (value > Tareas_Porcentaje) {
+                            setTareas_Puntos(Tareas_Porcentaje);
+                          } else if (value < 0) {
+                            setTareas_Puntos(0);
+                          } else {
+                            setTareas_Puntos(value);
+                          }
+                        }}
+                        onFocus={(e) => {
+                          if (e.target.value === '0' || Tareas_Puntos === 0) {
+                            e.target.select();
+                          }
+                        }}
+                        min="0"
+                        max={Tareas_Porcentaje}
+                        step="0.1"
+                        placeholder={`0-${Tareas_Porcentaje}`}
+                      />
+                      <span className="input-group-text">%</span>
+                    </div>
                     <small className="text-muted">
-                      Aporte: {((Tareas_Puntos || 0) * Tareas_Porcentaje / 100).toFixed(2)} pts
+                      Obtuvo <strong>{Tareas_Puntos || 0}%</strong> de {Tareas_Porcentaje}% posibles
                     </small>
                   </div>
 
@@ -759,20 +861,39 @@ const Notas = () => {
                   <div className="col-md-6 col-lg-3">
                     <label className="form-label fw-bold">
                       <FaClipboardCheck className="me-2" />
-                      Cotidiano ({Cotidiano_Porcentaje}%):
+                      Cotidiano (Peso: {Cotidiano_Porcentaje}%)
                     </label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={Cotidiano_Puntos}
-                      onChange={(e) => setCotidiano_Puntos(parseFloat(e.target.value) || 0)}
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      placeholder="0-100"
-                    />
+                    <div className="input-group">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={Cotidiano_Puntos === 0 ? '' : Cotidiano_Puntos}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value);
+                          if (e.target.value === '' || isNaN(value)) {
+                            setCotidiano_Puntos(0);
+                          } else if (value > Cotidiano_Porcentaje) {
+                            setCotidiano_Puntos(Cotidiano_Porcentaje);
+                          } else if (value < 0) {
+                            setCotidiano_Puntos(0);
+                          } else {
+                            setCotidiano_Puntos(value);
+                          }
+                        }}
+                        onFocus={(e) => {
+                          if (e.target.value === '0' || Cotidiano_Puntos === 0) {
+                            e.target.select();
+                          }
+                        }}
+                        min="0"
+                        max={Cotidiano_Porcentaje}
+                        step="0.1"
+                        placeholder={`0-${Cotidiano_Porcentaje}`}
+                      />
+                      <span className="input-group-text">%</span>
+                    </div>
                     <small className="text-muted">
-                      Aporte: {((Cotidiano_Puntos || 0) * Cotidiano_Porcentaje / 100).toFixed(2)} pts
+                      Obtuvo <strong>{Cotidiano_Puntos || 0}%</strong> de {Cotidiano_Porcentaje}% posibles
                     </small>
                   </div>
 
@@ -780,20 +901,39 @@ const Notas = () => {
                   <div className="col-md-6 col-lg-3">
                     <label className="form-label fw-bold">
                       <FaFileAlt className="me-2" />
-                      Examen ({Examen_Porcentaje}%):
+                      Examen (Peso: {Examen_Porcentaje}%)
                     </label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={Examen_Puntos}
-                      onChange={(e) => setExamen_Puntos(parseFloat(e.target.value) || 0)}
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      placeholder="0-100"
-                    />
+                    <div className="input-group">
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={Examen_Puntos === 0 ? '' : Examen_Puntos}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value);
+                          if (e.target.value === '' || isNaN(value)) {
+                            setExamen_Puntos(0);
+                          } else if (value > Examen_Porcentaje) {
+                            setExamen_Puntos(Examen_Porcentaje);
+                          } else if (value < 0) {
+                            setExamen_Puntos(0);
+                          } else {
+                            setExamen_Puntos(value);
+                          }
+                        }}
+                        onFocus={(e) => {
+                          if (e.target.value === '0' || Examen_Puntos === 0) {
+                            e.target.select();
+                          }
+                        }}
+                        min="0"
+                        max={Examen_Porcentaje}
+                        step="0.1"
+                        placeholder={`0-${Examen_Porcentaje}`}
+                      />
+                      <span className="input-group-text">%</span>
+                    </div>
                     <small className="text-muted">
-                      Aporte: {((Examen_Puntos || 0) * Examen_Porcentaje / 100).toFixed(2)} pts
+                      Obtuvo <strong>{Examen_Puntos || 0}%</strong> de {Examen_Porcentaje}% posibles
                     </small>
                   </div>
 
@@ -815,15 +955,18 @@ const Notas = () => {
                       <div>
                         <div style={{ fontSize: '0.9rem', opacity: 0.9, marginBottom: '5px' }}>
                           <FaCalculator className="me-2" />
-                          Nota Final Calculada
+                          Nota Final (Suma Directa)
                         </div>
                         <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                          ({Asistencia_Porcentaje}% + {Tareas_Porcentaje}% + {Cotidiano_Porcentaje}% + {Examen_Porcentaje}% = 100%)
+                          {VA_Valor || 0}% + {Tareas_Puntos || 0}% + {Cotidiano_Puntos || 0}% + {Examen_Puntos || 0}% = {Nota_Total}%
+                        </div>
+                        <div style={{ fontSize: '0.7rem', opacity: 0.7, marginTop: '5px' }}>
+                          De un total de {Asistencia_Porcentaje + Tareas_Porcentaje + Cotidiano_Porcentaje + Examen_Porcentaje}% posibles
                         </div>
                       </div>
                       <div className="text-end">
                         <div style={{ fontSize: '2.5rem', fontWeight: 'bold', lineHeight: '1' }}>
-                          {Nota_Total}
+                          {Nota_Total}%
                         </div>
                         <div style={{ fontSize: '0.85rem', opacity: 0.9 }}>
                           {Nota_Total >= 70 ? '✅ Aprobado' : Nota_Total >= 65 ? '⚠️ Suficiente' : '❌ Reprobado'}
@@ -860,7 +1003,7 @@ const Notas = () => {
           </Link>
         </div>
 
-        {/* Tabla de Resultados */}
+        {/* Tabla de Resultados Agrupada por Periodo */}
         {NotasFinales_List.length > 0 && (
           <div className="card">
             <div className="card-header" style={{
@@ -871,89 +1014,159 @@ const Notas = () => {
               fontWeight: '600'
             }}>
               <FaClipboardCheck className="me-2" />
-              Resultados Encontrados ({NotasFinales_List.length})
+              Resultados Encontrados ({NotasFinales_List.length} nota(s))
             </div>
             <div className="card-body p-0">
-              <div className="table-responsive">
-                <table className={`table table-hover mb-0 ${darkMode ? 'table-dark' : ''}`}>
-                  <thead>
-                    <tr style={{
-                      background: darkMode ? 'rgba(102, 126, 234, 0.2)' : 'rgba(102, 126, 234, 0.1)'
+              {/* Agrupar por periodo */}
+              {[1, 2, 3].map((periodo) => {
+                const notasPeriodo = NotasFinales_List.filter(
+                  (n) => parseInt(n.Nota_Periodo) === periodo
+                );
+                
+                if (notasPeriodo.length === 0) return null;
+
+                const periodoTexto = periodo === 1 ? 'I Periodo' : periodo === 2 ? 'II Periodo' : 'III Periodo';
+                
+                return (
+                  <div key={periodo} className="mb-4">
+                    {/* Encabezado del Periodo */}
+                    <div className="px-3 py-2" style={{
+                      background: darkMode 
+                        ? 'rgba(102, 126, 234, 0.15)' 
+                        : 'rgba(102, 126, 234, 0.1)',
+                      borderBottom: `3px solid ${darkMode ? '#667eea' : '#764ba2'}`
                     }}>
-                      <th>Estudiante</th>
-                      <th>Materia</th>
-                      <th>Periodo</th>
-                      <th className="text-center">Asist.</th>
-                      <th className="text-center">Cotid.</th>
-                      <th className="text-center">Tareas</th>
-                      <th className="text-center">Examen</th>
-                      <th className="text-center">Total</th>
-                      <th className="text-center">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {NotasFinales_List.map((nota) => {
-                      const estudiante = Matricula.find(
-                        (est) => est.Estudiantes_id === nota.Estudiantes_id
-                      );
-                      const materia = Materias_List.find(
-                        (mat) => mat.Materias_Nombre === nota.Materias_Nombre
-                      );
-                      
-                      const notaColor = nota.Nota_Total >= 70 ? 'text-success' : nota.Nota_Total >= 65 ? 'text-warning' : 'text-danger';
-                      
-                      // Convertir periodo numérico a texto para visualización
-                      const periodoTexto = nota.Nota_Periodo === 1 || nota.Nota_Periodo === '1' ? 'I Periodo' 
-                        : nota.Nota_Periodo === 2 || nota.Nota_Periodo === '2' ? 'II Periodo'
-                        : nota.Nota_Periodo === 3 || nota.Nota_Periodo === '3' ? 'III Periodo'
-                        : nota.Nota_Periodo;
-                      
-                      return (
-                        <tr key={nota.Nota_Id}>
-                          <td>
-                            {estudiante
-                              ? `${estudiante.Persona_nombre} ${estudiante.Persona_PApellido}`
-                              : "No encontrado"}
-                          </td>
-                          <td>
-                            {materia
-                              ? materia.Materias_Nombre
-                              : "No encontrada"}
-                          </td>
-                          <td>
-                            <span className="badge bg-primary">{periodoTexto}</span>
-                          </td>
-                          <td className="text-center">{nota.VA_Valor || 0}</td>
-                          <td className="text-center">{nota.Cotidiano_Puntos || 0}</td>
-                          <td className="text-center">{nota.Tareas_Puntos || 0}</td>
-                          <td className="text-center">{nota.Examen_Puntos || 0}</td>
-                          <td className="text-center">
-                            <strong className={notaColor} style={{ fontSize: '1.1rem' }}>
-                              {nota.Nota_Total}
-                            </strong>
-                          </td>
-                          <td className="text-center">
-                            <button
-                              className="btn btn-sm btn-warning me-1"
-                              onClick={() => editarNota(nota)}
-                              title="Editar"
-                            >
-                              ✏️
-                            </button>
-                            <button
-                              className="btn btn-sm btn-danger"
-                              onClick={() => eliminarNota(nota.Matricula_Id)}
-                              title="Eliminar"
-                            >
-                              🗑️
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                      <h5 className="mb-0">
+                        <FaCalendarAlt className="me-2" />
+                        {periodoTexto} ({notasPeriodo.length} materia(s))
+                      </h5>
+                    </div>
+
+                    {/* Tabla del Periodo */}
+                    <div className="table-responsive">
+                      <table className={`table table-hover mb-0 ${darkMode ? 'table-dark' : ''}`}>
+                        <thead>
+                          <tr style={{
+                            background: darkMode ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)',
+                            fontSize: '0.9rem'
+                          }}>
+                            <th style={{ width: '25%' }}>Materia</th>
+                            <th className="text-center" style={{ width: '12%' }}>
+                              <FaUserCheck className="me-1" style={{ fontSize: '0.85rem' }} />
+                              Asistencia<br/>
+                              <small className="text-muted" style={{ fontSize: '0.75rem' }}>de {Asistencia_Porcentaje}%</small>
+                            </th>
+                            <th className="text-center" style={{ width: '12%' }}>
+                              <FaTasks className="me-1" style={{ fontSize: '0.85rem' }} />
+                              Tareas<br/>
+                              <small className="text-muted" style={{ fontSize: '0.75rem' }}>de {Tareas_Porcentaje}%</small>
+                            </th>
+                            <th className="text-center" style={{ width: '12%' }}>
+                              <FaClipboardCheck className="me-1" style={{ fontSize: '0.85rem' }} />
+                              Cotidiano<br/>
+                              <small className="text-muted" style={{ fontSize: '0.75rem' }}>de {Cotidiano_Porcentaje}%</small>
+                            </th>
+                            <th className="text-center" style={{ width: '12%' }}>
+                              <FaFileAlt className="me-1" style={{ fontSize: '0.85rem' }} />
+                              Examen<br/>
+                              <small className="text-muted" style={{ fontSize: '0.75rem' }}>de {Examen_Porcentaje}%</small>
+                            </th>
+                            <th className="text-center" style={{ width: '15%' }}>
+                              <FaCalculator className="me-1" style={{ fontSize: '0.85rem' }} />
+                              Nota Final
+                            </th>
+                            <th className="text-center" style={{ width: '12%' }}>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {notasPeriodo.map((nota) => {
+                            const estudiante = Matricula.find(
+                              (est) => est.Estudiantes_id === nota.Estudiantes_id
+                            );
+                            const materia = Materias_List.find(
+                              (mat) => mat.Materias_Nombre === nota.Materias_Nombre
+                            );
+                            
+                            const notaColor = nota.Nota_Total >= 70 ? 'text-success' : nota.Nota_Total >= 65 ? 'text-warning' : 'text-danger';
+                            
+                            // Función para formatear porcentajes obtenidos con color
+                            const getPercentageDisplay = (value, maxValue) => {
+                              const numValue = parseFloat(value) || 0;
+                              const percentage = (numValue / maxValue) * 100;
+                              const color = percentage >= 90 ? '#10b981' : percentage >= 70 ? '#3b82f6' : percentage >= 50 ? '#f59e0b' : '#ef4444';
+                              return (
+                                <div>
+                                  <span style={{ color, fontWeight: '600', fontSize: '1.1rem' }}>
+                                    {numValue}%
+                                  </span>
+                                  <div style={{ fontSize: '0.7rem', color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                                    de {maxValue}%
+                                  </div>
+                                </div>
+                              );
+                            };
+
+                            return (
+                              <tr key={nota.Nota_Id}>
+                                <td>
+                                  <div>
+                                    <strong>{materia ? materia.Materias_Nombre : "No encontrada"}</strong>
+                                  </div>
+                                  <small className="text-muted">
+                                    {estudiante
+                                      ? `${estudiante.Persona_nombre} ${estudiante.Persona_PApellido}`
+                                      : "No encontrado"}
+                                  </small>
+                                </td>
+                                <td className="text-center">
+                                  {getPercentageDisplay(nota.VA_Valor, Asistencia_Porcentaje)}
+                                </td>
+                                <td className="text-center">
+                                  {getPercentageDisplay(nota.Tareas_Puntos, Tareas_Porcentaje)}
+                                </td>
+                                <td className="text-center">
+                                  {getPercentageDisplay(nota.Cotidiano_Puntos, Cotidiano_Porcentaje)}
+                                </td>
+                                <td className="text-center">
+                                  {getPercentageDisplay(nota.Examen_Puntos, Examen_Porcentaje)}
+                                </td>
+                                <td className="text-center">
+                                  <div className="d-flex flex-column align-items-center">
+                                    <strong className={notaColor} style={{ fontSize: '1.3rem' }}>
+                                      {nota.Nota_Total}
+                                    </strong>
+                                    <small className={notaColor} style={{ fontSize: '0.75rem' }}>
+                                      {nota.Nota_Total >= 70 ? '✅ Aprobado' : nota.Nota_Total >= 65 ? '⚠️ Suficiente' : '❌ Reprobado'}
+                                    </small>
+                                  </div>
+                                </td>
+                                <td className="text-center">
+                                  <div className="btn-group" role="group">
+                                    <button
+                                      className="btn btn-sm btn-warning"
+                                      onClick={() => editarNota(nota)}
+                                      title="Editar nota"
+                                    >
+                                      ✏️
+                                    </button>
+                                    <button
+                                      className="btn btn-sm btn-danger"
+                                      onClick={() => eliminarNota(nota.Matricula_Id)}
+                                      title="Eliminar nota"
+                                    >
+                                      🗑️
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

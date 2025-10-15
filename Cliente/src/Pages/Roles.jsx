@@ -133,8 +133,6 @@ const Roles = () => {
     };
   }, [darkMode]);
 
- 
-
   return (
     <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
       <div className="container py-4">

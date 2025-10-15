@@ -700,7 +700,6 @@ function Profesores() {
               </div>
             </div>
 
-           
           </>
         )}
       </div>

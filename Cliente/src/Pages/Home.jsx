@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/iframe-has-title */
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FaFacebook, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTheme } from "../components/Theme";
@@ -16,6 +15,7 @@ const Home = () => {
   const handleScroll = useCallback(() => {
     const scrollPosition = window.scrollY;
     if (scrollPosition > 100) {
+      document.body.classList.add("animate-scroll-down");
     } else {
       document.body.classList.remove("animate-scroll-down");
     }

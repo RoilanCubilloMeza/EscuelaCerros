@@ -99,9 +99,15 @@ app.get("/obtenerNotas", (req, res) => {
 app.get("/notasDetalladas", (req, res) => {
   const { Estudiantes_id, Materias_id, Nota_Periodo } = req.query;
   
-  // Normalizar el periodo
-  const periodoNormalizado = normalizarPeriodo(Nota_Periodo);
+  // Validar que al menos el estudiante esté presente
+  if (!Estudiantes_id) {
+    return res.status(400).json({ 
+      error: "Bad Request", 
+      message: "El parámetro Estudiantes_id es requerido" 
+    });
+  }
 
+  // Construir query dinámicamente según los parámetros proporcionados
   let query = `
     SELECT 
       e.Estudiantes_id,
@@ -135,7 +141,16 @@ app.get("/notasDetalladas", (req, res) => {
     JOIN 
       Materias m ON ma.Materias_id = m.Materias_id
     LEFT JOIN 
-      Matricula_Notas mn ON ma.Matricula_Id = mn.Matricula_Id AND mn.Nota_Periodo = ?
+      Matricula_Notas mn ON ma.Matricula_Id = mn.Matricula_Id
+  `;
+
+  // Agregar condición de periodo solo si se proporciona
+  if (Nota_Periodo) {
+    const periodoNormalizado = normalizarPeriodo(Nota_Periodo);
+    query += ` AND mn.Nota_Periodo = ${connection.escape(periodoNormalizado)}`;
+  }
+
+  query += `
     LEFT JOIN 
       Nota_Final nf ON mn.Nota_Id = nf.Nota_Id
     LEFT JOIN
@@ -147,16 +162,25 @@ app.get("/notasDetalladas", (req, res) => {
     LEFT JOIN
       Valor_Examen ve ON nf.Examen_Id = ve.Examen_Id
     WHERE 
-      e.Estudiantes_id = ? AND 
-      m.Materias_id = ? 
+      e.Estudiantes_id = ?
   `;
 
-  connection.query(query, [periodoNormalizado, Estudiantes_id, Materias_id], (error, results) => {
+  const queryParams = [Estudiantes_id];
+
+  // Agregar condición de materia solo si se proporciona
+  if (Materias_id) {
+    query += ` AND m.Materias_id = ?`;
+    queryParams.push(Materias_id);
+  }
+
+  query += ` ORDER BY m.Materias_Nombre, nf.Nota_Periodo`;
+
+  connection.query(query, queryParams, (error, results) => {
     if (error) {
       console.error("Error en notasDetalladas:", error);
       res.status(500).json({ error: "Internal Server Error", details: error.message });
     } else {
-      console.log("Resultados notasDetalladas:", results);
+      console.log(`✓ Búsqueda de notas: ${results.length} resultado(s) encontrado(s)`);
       res.json(results);
     }
   });

@@ -477,7 +477,6 @@ const ConfiguracionPorcentajes = () => {
               </div>
             </div>
 
-          
           </>
         )}
       </div>

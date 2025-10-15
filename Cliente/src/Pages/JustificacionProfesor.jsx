@@ -419,12 +419,12 @@ const JustificacionProfesor = () => {
                                 lineHeight: '1.6'
                               }}>
                                 <strong>Motivo:</strong>
-                                <div style={{ 
+                                <div style={{
                                   marginTop: '6px',
                                   paddingLeft: '12px',
                                   fontStyle: 'italic'
                                 }}>
-                                  "{notif.Notificacion_Mensaje}"
+                                  &ldquo;{notif.Notificacion_Mensaje}&rdquo;
                                 </div>
                               </div>
                             </div>

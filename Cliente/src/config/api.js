@@ -1,14 +1,34 @@
 /**
  * Configuración centralizada de la API
+ * 
+ * Variables de entorno:
+ * - REACT_APP_API_URL: URL del backend
+ * 
+ * Desarrollo local: http://localhost:3001
+ * Producción: https://escuelacerros.onrender.com
  */
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 const isDevelopment = process.env.NODE_ENV === 'development';
+const isProduction = process.env.NODE_ENV === 'production';
 
-// Solo log en desarrollo
+// Log solo en desarrollo
 if (isDevelopment) {
-  console.log('🌐 Backend URL:', API_BASE_URL);
-  console.log('🔧 Modo:', isDevelopment ? 'DESARROLLO LOCAL' : 'PRODUCCIÓN');
+  console.log('═══════════════════════════════════════════════════');
+  console.log('🚀 Configuración de API - Escuela Cerros');
+  console.log('═══════════════════════════════════════════════════');
+  console.log('🌐 URL del Backend:', API_BASE_URL);
+  console.log('🔧 Modo:', '🏠 DESARROLLO LOCAL');
+  console.log('💡 Tip: El backend debe estar corriendo en localhost:3001');
+  console.log('═══════════════════════════════════════════════════');
+}
+
+// En producción, solo advertir si se está usando localhost
+if (isProduction && API_BASE_URL.includes('localhost')) {
+  console.error('⚠️ ERROR DE CONFIGURACIÓN:');
+  console.error('La aplicación está en PRODUCCIÓN pero usa localhost');
+  console.error('Configura REACT_APP_API_URL en Vercel Dashboard');
+  console.error('Valor esperado: https://escuelacerros.onrender.com');
 }
 
 export default API_BASE_URL;

@@ -21,6 +21,32 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
+// ❤️ Health check endpoint para mantener el servidor activo
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Servidor Escuela Cerros activo',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
+// 🏠 Ruta principal
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: '🎓 API Escuela Cerros',
+    version: '1.0',
+    status: 'online',
+    endpoints: {
+      health: '/health',
+      estudiantes: '/obtenerMatricula',
+      materias: '/obtenerMaterias',
+      notas: '/obtenerNotas',
+      noticias: '/obtenerEventos'
+    }
+  });
+});
+
 //cargamos el archivo de rutas
 app.use(require('./services/Encargado'));
 app.use(require('./services/Enfermedades'));

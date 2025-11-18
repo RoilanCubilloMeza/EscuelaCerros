@@ -1,25 +1,26 @@
 {
   "short_name": "Escuela Cerros",
-  "name": "Sistema de Gestión Escolar - Escuela Cerros",
+  "name": "Sistema de Gestion Escolar - Escuela Cerros",
   "icons": [
     {
-      "src": "EscudoEscuelaCerros-removebg-preview.png",
+      "src": "/EscudoEscuelaCerros-removebg-preview.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/png"
     },
     {
-      "src": "EscudoEscuelaCerros-removebg-preview.png",
+      "src": "/EscudoEscuelaCerros-removebg-preview.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "EscudoEscuelaCerros-removebg-preview.png",
+      "src": "/EscudoEscuelaCerros-removebg-preview.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#003d82",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "scope": "/"
 }

@@ -123,12 +123,16 @@ const CustomNavbar = () => {
       <Container>
         <Link to="/" className="brand-custom d-flex align-items-center nav-link-inicio" style={{gap: '0.3rem', textDecoration: 'none'}}>
           <img
-            src={`${process.env.PUBLIC_URL}/EscudoEscuelaCerros-removebg-preview.png`}
+            src="/EscudoEscuelaCerros-removebg-preview.png"
             alt="Escuela Cerros Logo"
             width="60"
             height="60"
             className="d-inline-block align-text-center logo-img"
             style={{ transition: "transform 0.3s ease", objectFit: "contain" }}
+            onError={(e) => {
+              console.error('Error cargando logo');
+              e.target.style.display = 'none';
+            }}
           />
           <span style={{paddingLeft: '0.3rem', paddingRight: '0.3rem', marginLeft: 0, marginRight: 0, fontWeight: 600, fontSize: '1.2rem', color: '#fff'}}>Inicio</span>
         </Link>
@@ -212,7 +216,7 @@ const DarkModeButton = ({ darkMode, toggleDarkMode }) => {
     }, 800);
   };
 
-  const handleToggle = (e) => {
+  const handleToggle = () => {
     if (isAnimating) return;
     
     setIsAnimating(true);

@@ -50,7 +50,7 @@ const MisCalificaciones = () => {
 
         // Obtener información del estudiante
         const estudianteResponse = await Axios.get(
-          `${API_BASE_URL}/estudiantes/estudiantePorUsuario?username=${username}`
+          `${API_BASE_URL}/estudiantePorUsuario?username=${username}`
         );
 
         if (!estudianteResponse.data) {

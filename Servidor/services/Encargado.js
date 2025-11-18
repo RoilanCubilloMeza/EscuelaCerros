@@ -47,12 +47,67 @@ app.post("/createEncargado", (req, res) => {
 
 
 app.get("/obtenerEncargados", (req, res) => {
-  connection.query("SELECT * FROM Encargados", (err, result) => {
+  // Parámetros de paginación
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || '';
+
+  console.log('📊 Petición de encargados:', { page, limit, offset, search });
+
+  // Query para contar total de registros
+  let countQuery = "SELECT COUNT(*) as total FROM Encargados";
+  let countParams = [];
+
+  // Query para obtener registros
+  let dataQuery = "SELECT * FROM Encargados";
+  let dataParams = [];
+
+  // Agregar filtro de búsqueda si existe
+  if (search) {
+    const searchCondition = " WHERE Encargados_Nombre LIKE ? OR Encargado_Nombre2 LIKE ? OR Encargado_Apellido1 LIKE ? OR Encargado_Apellido2 LIKE ? OR Encargado_Telefono LIKE ? OR Encargados_LugarTrabajo LIKE ? OR Encargados_Id LIKE ?";
+    const searchParam = `%${search}%`;
+    
+    countQuery += searchCondition;
+    countParams = [searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, searchParam];
+    
+    dataQuery += searchCondition;
+    dataParams = [searchParam, searchParam, searchParam, searchParam, searchParam, searchParam, searchParam];
+  }
+
+  // Agregar paginación
+  dataQuery += " LIMIT ? OFFSET ?";
+  dataParams.push(limit, offset);
+
+  // Primero obtener el total
+  connection.query(countQuery, countParams, (err, countResult) => {
     if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
+      console.log('❌ Error al contar:', err);
+      return res.status(500).send("Error al contar registros");
     }
+
+    const total = countResult[0].total;
+
+    // Luego obtener los datos paginados
+    connection.query(dataQuery, dataParams, (err, result) => {
+      if (err) {
+        console.log('❌ Error al obtener datos:', err);
+        return res.status(500).send("Error al obtener encargados");
+      }
+
+      console.log(`✅ Enviando ${result.length} de ${total} encargados (página ${page})`);
+
+      // Enviar respuesta con datos y metadata de paginación
+      res.send({
+        data: result,
+        pagination: {
+          page: page,
+          limit: limit,
+          total: total,
+          totalPages: Math.ceil(total / limit)
+        }
+      });
+    });
   });
 });
 

@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 import API_BASE_URL from "../config/api";
-import AdminDashboard from './../Dashboard/AdminDashboard';
 
 const Materias = () => {
   const { darkMode } = useTheme();

@@ -18,7 +18,7 @@ const Parentesco = () => {
   
   // Estados de paginación
   const [paginaActual, setPaginaActual] = useState(1);
-  const [registrosPorPagina, setRegistrosPorPagina] = useState(1);
+  const [registrosPorPagina, setRegistrosPorPagina] = useState(5);
 
   const add = () => {
     if (!Parentesco_Nombre.trim()) {
@@ -33,8 +33,8 @@ const Parentesco = () => {
     Axios.post(`${API_BASE_URL}/createParentesco`, {
       Parentesco_Nombre: Parentesco_Nombre,
     }).then(() => {
-      getLista();
       limpiarDatos();
+      getLista();
       Swal.fire({
         title: '<strong >Guardado exitoso</strong>',
         html: '<i>El parentesco <strong>' + Parentesco_Nombre + '</strong> ha sido registrado.</i>',
@@ -59,6 +59,11 @@ const Parentesco = () => {
       console.error('Error fetching data:', error);
     }
   };
+
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    getLista();
+  }, []);
 
   // Efecto para filtrar parentescos
   useEffect(() => {
@@ -138,17 +143,17 @@ const Parentesco = () => {
       Parentesco_Nombre: Parentesco_Nombre,
       Parentesco_Id: Parentesco_Id,
     }).then(() => {
+      limpiarDatos();
       getLista();
-    });
-    Swal.fire({
-      title: '<strong >Editado exitoso</strong>',
-      html: '<i>El parentesco <strong>' + Parentesco_Nombre + '</strong> ha sido actualizado.</i>',
-      icon: 'success',
-      timer: 3000,
+      Swal.fire({
+        title: '<strong >Editado exitoso</strong>',
+        html: '<i>El parentesco <strong>' + Parentesco_Nombre + '</strong> ha sido actualizado.</i>',
+        icon: 'success',
+        timer: 3000,
+      });
     });
   };
 
-  getLista();
   const limpiarDatos = () => {
     setId('');
     setNombre('');
@@ -167,10 +172,10 @@ const Parentesco = () => {
     }).then((res) => {
       if (res.isConfirmed) {
         Axios.delete(`${API_BASE_URL}/deleteParentesco/${Parentesco_Id}`).then(() => {
-          getLista();
           limpiarDatos();
+          getLista();
+          Swal.fire('Eliminado', 'El parentesco ha sido eliminado.', 'success');
         });
-        Swal.fire('Eliminado', 'El parentesco ha sido eliminado.', 'success');
       }
     });
   };
@@ -502,68 +507,160 @@ const Parentesco = () => {
               </div>
             )}
 
-            {/* Paginación */}
-            {Parentesco_ListFiltrados.length > registrosPorPagina && (
-              <div className="d-flex justify-content-between align-items-center mt-4 pt-3" style={{ borderTop: darkMode ? '1px solid #4a5568' : '1px solid #e2e8f0' }}>
-                <div className="text-muted small">
-                  Página {paginaActual} de {totalPaginas}
+            {/* Paginación Mejorada */}
+            {Parentesco_ListFiltrados.length > 0 && totalPaginas > 1 && (
+              <div 
+                className="pagination-container" 
+                style={{ 
+                  marginTop: '2rem',
+                  paddingTop: '1.5rem',
+                  borderTop: darkMode ? '2px solid #4a5568' : '2px solid #e2e8f0'
+                }}
+              >
+                <div className="d-flex justify-content-center align-items-center flex-wrap gap-2">
+                  <button
+                    className="pagination-btn"
+                    onClick={paginaAnterior}
+                    disabled={paginaActual === 1}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      borderRadius: '10px',
+                      border: 'none',
+                      background: paginaActual === 1 
+                        ? (darkMode ? '#1a202c' : '#f7fafc')
+                        : (darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'),
+                      color: paginaActual === 1 
+                        ? (darkMode ? '#4a5568' : '#cbd5e0')
+                        : '#ffffff',
+                      fontWeight: '600',
+                      fontSize: '0.875rem',
+                      cursor: paginaActual === 1 ? 'not-allowed' : 'pointer',
+                      opacity: paginaActual === 1 ? 0.5 : 1,
+                      transition: 'all 0.3s ease',
+                      boxShadow: paginaActual === 1 ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (paginaActual !== 1) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (paginaActual !== 1) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+                      }
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    Anterior
+                  </button>
+
+                  {obtenerNumerosPagina().map((numero) => (
+                    <button
+                      key={numero}
+                      className="pagination-number"
+                      onClick={() => cambiarPagina(numero)}
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        background: paginaActual === numero
+                          ? (darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)')
+                          : (darkMode ? '#2d3748' : '#ffffff'),
+                        color: paginaActual === numero ? '#ffffff' : (darkMode ? '#e2e8f0' : '#2d3748'),
+                        fontWeight: paginaActual === numero ? '700' : '500',
+                        fontSize: '0.875rem',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        boxShadow: paginaActual === numero 
+                          ? '0 4px 12px rgba(79, 172, 254, 0.4)'
+                          : (darkMode ? '0 2px 4px rgba(0, 0, 0, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.1)'),
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (paginaActual !== numero) {
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                          e.currentTarget.style.boxShadow = darkMode 
+                            ? '0 4px 12px rgba(102, 126, 234, 0.4)'
+                            : '0 4px 12px rgba(79, 172, 254, 0.4)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (paginaActual !== numero) {
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = darkMode 
+                            ? '0 2px 4px rgba(0, 0, 0, 0.3)'
+                            : '0 2px 4px rgba(0, 0, 0, 0.1)';
+                        }
+                      }}
+                    >
+                      {numero}
+                    </button>
+                  ))}
+
+                  <button
+                    className="pagination-btn"
+                    onClick={paginaSiguiente}
+                    disabled={paginaActual === totalPaginas}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      borderRadius: '10px',
+                      border: 'none',
+                      background: paginaActual === totalPaginas
+                        ? (darkMode ? '#1a202c' : '#f7fafc')
+                        : (darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'),
+                      color: paginaActual === totalPaginas
+                        ? (darkMode ? '#4a5568' : '#cbd5e0')
+                        : '#ffffff',
+                      fontWeight: '600',
+                      fontSize: '0.875rem',
+                      cursor: paginaActual === totalPaginas ? 'not-allowed' : 'pointer',
+                      opacity: paginaActual === totalPaginas ? 0.5 : 1,
+                      transition: 'all 0.3s ease',
+                      boxShadow: paginaActual === totalPaginas ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (paginaActual !== totalPaginas) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (paginaActual !== totalPaginas) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+                      }
+                    }}
+                  >
+                    Siguiente
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
                 </div>
-                <nav>
-                  <ul className="pagination pagination-sm mb-0" style={{ gap: '0.25rem' }}>
-                    <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
-                      <button
-                        className="page-link"
-                        onClick={paginaAnterior}
-                        disabled={paginaActual === 1}
-                        style={{
-                          background: darkMode ? '#2d3748' : '#fff',
-                          color: darkMode ? '#e2e8f0' : '#1a202c',
-                          border: darkMode ? '1px solid #4a5568' : '1px solid #cbd5e0',
-                          borderRadius: '8px'
-                        }}
-                      >
-                        ‹ Anterior
-                      </button>
-                    </li>
-                    
-                    {obtenerNumerosPagina().map((numero) => (
-                      <li key={numero} className={`page-item ${paginaActual === numero ? 'active' : ''}`}>
-                        <button
-                          className="page-link"
-                          onClick={() => cambiarPagina(numero)}
-                          style={{
-                            background: paginaActual === numero 
-                              ? (darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)')
-                              : (darkMode ? '#2d3748' : '#fff'),
-                            color: paginaActual === numero ? '#fff' : (darkMode ? '#e2e8f0' : '#1a202c'),
-                            border: darkMode ? '1px solid #4a5568' : '1px solid #cbd5e0',
-                            borderRadius: '8px',
-                            fontWeight: paginaActual === numero ? '600' : '400',
-                            minWidth: '36px'
-                          }}
-                        >
-                          {numero}
-                        </button>
-                      </li>
-                    ))}
-                    
-                    <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
-                      <button
-                        className="page-link"
-                        onClick={paginaSiguiente}
-                        disabled={paginaActual === totalPaginas}
-                        style={{
-                          background: darkMode ? '#2d3748' : '#fff',
-                          color: darkMode ? '#e2e8f0' : '#1a202c',
-                          border: darkMode ? '1px solid #4a5568' : '1px solid #cbd5e0',
-                          borderRadius: '8px'
-                        }}
-                      >
-                        Siguiente ›
-                      </button>
-                    </li>
-                  </ul>
-                </nav>
+                
+                <div 
+                  className="text-center mt-3" 
+                  style={{
+                    fontSize: '0.875rem',
+                    color: darkMode ? '#a0aec0' : '#718096',
+                    fontWeight: '500'
+                  }}
+                >
+                  Página <span style={{ fontWeight: '700', color: darkMode ? '#e2e8f0' : '#2d3748' }}>{paginaActual}</span> de <span style={{ fontWeight: '700', color: darkMode ? '#e2e8f0' : '#2d3748' }}>{totalPaginas}</span>
+                </div>
               </div>
             )}
           </div>

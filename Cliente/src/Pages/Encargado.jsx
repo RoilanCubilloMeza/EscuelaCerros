@@ -21,7 +21,6 @@ const Encargado = () => {
   const [Encargado_Apellido1, setEncargadoApellido1] = useState('');
   const [Encargado_Apellido2, setEncargadoApellido2] = useState('');
 
-  const [EncargadoList, setEncargadoList] = useState([]);
   const [EncargadoListFiltrados, setEncargadoListFiltrados] = useState([]);
   const [editar, setEditar] = useState(false);
   const [EscolaridadList, setEscolaridadList] = useState([]);
@@ -29,6 +28,13 @@ const Encargado = () => {
   const [ParentescoList, setParentescoList] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [busquedaTemporal, setBusquedaTemporal] = useState('');
+  
+  // Estados de paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [registrosPorPagina, setRegistrosPorPagina] = useState(5);
+  const [totalRegistros, setTotalRegistros] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+  const [cargando, setCargando] = useState(false);
 
   useEffect(() => {
     if (darkMode) {
@@ -46,29 +52,37 @@ const Encargado = () => {
     };
   }, [darkMode]);
 
-  const getLista = async () => {
+  const getLista = async (page = paginaActual, limit = registrosPorPagina, searchTerm = busqueda) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerEncargados`);
+      setCargando(true);
+      const url = `${API_BASE_URL}/obtenerEncargados?page=${page}&limit=${limit}&search=${encodeURIComponent(searchTerm)}`;
+      console.log('🔍 Solicitando:', url);
+      
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
 
-      const data = await response.json();
-      console.log('📋 Datos recibidos del servidor:', data);
-      if (data.length > 0) {
-        console.log('📋 Primer encargado (ejemplo):', data[0]);
-        console.log('📚 Tiene Escolaridad_Id?:', data[0].Escolaridad_Id);
-      }
-      setEncargadoList(data);
-      setEncargadoListFiltrados(data);
+      const result = await response.json();
+      console.log('📋 Respuesta del servidor:', result);
+      
+      setEncargadoListFiltrados(result.data);
+      setTotalRegistros(result.pagination.total);
+      setTotalPaginas(result.pagination.totalPages);
+      setPaginaActual(result.pagination.page);
+      
+      console.log(`✅ Mostrando ${result.data.length} de ${result.pagination.total} registros`);
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setCargando(false);
     }
   };
 
   useEffect(() => {
-    getLista();
+    getLista(1, 5, '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -173,34 +187,44 @@ const Encargado = () => {
       });
   };
 
-  // Efecto para filtrar encargados
-  useEffect(() => {
-    if (busqueda.trim() === '') {
-      setEncargadoListFiltrados(EncargadoList);
-    } else {
-      const resultados = EncargadoList.filter((encargado) => {
-        const nombreCompleto = `${encargado.Encargados_Nombre || ''} ${
-          encargado.Encargado_Nombre2 || ''
-        } ${encargado.Encargado_Apellido1 || ''} ${
-          encargado.Encargado_Apellido2 || ''
-        }`.toLowerCase();
-        const telefono = encargado.Encargado_Telefono?.toLowerCase() || '';
-        const estadoCivil = encargado.Encargado_EstadoCivil?.toLowerCase() || '';
-        const lugarTrabajo = encargado.Encargados_LugarTrabajo?.toLowerCase() || '';
-        const id = encargado.Encargados_Id?.toString() || '';
-        const busquedaLower = busqueda.toLowerCase();
+  // Funciones de paginación
+  const cambiarPagina = (numeroPagina) => {
+    getLista(numeroPagina, registrosPorPagina, busqueda);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-        return (
-          nombreCompleto.includes(busquedaLower) ||
-          telefono.includes(busquedaLower) ||
-          estadoCivil.includes(busquedaLower) ||
-          lugarTrabajo.includes(busquedaLower) ||
-          id.includes(busquedaLower)
-        );
-      });
-      setEncargadoListFiltrados(resultados);
+  const cambiarRegistrosPorPagina = (nuevoLimite) => {
+    setRegistrosPorPagina(nuevoLimite);
+    getLista(1, nuevoLimite, busqueda);
+  };
+
+  const realizarBusqueda = () => {
+    setBusqueda(busquedaTemporal);
+    getLista(1, registrosPorPagina, busquedaTemporal);
+  };
+
+  const limpiarBusqueda = () => {
+    setBusqueda('');
+    setBusquedaTemporal('');
+    getLista(1, registrosPorPagina, '');
+  };
+
+  // Generar números de página
+  const obtenerNumerosPagina = () => {
+    const numeros = [];
+    const maxBotones = 5;
+    let inicio = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+    const fin = Math.min(totalPaginas, inicio + maxBotones - 1);
+
+    if (fin - inicio < maxBotones - 1) {
+      inicio = Math.max(1, fin - maxBotones + 1);
     }
-  }, [busqueda, EncargadoList]);
+
+    for (let i = inicio; i <= fin; i++) {
+      numeros.push(i);
+    }
+    return numeros;
+  };
 
   const editarEstudiante = (val) => {
     console.log('✏️ Datos del encargado a editar:', val);
@@ -382,13 +406,14 @@ const Encargado = () => {
                   onChange={(e) => setBusquedaTemporal(e.target.value)}
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
-                      setBusqueda(busquedaTemporal);
+                      realizarBusqueda();
                     }
                   }}
                   style={{ paddingRight: '120px' }}
                 />
                 <button
-                  onClick={() => setBusqueda(busquedaTemporal)}
+                  onClick={realizarBusqueda}
+                  disabled={cargando}
                   style={{
                     position: 'absolute',
                     right: '8px',
@@ -434,28 +459,55 @@ const Encargado = () => {
                   Buscar
                 </button>
               </div>
-              {busqueda && (
-                <small className="text-muted d-block mt-2">
-                  Mostrando {EncargadoListFiltrados.length} de {EncargadoList.length} encargados
-                  <button
-                    onClick={() => {
-                      setBusqueda('');
-                      setBusquedaTemporal('');
-                    }}
-                    style={{
-                      marginLeft: '10px',
-                      background: 'transparent',
-                      border: 'none',
-                      color: darkMode ? '#4dabf7' : '#0d6efd',
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                      fontSize: '0.875rem',
-                    }}
-                  >
-                    Limpiar búsqueda
-                  </button>
+              {/* Información de registros y selector de registros por página */}
+              <div className="d-flex align-items-center justify-content-between mt-2 flex-wrap gap-2">
+                <small className="text-muted">
+                  {cargando ? (
+                    <span>Cargando...</span>
+                  ) : (
+                    <span>
+                      Mostrando {EncargadoListFiltrados.length > 0 ? ((paginaActual - 1) * registrosPorPagina) + 1 : 0} - {Math.min(paginaActual * registrosPorPagina, totalRegistros)} de {totalRegistros} encargados
+                    </span>
+                  )}
+                  {busqueda && (
+                    <button
+                      onClick={limpiarBusqueda}
+                      disabled={cargando}
+                      style={{
+                        marginLeft: '10px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: darkMode ? '#4dabf7' : '#0d6efd',
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        fontSize: '0.875rem',
+                      }}
+                    >
+                      Limpiar búsqueda
+                    </button>
+                  )}
                 </small>
-              )}
+
+                {/* Selector de registros por página */}
+                <div className="d-flex align-items-center">
+                  <label className={`me-2 ${darkMode ? 'text-white' : ''}`} style={{whiteSpace: 'nowrap', fontSize: '0.875rem'}}>
+                    Registros por página:
+                  </label>
+                  <select
+                    className={`form-select form-select-sm ${darkMode ? 'bg-dark text-white border-secondary' : ''}`}
+                    style={{width: '80px'}}
+                    value={registrosPorPagina}
+                    onChange={(e) => cambiarRegistrosPorPagina(parseInt(e.target.value))}
+                    disabled={cargando}
+                  >
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -801,10 +853,8 @@ const Encargado = () => {
                 </p>
                 {busqueda && (
                   <button
-                    onClick={() => {
-                      setBusqueda('');
-                      setBusquedaTemporal('');
-                    }}
+                    onClick={limpiarBusqueda}
+                    disabled={cargando}
                     className="btn-action btn-cancel mt-2"
                   >
                     Limpiar búsqueda
@@ -813,6 +863,172 @@ const Encargado = () => {
               </div>
             )}
           </div>
+
+          {/* Controles de paginación mejorados */}
+          {EncargadoListFiltrados.length > 0 && totalPaginas > 1 && (
+            <div 
+              className="pagination-container" 
+              style={{ 
+                marginTop: '2rem',
+                paddingTop: '1.5rem',
+                paddingBottom: '1rem',
+                borderTop: darkMode ? '2px solid #4a5568' : '2px solid #e2e8f0'
+              }}
+            >
+              <div className="d-flex justify-content-center align-items-center flex-wrap gap-2">
+                <button
+                  className="pagination-btn"
+                  onClick={() => cambiarPagina(paginaActual - 1)}
+                  disabled={paginaActual === 1 || cargando}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    borderRadius: '10px',
+                    border: 'none',
+                    background: (paginaActual === 1 || cargando)
+                      ? (darkMode ? '#1a202c' : '#f7fafc')
+                      : (darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'),
+                    color: (paginaActual === 1 || cargando)
+                      ? (darkMode ? '#4a5568' : '#cbd5e0')
+                      : '#ffffff',
+                    fontWeight: '600',
+                    fontSize: '0.875rem',
+                    cursor: (paginaActual === 1 || cargando) ? 'not-allowed' : 'pointer',
+                    opacity: (paginaActual === 1 || cargando) ? 0.5 : 1,
+                    transition: 'all 0.3s ease',
+                    boxShadow: (paginaActual === 1 || cargando) ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (paginaActual !== 1 && !cargando) {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (paginaActual !== 1 && !cargando) {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+                    }
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                  Anterior
+                </button>
+
+                {obtenerNumerosPagina().map((numero) => (
+                  <button
+                    key={numero}
+                    className="pagination-number"
+                    onClick={() => cambiarPagina(numero)}
+                    disabled={cargando}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      border: 'none',
+                      background: paginaActual === numero
+                        ? (darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)')
+                        : (darkMode ? '#2d3748' : '#ffffff'),
+                      color: paginaActual === numero ? '#ffffff' : (darkMode ? '#e2e8f0' : '#2d3748'),
+                      fontWeight: paginaActual === numero ? '700' : '500',
+                      fontSize: '0.875rem',
+                      cursor: cargando ? 'not-allowed' : 'pointer',
+                      opacity: cargando ? 0.6 : 1,
+                      transition: 'all 0.3s ease',
+                      boxShadow: paginaActual === numero
+                        ? '0 4px 12px rgba(79, 172, 254, 0.4)'
+                        : (darkMode ? '0 2px 4px rgba(0, 0, 0, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.1)'),
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (paginaActual !== numero && !cargando) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = darkMode
+                          ? '0 4px 12px rgba(102, 126, 234, 0.4)'
+                          : '0 4px 12px rgba(79, 172, 254, 0.4)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (paginaActual !== numero && !cargando) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = darkMode
+                          ? '0 2px 4px rgba(0, 0, 0, 0.3)'
+                          : '0 2px 4px rgba(0, 0, 0, 0.1)';
+                      }
+                    }}
+                  >
+                    {numero}
+                  </button>
+                ))}
+
+                <button
+                  className="pagination-btn"
+                  onClick={() => cambiarPagina(paginaActual + 1)}
+                  disabled={paginaActual === totalPaginas || cargando}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    borderRadius: '10px',
+                    border: 'none',
+                    background: (paginaActual === totalPaginas || cargando)
+                      ? (darkMode ? '#1a202c' : '#f7fafc')
+                      : (darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'),
+                    color: (paginaActual === totalPaginas || cargando)
+                      ? (darkMode ? '#4a5568' : '#cbd5e0')
+                      : '#ffffff',
+                    fontWeight: '600',
+                    fontSize: '0.875rem',
+                    cursor: (paginaActual === totalPaginas || cargando) ? 'not-allowed' : 'pointer',
+                    opacity: (paginaActual === totalPaginas || cargando) ? 0.5 : 1,
+                    transition: 'all 0.3s ease',
+                    boxShadow: (paginaActual === totalPaginas || cargando) ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (paginaActual !== totalPaginas && !cargando) {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (paginaActual !== totalPaginas && !cargando) {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+                    }
+                  }}
+                >
+                  Siguiente
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+              
+              <div 
+                className="text-center mt-3" 
+                style={{
+                  fontSize: '0.875rem',
+                  color: darkMode ? '#a0aec0' : '#718096',
+                  fontWeight: '500'
+                }}
+              >
+                {cargando ? (
+                  <span>Cargando...</span>
+                ) : (
+                  <span>
+                    Página <span style={{ fontWeight: '700', color: darkMode ? '#e2e8f0' : '#2d3748' }}>{paginaActual}</span> de <span style={{ fontWeight: '700', color: darkMode ? '#e2e8f0' : '#2d3748' }}>{totalPaginas}</span>
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

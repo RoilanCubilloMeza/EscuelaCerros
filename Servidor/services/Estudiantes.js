@@ -151,10 +151,52 @@ const verificarColumnasExtendidas = () => {
   });
 };
 
+// Función para crear índices optimizados
+const crearIndicesOptimizados = () => {
+  connection.getConnection((connErr, conn) => {
+    if (connErr) return;
+
+    // Índice para Persona_Id (búsquedas frecuentes)
+    conn.query(
+      "CREATE INDEX IF NOT EXISTS idx_estudiantes_persona ON Estudiantes(Persona_Id)",
+      (err) => {
+        if (err && err.code !== 'ER_DUP_KEYNAME') {
+          console.log('⚠️ Info: Índice idx_estudiantes_persona:', err.code);
+        }
+      }
+    );
+
+    // Índice para estado (filtros frecuentes)
+    conn.query(
+      "CREATE INDEX IF NOT EXISTS idx_estudiantes_estado ON Estudiantes(Estudiantes_Estado)",
+      (err) => {
+        if (err && err.code !== 'ER_DUP_KEYNAME') {
+          console.log('⚠️ Info: Índice idx_estudiantes_estado:', err.code);
+        }
+      }
+    );
+
+    // Índice compuesto para búsquedas y ordenamiento
+    conn.query(
+      "CREATE INDEX IF NOT EXISTS idx_estudiantes_busqueda ON Estudiantes(Estudiantes_Estado, Estudiantes_id)",
+      (err) => {
+        if (err && err.code !== 'ER_DUP_KEYNAME') {
+          console.log('⚠️ Info: Índice idx_estudiantes_busqueda:', err.code);
+        } else {
+          console.log('✓ Índices de optimización verificados');
+        }
+      }
+    );
+
+    conn.release();
+  });
+};
+
 // Ejecutar verificación al cargar el módulo después de un delay
 // Esto permite que el pool de conexiones se estabilice
 setTimeout(() => {
   verificarColumnasExtendidas();
+  crearIndicesOptimizados();
 }, 2000);
 
 app.post("/createMatricula", (req, res) => {
@@ -224,18 +266,28 @@ app.get("/obtenerMatriculaNombre", (req, res) => {
 
 app.get("/obtenerMatricula", (req, res) => {
   if (columnasExtendidas) {
-    // Si las columnas existen, traer información completa con JOINs
+    // Si las columnas existen, traer información completa con JOINs optimizados
     connection.query(
       `SELECT 
-        e.*,
+        e.Estudiantes_id,
+        e.Persona_Id,
+        e.Estudiantes_Estado,
+        e.Adecuacion_Id,
+        e.Residencia_ID,
+        e.Enfermedades_Id,
+        e.Estudiantes_Grado,
+        e.Encargados_Id,
+        e.Profesor_Id,
+        e.Grado_Id,
         CONCAT(per.Persona_Nombre, ' ', per.Persona_PApellido, ' ', per.Persona_SApellido) as NombreProfesor,
         p.Profesor_Especialidad,
         g.Grado_Nombre,
         g.Grado_Aula
       FROM Estudiantes e
-      LEFT JOIN Profesores p ON e.Profesor_Id = p.Profesor_Id
+      LEFT JOIN Profesores p ON e.Profesor_Id = p.Profesor_Id AND p.Profesor_Id IS NOT NULL
       LEFT JOIN Personas per ON p.Persona_Id = per.Persona_Id
-      LEFT JOIN Grado g ON e.Grado_Id = g.Grado_Id`,
+      LEFT JOIN Grado g ON e.Grado_Id = g.Grado_Id AND e.Grado_Id IS NOT NULL
+      ORDER BY e.Estudiantes_id DESC`,
       (err, result) => {
         if (err) {
           console.log(err);
@@ -247,7 +299,7 @@ app.get("/obtenerMatricula", (req, res) => {
     );
   } else {
     // Versión sin columnas extendidas
-    connection.query("SELECT * FROM Estudiantes", (err, result) => {
+    connection.query("SELECT * FROM Estudiantes ORDER BY Estudiantes_id DESC", (err, result) => {
       if (err) {
         console.log(err);
         res.status(500).send("Error al obtener las matrículas");
@@ -297,30 +349,39 @@ app.get("/obtenerMatriculaPaginada", (req, res) => {
       ? 'WHERE ' + whereConditions.join(' AND ') 
       : '';
 
-    // Consulta para obtener el total de registros
+    // Consulta optimizada para obtener el total de registros (sin JOINs innecesarios)
     const countQuery = `
-      SELECT COUNT(*) as total
+      SELECT COUNT(DISTINCT e.Estudiantes_id) as total
       FROM Estudiantes e
-      LEFT JOIN Personas personas ON e.Persona_Id = personas.Persona_Id
-      LEFT JOIN Profesores p ON e.Profesor_Id = p.Profesor_Id
-      LEFT JOIN Personas per ON p.Persona_Id = per.Persona_Id
-      LEFT JOIN Grado g ON e.Grado_Id = g.Grado_Id
+      ${busqueda ? 'LEFT JOIN Personas personas ON e.Persona_Id = personas.Persona_Id' : ''}
+      ${busqueda ? 'LEFT JOIN Profesores p ON e.Profesor_Id = p.Profesor_Id' : ''}
+      ${busqueda ? 'LEFT JOIN Personas per ON p.Persona_Id = per.Persona_Id' : ''}
+      ${busqueda ? 'LEFT JOIN Grado g ON e.Grado_Id = g.Grado_Id' : ''}
       ${whereClause}
     `;
 
-    // Consulta para obtener los datos paginados
+    // Consulta optimizada para obtener los datos paginados con todos los campos
     const dataQuery = `
       SELECT 
-        e.*,
+        e.Estudiantes_id,
+        e.Persona_Id,
+        e.Estudiantes_Estado,
+        e.Adecuacion_Id,
+        e.Residencia_ID,
+        e.Enfermedades_Id,
+        e.Estudiantes_Grado,
+        e.Encargados_Id,
+        e.Profesor_Id,
+        e.Grado_Id,
         CONCAT(per.Persona_Nombre, ' ', per.Persona_PApellido, ' ', per.Persona_SApellido) as NombreProfesor,
         p.Profesor_Especialidad,
         g.Grado_Nombre,
         g.Grado_Aula
       FROM Estudiantes e
-      LEFT JOIN Personas personas ON e.Persona_Id = personas.Persona_Id
-      LEFT JOIN Profesores p ON e.Profesor_Id = p.Profesor_Id
+      ${busqueda ? 'LEFT JOIN Personas personas ON e.Persona_Id = personas.Persona_Id' : ''}
+      LEFT JOIN Profesores p ON e.Profesor_Id = p.Profesor_Id AND p.Profesor_Id IS NOT NULL
       LEFT JOIN Personas per ON p.Persona_Id = per.Persona_Id
-      LEFT JOIN Grado g ON e.Grado_Id = g.Grado_Id
+      LEFT JOIN Grado g ON e.Grado_Id = g.Grado_Id AND e.Grado_Id IS NOT NULL
       ${whereClause}
       ORDER BY e.Estudiantes_id DESC
       LIMIT ? OFFSET ?

@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from "react";
-import Axios from "axios";
-import Swal from "sweetalert2";
-import { useTheme } from "../components/Theme";
-import { Link } from "react-router-dom";
-import API_BASE_URL from "../config/api";
+import React, { useState, useEffect } from 'react';
+import Axios from 'axios';
+import Swal from 'sweetalert2';
+import { useTheme } from '../components/Theme';
+import { Link } from 'react-router-dom';
+import API_BASE_URL from '../config/api';
 
 const Encargado = () => {
   const { darkMode } = useTheme();
 
-  const [Encargados_Id, setId] = useState("");
-  const [Encargados_LugarTrabajo, setEncargadosLugarTrabajo] = useState("");
-  const [Escolaridad_Id, setEscolaridadId] = useState("");
-  const [Ocupacion_Id, setOcupacionId] = useState("");
-  const [Parentesco_Id, setParentescoId] = useState("");
-  const [Encargado_ViveEstudiante, setEncargadoViveEstudiante] = useState("");
-  const [Encargado_Telefono, setEncargadoTelefono] = useState("");
-  const [Encargado_EstadoCivil, setEncargadoEstadoCivil] = useState("");
-  const [Encargados_Nombre, setEncargadoNombre] = useState("");
-  const [Encargado_Nombre2, setEncargadoNombre2] = useState("");
-  const [Encargado_Apellido1, setEncargadoApellido1] = useState("");
-  const [Encargado_Apellido2, setEncargadoApellido2] = useState("");
+  const [Encargados_Id, setId] = useState('');
+  const [Encargados_LugarTrabajo, setEncargadosLugarTrabajo] = useState('');
+  const [Escolaridad_Id, setEscolaridadId] = useState('');
+  const [Ocupacion_Id, setOcupacionId] = useState('');
+  const [Parentesco_Id, setParentescoId] = useState('');
+  const [Encargado_ViveEstudiante, setEncargadoViveEstudiante] = useState('');
+  const [Encargado_Telefono, setEncargadoTelefono] = useState('');
+  const [Encargado_EstadoCivil, setEncargadoEstadoCivil] = useState('');
+  const [Encargados_Nombre, setEncargadoNombre] = useState('');
+  const [Encargado_Nombre2, setEncargadoNombre2] = useState('');
+  const [Encargado_Apellido1, setEncargadoApellido1] = useState('');
+  const [Encargado_Apellido2, setEncargadoApellido2] = useState('');
 
   const [EncargadoList, setEncargadoList] = useState([]);
   const [EncargadoListFiltrados, setEncargadoListFiltrados] = useState([]);
@@ -27,27 +27,22 @@ const Encargado = () => {
   const [EscolaridadList, setEscolaridadList] = useState([]);
   const [OcupacionList, setOcupacionList] = useState([]);
   const [ParentescoList, setParentescoList] = useState([]);
-  const [busqueda, setBusqueda] = useState("");
-  const [busquedaTemporal, setBusquedaTemporal] = useState("");
+  const [busqueda, setBusqueda] = useState('');
+  const [busquedaTemporal, setBusquedaTemporal] = useState('');
 
   useEffect(() => {
     if (darkMode) {
-      document.body.classList.add("bg-dark");
-      document.body.classList.add("text-white");
+      document.body.classList.add('bg-dark');
+      document.body.classList.add('text-white');
     } else {
-      document.body.classList.remove("bg-dark");
-      document.body.classList.remove("text-white");
-      document.body.classList.add("bg-light");
-      document.body.classList.add("text-dark");
+      document.body.classList.remove('bg-dark');
+      document.body.classList.remove('text-white');
+      document.body.classList.add('bg-light');
+      document.body.classList.add('text-dark');
     }
 
     return () => {
-      document.body.classList.remove(
-        "bg-dark",
-        "text-white",
-        "bg-light",
-        "text-dark"
-      );
+      document.body.classList.remove('bg-dark', 'text-white', 'bg-light', 'text-dark');
     };
   }, [darkMode]);
 
@@ -56,7 +51,7 @@ const Encargado = () => {
       const response = await fetch(`${API_BASE_URL}/obtenerEncargados`);
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
 
       const data = await response.json();
@@ -68,7 +63,7 @@ const Encargado = () => {
       setEncargadoList(data);
       setEncargadoListFiltrados(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -82,7 +77,7 @@ const Encargado = () => {
         setEscolaridadList(response.data);
       })
       .catch((error) => {
-        console.error("Error al obtener datos:", error);
+        console.error('Error al obtener datos:', error);
       });
   }, []);
 
@@ -92,7 +87,7 @@ const Encargado = () => {
         setOcupacionList(response.data);
       })
       .catch((error) => {
-        console.error("Error al obtener datos:", error);
+        console.error('Error al obtener datos:', error);
       });
   }, []);
 
@@ -102,7 +97,7 @@ const Encargado = () => {
         setParentescoList(response.data);
       })
       .catch((error) => {
-        console.error("Error al obtener datos:", error);
+        console.error('Error al obtener datos:', error);
       });
   }, []);
 
@@ -117,9 +112,9 @@ const Encargado = () => {
       !Parentesco_Id.trim()
     ) {
       Swal.fire({
-        icon: "warning",
-        title: "Campos vacíos",
-        text: "Por favor, complete todos los campos.",
+        icon: 'warning',
+        title: 'Campos vacíos',
+        text: 'Por favor, complete todos los campos.',
       });
       return;
     }
@@ -151,46 +146,50 @@ const Encargado = () => {
       Encargado_EstadoCivil: Encargado_EstadoCivil,
       Escolaridad_Id: Escolaridad_Id,
     })
-    .then((response) => {
-      console.log('✅ Respuesta del servidor:', response.data);
-      getLista();
-      limpiarDatos();
-      Swal.fire({
-        title: "<strong >Guardado exitoso</strong>",
-        html:
-          "<i>El encargado <strong>" +
-          Encargados_Nombre +
-          " " +
-          Encargado_Apellido1 +
-          "</strong> ha sido registrado.</i>",
-        icon: "success",
-        timer: 3000,
+      .then((response) => {
+        console.log('✅ Respuesta del servidor:', response.data);
+        getLista();
+        limpiarDatos();
+        Swal.fire({
+          title: '<strong >Guardado exitoso</strong>',
+          html:
+            '<i>El encargado <strong>' +
+            Encargados_Nombre +
+            ' ' +
+            Encargado_Apellido1 +
+            '</strong> ha sido registrado.</i>',
+          icon: 'success',
+          timer: 3000,
+        });
+      })
+      .catch((error) => {
+        console.error('❌ Error al guardar:', error);
+        console.error('❌ Detalles del error:', error.response?.data);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al guardar',
+          text: error.response?.data || error.message || 'No se pudo conectar con el servidor',
+        });
       });
-    })
-    .catch((error) => {
-      console.error('❌ Error al guardar:', error);
-      console.error('❌ Detalles del error:', error.response?.data);
-      Swal.fire({
-        icon: "error",
-        title: "Error al guardar",
-        text: error.response?.data || error.message || "No se pudo conectar con el servidor",
-      });
-    });
   };
 
   // Efecto para filtrar encargados
   useEffect(() => {
-    if (busqueda.trim() === "") {
+    if (busqueda.trim() === '') {
       setEncargadoListFiltrados(EncargadoList);
     } else {
       const resultados = EncargadoList.filter((encargado) => {
-        const nombreCompleto = `${encargado.Encargados_Nombre || ''} ${encargado.Encargado_Nombre2 || ''} ${encargado.Encargado_Apellido1 || ''} ${encargado.Encargado_Apellido2 || ''}`.toLowerCase();
-        const telefono = encargado.Encargado_Telefono?.toLowerCase() || "";
-        const estadoCivil = encargado.Encargado_EstadoCivil?.toLowerCase() || "";
-        const lugarTrabajo = encargado.Encargados_LugarTrabajo?.toLowerCase() || "";
-        const id = encargado.Encargados_Id?.toString() || "";
+        const nombreCompleto = `${encargado.Encargados_Nombre || ''} ${
+          encargado.Encargado_Nombre2 || ''
+        } ${encargado.Encargado_Apellido1 || ''} ${
+          encargado.Encargado_Apellido2 || ''
+        }`.toLowerCase();
+        const telefono = encargado.Encargado_Telefono?.toLowerCase() || '';
+        const estadoCivil = encargado.Encargado_EstadoCivil?.toLowerCase() || '';
+        const lugarTrabajo = encargado.Encargados_LugarTrabajo?.toLowerCase() || '';
+        const id = encargado.Encargados_Id?.toString() || '';
         const busquedaLower = busqueda.toLowerCase();
-        
+
         return (
           nombreCompleto.includes(busquedaLower) ||
           telefono.includes(busquedaLower) ||
@@ -206,7 +205,7 @@ const Encargado = () => {
   const editarEstudiante = (val) => {
     console.log('✏️ Datos del encargado a editar:', val);
     console.log('📚 Escolaridad_Id recibido:', val.Escolaridad_Id);
-    
+
     setEditar(true);
     setId(val.Encargados_Id);
     setEncargadoNombre(val.Encargados_Nombre);
@@ -220,7 +219,7 @@ const Encargado = () => {
     setEncargadoViveEstudiante(val.Encargado_ViveEstudiante);
     setEncargadoTelefono(val.Encargado_Telefono);
     setEncargadoEstadoCivil(val.Encargado_EstadoCivil);
-    
+
     console.log('✅ Estados actualizados - Escolaridad_Id:', val.Escolaridad_Id);
   };
 
@@ -235,9 +234,9 @@ const Encargado = () => {
       !Parentesco_Id
     ) {
       Swal.fire({
-        icon: "warning",
-        title: "Campos vacíos",
-        text: "Por favor, complete todos los campos obligatorios (Escolaridad, Ocupación, Parentesco, etc.).",
+        icon: 'warning',
+        title: 'Campos vacíos',
+        text: 'Por favor, complete todos los campos obligatorios (Escolaridad, Ocupación, Parentesco, etc.).',
       });
       return;
     }
@@ -260,72 +259,70 @@ const Encargado = () => {
     console.log('📤 Actualizando encargado con datos:', datosActualizar);
 
     Axios.put(`${API_BASE_URL}/actualizarEncargados`, datosActualizar)
-    .then((response) => {
-      console.log('✅ Actualizado correctamente:', response.data);
-      getLista();
-      limpiarDatos();
-      Swal.fire({
-        title: "<strong >Editado exitoso</strong>",
-        html:
-          "<i>El encargado <strong>" +
-          Encargados_Nombre +
-          " " +
-          Encargado_Apellido1 +
-          "</strong> ha sido actualizado.</i>",
-        icon: "success",
-        timer: 3000,
+      .then((response) => {
+        console.log('✅ Actualizado correctamente:', response.data);
+        getLista();
+        limpiarDatos();
+        Swal.fire({
+          title: '<strong >Editado exitoso</strong>',
+          html:
+            '<i>El encargado <strong>' +
+            Encargados_Nombre +
+            ' ' +
+            Encargado_Apellido1 +
+            '</strong> ha sido actualizado.</i>',
+          icon: 'success',
+          timer: 3000,
+        });
+      })
+      .catch((error) => {
+        console.error('❌ Error al actualizar:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al actualizar',
+          text: error.response?.data || error.message || 'No se pudo conectar con el servidor',
+        });
       });
-    })
-    .catch((error) => {
-      console.error('❌ Error al actualizar:', error);
-      Swal.fire({
-        icon: "error",
-        title: "Error al actualizar",
-        text: error.response?.data || error.message || "No se pudo conectar con el servidor",
-      });
-    });
   };
 
   const limpiarDatos = () => {
-    setId("");
-    setId("");
-    setEncargadoNombre("");
-    setEncargadoNombre2("");
-    setEncargadoApellido1("");
-    setEncargadoApellido2("");
-    setEncargadosLugarTrabajo("");
-    setEscolaridadId("");
-    setOcupacionId("");
-    setParentescoId("");
-    setEncargadoViveEstudiante("");
-    setEncargadoTelefono("");
-    setEncargadoEstadoCivil("");
+    setId('');
+    setId('');
+    setEncargadoNombre('');
+    setEncargadoNombre2('');
+    setEncargadoApellido1('');
+    setEncargadoApellido2('');
+    setEncargadosLugarTrabajo('');
+    setEscolaridadId('');
+    setOcupacionId('');
+    setParentescoId('');
+    setEncargadoViveEstudiante('');
+    setEncargadoTelefono('');
+    setEncargadoEstadoCivil('');
 
     setEditar(false);
   };
 
   const eliminar = (Encargados_Id) => {
     Swal.fire({
-      title: "<strong >Eliminar</strong>",
+      title: '<strong >Eliminar</strong>',
       html:
-        "<i>¿Realmente desea eliminar a <strong>" +
+        '<i>¿Realmente desea eliminar a <strong>' +
         Encargados_Nombre +
         Encargado_Apellido1 +
-        "</strong>?</i>",
-      icon: "warning",
+        '</strong>?</i>',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "green",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
+      confirmButtonColor: 'green',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(
-          `${API_BASE_URL}/deleteEncargados/${Encargados_Id}`
-        ).then(() => {
+        Axios.delete(`${API_BASE_URL}/deleteEncargados/${Encargados_Id}`).then(() => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "El encargado ha sido eliminado.", "success");
+        Swal.fire('Eliminado', 'El encargado ha sido eliminado.', 'success');
       }
     });
   };
@@ -337,24 +334,22 @@ const Encargado = () => {
         <div className="noticias-header mb-5">
           <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div className="d-flex align-items-center gap-3">
-              <div className="title-icon">
-                👨‍👩‍👧‍👦
-              </div>
+              <div className="title-icon">👨‍👩‍👧‍👦</div>
               <div>
                 <h1 className="noticias-title mb-1">Gestión de Encargados</h1>
                 <p className="noticias-subtitle mb-0">Datos de los encargados de estudiantes</p>
               </div>
             </div>
             <div className="d-flex gap-2">
-              <Link to="/Grado" className="btn-back">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M5 7L10 2L15 7M3 9H17V17H3V9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Grado
-              </Link>
               <Link to="/admindashboard" className="btn-back">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path
+                    d="M12.5 15L7.5 10L12.5 5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
                 Menú Principal
               </Link>
@@ -367,9 +362,17 @@ const Encargado = () => {
           <div className="row g-3 align-items-center">
             <div className="col-12">
               <div className="search-box" style={{ position: 'relative' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="search-icon">
-                  <circle cx="11" cy="11" r="8"/>
-                  <path d="m21 21-4.35-4.35"/>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="search-icon"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
                 </svg>
                 <input
                   type="text"
@@ -391,7 +394,9 @@ const Encargado = () => {
                     right: '8px',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    background: darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    background: darkMode
+                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                      : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
                     border: 'none',
                     borderRadius: '8px',
                     padding: '8px 16px',
@@ -403,7 +408,7 @@ const Encargado = () => {
                     alignItems: 'center',
                     gap: '6px',
                     transition: 'all 0.3s ease',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
@@ -415,9 +420,16 @@ const Encargado = () => {
                   }}
                   title="Buscar"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.35-4.35"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
                   </svg>
                   Buscar
                 </button>
@@ -427,8 +439,8 @@ const Encargado = () => {
                   Mostrando {EncargadoListFiltrados.length} de {EncargadoList.length} encargados
                   <button
                     onClick={() => {
-                      setBusqueda("");
-                      setBusquedaTemporal("");
+                      setBusqueda('');
+                      setBusquedaTemporal('');
                     }}
                     style={{
                       marginLeft: '10px',
@@ -437,7 +449,7 @@ const Encargado = () => {
                       color: darkMode ? '#4dabf7' : '#0d6efd',
                       cursor: 'pointer',
                       textDecoration: 'underline',
-                      fontSize: '0.875rem'
+                      fontSize: '0.875rem',
                     }}
                   >
                     Limpiar búsqueda
@@ -451,9 +463,7 @@ const Encargado = () => {
         {/* Form Card */}
         <div className="noticias-form-card mb-5">
           <div className="card-header-custom">
-            <h5 className="mb-0">
-              {editar ? '✏️ Editar Encargado' : '➕ Registrar Encargado'}
-            </h5>
+            <h5 className="mb-0">{editar ? '✏️ Editar Encargado' : '➕ Registrar Encargado'}</h5>
           </div>
           <div className="card-body-custom">
             <h6 className="mb-3 text-primary">📝 Información Personal</h6>
@@ -670,35 +680,39 @@ const Encargado = () => {
             <div className="action-buttons">
               {editar ? (
                 <>
-                  <button
-                    type="button"
-                    className="btn-action btn-update"
-                    onClick={actualizar}
-                  >
+                  <button type="button" className="btn-action btn-update" onClick={actualizar}>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M15 6L9 12L5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path
+                        d="M15 6L9 12L5 8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                     Actualizar
                   </button>
-                  <button
-                    type="button"
-                    className="btn-action btn-cancel"
-                    onClick={limpiarDatos}
-                  >
+                  <button type="button" className="btn-action btn-cancel" onClick={limpiarDatos}>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M6 6L14 14M6 14L14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      <path
+                        d="M6 6L14 14M6 14L14 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
                     </svg>
                     Cancelar
                   </button>
                 </>
               ) : (
-                <button
-                  type="button"
-                  className="btn-action btn-register"
-                  onClick={add}
-                >
+                <button type="button" className="btn-action btn-register" onClick={add}>
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M10 5V15M5 10H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path
+                      d="M10 5V15M5 10H15"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
                   </svg>
                   Registrar
                 </button>
@@ -744,7 +758,13 @@ const Encargado = () => {
                               title="Editar"
                             >
                               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                <path d="M12.5 2.5L15.5 5.5L6 15H3V12L12.5 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path
+                                  d="M12.5 2.5L15.5 5.5L6 15H3V12L12.5 2.5Z"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
                               </svg>
                               Editar
                             </button>
@@ -754,7 +774,13 @@ const Encargado = () => {
                               title="Eliminar"
                             >
                               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                <path d="M3 5H15M7 8V13M11 8V13M4 5L5 15H13L14 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path
+                                  d="M3 5H15M7 8V13M11 8V13M4 5L5 15H13L14 5"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
                               </svg>
                               Eliminar
                             </button>
@@ -768,12 +794,16 @@ const Encargado = () => {
             ) : (
               <div className="empty-state">
                 <div className="empty-icon">📭</div>
-                <p>{busqueda ? 'No se encontraron encargados con ese criterio' : 'No hay encargados registrados'}</p>
+                <p>
+                  {busqueda
+                    ? 'No se encontraron encargados con ese criterio'
+                    : 'No hay encargados registrados'}
+                </p>
                 {busqueda && (
                   <button
                     onClick={() => {
-                      setBusqueda("");
-                      setBusquedaTemporal("");
+                      setBusqueda('');
+                      setBusquedaTemporal('');
                     }}
                     className="btn-action btn-cancel mt-2"
                   >

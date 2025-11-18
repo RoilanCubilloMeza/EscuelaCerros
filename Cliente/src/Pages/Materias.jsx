@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 import API_BASE_URL from "../config/api";
+import AdminDashboard from './../Dashboard/AdminDashboard';
 
 const Materias = () => {
   const { darkMode } = useTheme();
@@ -156,7 +157,7 @@ const Materias = () => {
                 <p className="noticias-subtitle mb-0">Administración de materias del centro educativo</p>
               </div>
             </div>
-            <Link to="/profesordashboard" className="btn-back">
+            <Link to="/AdminDashboard" className="btn-back">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>

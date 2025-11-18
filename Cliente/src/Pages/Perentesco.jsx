@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from "react";
-import Axios from "axios";
-import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
-import { useTheme } from "../components/Theme";
-import API_BASE_URL from "../config/api";
+import React, { useState, useEffect } from 'react';
+import Axios from 'axios';
+import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
+import { useTheme } from '../components/Theme';
+import API_BASE_URL from '../config/api';
 
 const Parentesco = () => {
   const { darkMode } = useTheme();
 
-  const [Parentesco_Nombre, setNombre] = useState("");
-  const [Parentesco_Id, setId] = useState("");
+  const [Parentesco_Nombre, setNombre] = useState('');
+  const [Parentesco_Id, setId] = useState('');
   const [Parentesco_List, setParentesco_List] = useState([]);
   const [Parentesco_ListFiltrados, setParentesco_ListFiltrados] = useState([]);
   const [editar, setEditar] = useState(false);
-  const [busqueda, setBusqueda] = useState("");
-  const [busquedaTemporal, setBusquedaTemporal] = useState("");
+  const [busqueda, setBusqueda] = useState('');
+  const [busquedaTemporal, setBusquedaTemporal] = useState('');
 
   const add = () => {
     if (!Parentesco_Nombre.trim()) {
       Swal.fire({
-        icon: "warning",
-        title: "Campo vacío",
-        text: "Por favor, complete el campo Nombre del parentesco.",
+        icon: 'warning',
+        title: 'Campo vacío',
+        text: 'Por favor, complete el campo Nombre del parentesco.',
       });
       return;
     }
@@ -32,12 +32,9 @@ const Parentesco = () => {
       getLista();
       limpiarDatos();
       Swal.fire({
-        title: "<strong >Guardado exitoso</strong>",
-        html:
-          "<i>El parentesco <strong>" +
-          Parentesco_Nombre +
-          "</strong> ha sido registrado.</i>",
-        icon: "success",
+        title: '<strong >Guardado exitoso</strong>',
+        html: '<i>El parentesco <strong>' + Parentesco_Nombre + '</strong> ha sido registrado.</i>',
+        icon: 'success',
         timer: 3000,
       });
     });
@@ -48,31 +45,28 @@ const Parentesco = () => {
       const response = await fetch(`${API_BASE_URL}/obtenerParentesco`);
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
 
       const data = await response.json();
       setParentesco_List(data);
       setParentesco_ListFiltrados(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
   // Efecto para filtrar parentescos
   useEffect(() => {
-    if (busqueda.trim() === "") {
+    if (busqueda.trim() === '') {
       setParentesco_ListFiltrados(Parentesco_List);
     } else {
       const resultados = Parentesco_List.filter((parentesco) => {
-        const nombre = parentesco.Parentesco_Nombre?.toLowerCase() || "";
-        const id = parentesco.Parentesco_Id?.toString() || "";
+        const nombre = parentesco.Parentesco_Nombre?.toLowerCase() || '';
+        const id = parentesco.Parentesco_Id?.toString() || '';
         const busquedaLower = busqueda.toLowerCase();
-        
-        return (
-          nombre.includes(busquedaLower) ||
-          id.includes(busquedaLower)
-        );
+
+        return nombre.includes(busquedaLower) || id.includes(busquedaLower);
       });
       setParentesco_ListFiltrados(resultados);
     }
@@ -87,9 +81,9 @@ const Parentesco = () => {
   const actualizar = () => {
     if (!Parentesco_Nombre.trim()) {
       Swal.fire({
-        icon: "warning",
-        title: "Campo vacío",
-        text: "Por favor, complete el campo Nombre del parentesco.",
+        icon: 'warning',
+        title: 'Campo vacío',
+        text: 'Por favor, complete el campo Nombre del parentesco.',
       });
       return;
     }
@@ -101,66 +95,53 @@ const Parentesco = () => {
       getLista();
     });
     Swal.fire({
-      title: "<strong >Editado exitoso</strong>",
-      html:
-        "<i>El parentesco <strong>" +
-        Parentesco_Nombre +
-        "</strong> ha sido actualizado.</i>",
-      icon: "success",
+      title: '<strong >Editado exitoso</strong>',
+      html: '<i>El parentesco <strong>' + Parentesco_Nombre + '</strong> ha sido actualizado.</i>',
+      icon: 'success',
       timer: 3000,
     });
   };
 
   getLista();
   const limpiarDatos = () => {
-    setId("");
-    setNombre("");
+    setId('');
+    setNombre('');
     setEditar(false);
   };
 
   const eliminar = (Parentesco_Id) => {
     Swal.fire({
-      title: "<strong >Eliminar</strong>",
-      html:
-        "<i>¿Realmente desea eliminar <strong>" +
-        Parentesco_Nombre +
-        "</strong>?</i>",
-      icon: "warning",
+      title: '<strong >Eliminar</strong>',
+      html: '<i>¿Realmente desea eliminar <strong>' + Parentesco_Nombre + '</strong>?</i>',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "green",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
+      confirmButtonColor: 'green',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(
-          `${API_BASE_URL}/deleteParentesco/${Parentesco_Id}`
-        ).then(() => {
+        Axios.delete(`${API_BASE_URL}/deleteParentesco/${Parentesco_Id}`).then(() => {
           getLista();
           limpiarDatos();
         });
-        Swal.fire("Eliminado", "El parentesco ha sido eliminado.", "success");
+        Swal.fire('Eliminado', 'El parentesco ha sido eliminado.', 'success');
       }
     });
   };
 
   useEffect(() => {
     if (darkMode) {
-      document.body.classList.add("bg-dark");
-      document.body.classList.add("text-white");
+      document.body.classList.add('bg-dark');
+      document.body.classList.add('text-white');
     } else {
-      document.body.classList.remove("bg-dark");
-      document.body.classList.remove("text-white");
-      document.body.classList.add("bg-light");
-      document.body.classList.add("text-dark");
+      document.body.classList.remove('bg-dark');
+      document.body.classList.remove('text-white');
+      document.body.classList.add('bg-light');
+      document.body.classList.add('text-dark');
     }
 
     return () => {
-      document.body.classList.remove(
-        "bg-dark",
-        "text-white",
-        "bg-light",
-        "text-dark"
-      );
+      document.body.classList.remove('bg-dark', 'text-white', 'bg-light', 'text-dark');
     };
   }, [darkMode]);
 
@@ -171,24 +152,22 @@ const Parentesco = () => {
         <div className="noticias-header mb-5">
           <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div className="d-flex align-items-center gap-3">
-              <div className="title-icon">
-                👨‍👩‍👧
-              </div>
+              <div className="title-icon">👨‍👩‍👧</div>
               <div>
                 <h1 className="noticias-title mb-1">Gestión de Parentesco</h1>
                 <p className="noticias-subtitle mb-0">Relación de parentesco con el estudiante</p>
               </div>
             </div>
             <div className="d-flex gap-2">
-              <Link to="/Escolaridad" className="btn-back">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M10 2L3 7V17H7V12H13V17H17V7L10 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Escolaridad
-              </Link>
               <Link to="/admindashboard" className="btn-back">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path
+                    d="M12.5 15L7.5 10L12.5 5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
                 Menú Principal
               </Link>
@@ -201,9 +180,17 @@ const Parentesco = () => {
           <div className="row g-3 align-items-center">
             <div className="col-12">
               <div className="search-box" style={{ position: 'relative' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="search-icon">
-                  <circle cx="11" cy="11" r="8"/>
-                  <path d="m21 21-4.35-4.35"/>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="search-icon"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
                 </svg>
                 <input
                   type="text"
@@ -225,7 +212,9 @@ const Parentesco = () => {
                     right: '8px',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    background: darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    background: darkMode
+                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                      : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
                     border: 'none',
                     borderRadius: '8px',
                     padding: '8px 16px',
@@ -237,7 +226,7 @@ const Parentesco = () => {
                     alignItems: 'center',
                     gap: '6px',
                     transition: 'all 0.3s ease',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
@@ -249,20 +238,28 @@ const Parentesco = () => {
                   }}
                   title="Buscar"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.35-4.35"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
                   </svg>
                   Buscar
                 </button>
               </div>
               {busqueda && (
                 <small className="text-muted d-block mt-2">
-                  Mostrando {Parentesco_ListFiltrados.length} de {Parentesco_List.length} parentescos
+                  Mostrando {Parentesco_ListFiltrados.length} de {Parentesco_List.length}{' '}
+                  parentescos
                   <button
                     onClick={() => {
-                      setBusqueda("");
-                      setBusquedaTemporal("");
+                      setBusqueda('');
+                      setBusquedaTemporal('');
                     }}
                     style={{
                       marginLeft: '10px',
@@ -271,7 +268,7 @@ const Parentesco = () => {
                       color: darkMode ? '#4dabf7' : '#0d6efd',
                       cursor: 'pointer',
                       textDecoration: 'underline',
-                      fontSize: '0.875rem'
+                      fontSize: '0.875rem',
                     }}
                   >
                     Limpiar búsqueda
@@ -285,9 +282,7 @@ const Parentesco = () => {
         {/* Form Card */}
         <div className="noticias-form-card mb-5">
           <div className="card-header-custom">
-            <h5 className="mb-0">
-              {editar ? '✏️ Editar Parentesco' : '➕ Registrar Parentesco'}
-            </h5>
+            <h5 className="mb-0">{editar ? '✏️ Editar Parentesco' : '➕ Registrar Parentesco'}</h5>
           </div>
           <div className="card-body-custom">
             <div className="form-group-modern">
@@ -308,35 +303,39 @@ const Parentesco = () => {
             <div className="action-buttons">
               {editar ? (
                 <>
-                  <button
-                    type="button"
-                    className="btn-action btn-update"
-                    onClick={actualizar}
-                  >
+                  <button type="button" className="btn-action btn-update" onClick={actualizar}>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M15 6L9 12L5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path
+                        d="M15 6L9 12L5 8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                     Actualizar
                   </button>
-                  <button
-                    type="button"
-                    className="btn-action btn-cancel"
-                    onClick={limpiarDatos}
-                  >
+                  <button type="button" className="btn-action btn-cancel" onClick={limpiarDatos}>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M6 6L14 14M6 14L14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      <path
+                        d="M6 6L14 14M6 14L14 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
                     </svg>
                     Cancelar
                   </button>
                 </>
               ) : (
-                <button
-                  type="button"
-                  className="btn-action btn-register"
-                  onClick={add}
-                >
+                <button type="button" className="btn-action btn-register" onClick={add}>
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M10 5V15M5 10H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path
+                      d="M10 5V15M5 10H15"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
                   </svg>
                   Registrar
                 </button>
@@ -380,7 +379,13 @@ const Parentesco = () => {
                               title="Editar"
                             >
                               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                <path d="M12.5 2.5L15.5 5.5L6 15H3V12L12.5 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path
+                                  d="M12.5 2.5L15.5 5.5L6 15H3V12L12.5 2.5Z"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
                               </svg>
                               Editar
                             </button>
@@ -390,7 +395,13 @@ const Parentesco = () => {
                               title="Eliminar"
                             >
                               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                <path d="M3 5H15M7 8V13M11 8V13M4 5L5 15H13L14 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path
+                                  d="M3 5H15M7 8V13M11 8V13M4 5L5 15H13L14 5"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
                               </svg>
                               Eliminar
                             </button>
@@ -404,12 +415,14 @@ const Parentesco = () => {
             ) : (
               <div className="empty-state">
                 <div className="empty-icon">📭</div>
-                <p>{busqueda ? 'No se encontraron parentescos' : 'No hay parentescos registrados'}</p>
+                <p>
+                  {busqueda ? 'No se encontraron parentescos' : 'No hay parentescos registrados'}
+                </p>
                 {busqueda && (
                   <button
                     onClick={() => {
-                      setBusqueda("");
-                      setBusquedaTemporal("");
+                      setBusqueda('');
+                      setBusquedaTemporal('');
                     }}
                     className="btn-action btn-cancel mt-2"
                   >

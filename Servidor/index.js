@@ -73,7 +73,7 @@ app.use(require('./services/Noticias'))
 app.use(require('./services/Notas'))
 app.use(require('./services/NotasFinales'))
 app.use(require('./services/Profesores'))
-app.use(require('./services/Notificaciones')) // 📬 Nuevo servicio
+app.use('/notificaciones', require('./services/Notificaciones')) // 📬 Nuevo servicio
 app.use(require('./services/AsistenciaEstudiantes')) // 📋 Gestión de asistencia y tareas
 app.use(require('./services/ConfiguracionPorcentajes')) // 📊 Configuración de porcentajes
 

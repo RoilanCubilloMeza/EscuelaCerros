@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { UserProvider } from "./components/UserContext";
 import { ThemeProvider } from "./components/Theme";
 import Navbar from "./components/Navbar";
@@ -44,27 +44,13 @@ import JustificacionProfesor from "./Pages/JustificacionProfesor";
 import PasarLista from "./Pages/PasarLista";
 import ConfiguracionPorcentajes from "./Pages/ConfiguracionPorcentajes";
 
-function App() {
-  // const [refresh, setRefresh] = useState(false);
+// Componente wrapper para forzar re-render en cambios de ruta
+function AppRoutes() {
+  const location = useLocation();
   const isAuthenticated = localStorage.getItem("token") !== null;
 
-  // Timer desactivado - no se estaba usando
-  /*
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRefresh((prevRefresh) => !prevRefresh);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-  */
-
   return (
-    <BrowserRouter>
-      <UserProvider>
-        <ThemeProvider>
-          <Navbar />
-          <Routes>
+    <Routes key={location.pathname}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Registration />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -323,6 +309,16 @@ function App() {
               }
             />
           </Routes>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <UserProvider>
+        <ThemeProvider>
+          <Navbar />
+          <AppRoutes />
         </ThemeProvider>
       </UserProvider>
     </BrowserRouter>

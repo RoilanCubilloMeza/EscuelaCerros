@@ -115,6 +115,14 @@ const AdminDashboard = () => {
         ? "linear-gradient(135deg, #0891b2 0%, #0e7490 100%)"
         : "linear-gradient(135deg, #56ccf2 0%, #2f80ed 100%)",
     },
+    {
+      category: "Materias",
+      icon: <FaBook size={32} />,
+      path: "/Materias",
+      gradient: darkMode
+        ? "linear-gradient(135deg, #06b6d4 0%, #0284c7 100%)"
+        : "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    },
   ];
 
   const catalogItems = [

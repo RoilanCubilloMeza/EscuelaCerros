@@ -43,6 +43,7 @@ import NotasFinales from "./Pages/NotasFinales";
 import JustificacionProfesor from "./Pages/JustificacionProfesor";
 import PasarLista from "./Pages/PasarLista";
 import ConfiguracionPorcentajes from "./Pages/ConfiguracionPorcentajes";
+import MisCalificaciones from "./Pages/MisCalificaciones";
 
 // Componente wrapper para forzar re-render en cambios de ruta
 function AppRoutes() {
@@ -178,6 +179,14 @@ function AppRoutes() {
                 ) : (
                   <Navigate to="/NotasEstudiante" replace />
                 )
+              }
+            />
+            <Route
+              path="/MisCalificaciones"
+              element={
+                <EstudianteRoute>
+                  <MisCalificaciones />
+                </EstudianteRoute>
               }
             />
             <Route

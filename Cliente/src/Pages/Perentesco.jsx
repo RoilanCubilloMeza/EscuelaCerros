@@ -15,6 +15,10 @@ const Parentesco = () => {
   const [editar, setEditar] = useState(false);
   const [busqueda, setBusqueda] = useState('');
   const [busquedaTemporal, setBusquedaTemporal] = useState('');
+  
+  // Estados de paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [registrosPorPagina, setRegistrosPorPagina] = useState(10);
 
   const add = () => {
     if (!Parentesco_Nombre.trim()) {
@@ -70,7 +74,49 @@ const Parentesco = () => {
       });
       setParentesco_ListFiltrados(resultados);
     }
+    // Resetear a la primera página cuando cambia la búsqueda
+    setPaginaActual(1);
   }, [busqueda, Parentesco_List]);
+
+  // Calcular datos de paginación
+  const indiceUltimo = paginaActual * registrosPorPagina;
+  const indicePrimero = indiceUltimo - registrosPorPagina;
+  const registrosActuales = Parentesco_ListFiltrados.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(Parentesco_ListFiltrados.length / registrosPorPagina);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const paginaAnterior = () => {
+    if (paginaActual > 1) {
+      cambiarPagina(paginaActual - 1);
+    }
+  };
+
+  const paginaSiguiente = () => {
+    if (paginaActual < totalPaginas) {
+      cambiarPagina(paginaActual + 1);
+    }
+  };
+
+  // Generar números de página para mostrar
+  const obtenerNumerosPagina = () => {
+    const numeros = [];
+    const maxBotones = 5;
+    let inicio = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+    const fin = Math.min(totalPaginas, inicio + maxBotones - 1);
+
+    if (fin - inicio < maxBotones - 1) {
+      inicio = Math.max(1, fin - maxBotones + 1);
+    }
+
+    for (let i = inicio; i <= fin; i++) {
+      numeros.push(i);
+    }
+    return numeros;
+  };
 
   const editarAdecuacion = (val) => {
     setEditar(true);
@@ -252,29 +298,53 @@ const Parentesco = () => {
                   Buscar
                 </button>
               </div>
-              {busqueda && (
-                <small className="text-muted d-block mt-2">
-                  Mostrando {Parentesco_ListFiltrados.length} de {Parentesco_List.length}{' '}
-                  parentescos
-                  <button
-                    onClick={() => {
-                      setBusqueda('');
-                      setBusquedaTemporal('');
+              <div className="d-flex justify-content-between align-items-center mt-2 flex-wrap gap-2">
+                <small className="text-muted">
+                  Mostrando {indicePrimero + 1} - {Math.min(indiceUltimo, Parentesco_ListFiltrados.length)} de {Parentesco_ListFiltrados.length} {busqueda ? 'resultados' : 'parentescos'}
+                  {busqueda && (
+                    <button
+                      onClick={() => {
+                        setBusqueda('');
+                        setBusquedaTemporal('');
+                      }}
+                      style={{
+                        marginLeft: '10px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: darkMode ? '#4dabf7' : '#0d6efd',
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        fontSize: '0.875rem',
+                      }}
+                    >
+                      Limpiar búsqueda
+                    </button>
+                  )}
+                </small>
+                <div className="d-flex align-items-center gap-2">
+                  <small className="text-muted">Mostrar:</small>
+                  <select
+                    className="form-select form-select-sm"
+                    style={{ 
+                      width: 'auto',
+                      background: darkMode ? '#2d3748' : '#fff',
+                      color: darkMode ? '#e2e8f0' : '#1a202c',
+                      border: darkMode ? '1px solid #4a5568' : '1px solid #cbd5e0'
                     }}
-                    style={{
-                      marginLeft: '10px',
-                      background: 'transparent',
-                      border: 'none',
-                      color: darkMode ? '#4dabf7' : '#0d6efd',
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                      fontSize: '0.875rem',
+                    value={registrosPorPagina}
+                    onChange={(e) => {
+                      setRegistrosPorPagina(Number(e.target.value));
+                      setPaginaActual(1);
                     }}
                   >
-                    Limpiar búsqueda
-                  </button>
-                </small>
-              )}
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -361,7 +431,7 @@ const Parentesco = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {Parentesco_ListFiltrados.map((val, key) => (
+                    {registrosActuales.map((val, key) => (
                       <tr key={key} className="table-row-hover">
                         <td className="td-id">
                           <span className="badge-id">{val.Parentesco_Id}</span>
@@ -429,6 +499,71 @@ const Parentesco = () => {
                     Limpiar búsqueda
                   </button>
                 )}
+              </div>
+            )}
+
+            {/* Paginación */}
+            {Parentesco_ListFiltrados.length > registrosPorPagina && (
+              <div className="d-flex justify-content-between align-items-center mt-4 pt-3" style={{ borderTop: darkMode ? '1px solid #4a5568' : '1px solid #e2e8f0' }}>
+                <div className="text-muted small">
+                  Página {paginaActual} de {totalPaginas}
+                </div>
+                <nav>
+                  <ul className="pagination pagination-sm mb-0" style={{ gap: '0.25rem' }}>
+                    <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+                      <button
+                        className="page-link"
+                        onClick={paginaAnterior}
+                        disabled={paginaActual === 1}
+                        style={{
+                          background: darkMode ? '#2d3748' : '#fff',
+                          color: darkMode ? '#e2e8f0' : '#1a202c',
+                          border: darkMode ? '1px solid #4a5568' : '1px solid #cbd5e0',
+                          borderRadius: '8px'
+                        }}
+                      >
+                        ‹ Anterior
+                      </button>
+                    </li>
+                    
+                    {obtenerNumerosPagina().map((numero) => (
+                      <li key={numero} className={`page-item ${paginaActual === numero ? 'active' : ''}`}>
+                        <button
+                          className="page-link"
+                          onClick={() => cambiarPagina(numero)}
+                          style={{
+                            background: paginaActual === numero 
+                              ? (darkMode ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)')
+                              : (darkMode ? '#2d3748' : '#fff'),
+                            color: paginaActual === numero ? '#fff' : (darkMode ? '#e2e8f0' : '#1a202c'),
+                            border: darkMode ? '1px solid #4a5568' : '1px solid #cbd5e0',
+                            borderRadius: '8px',
+                            fontWeight: paginaActual === numero ? '600' : '400',
+                            minWidth: '36px'
+                          }}
+                        >
+                          {numero}
+                        </button>
+                      </li>
+                    ))}
+                    
+                    <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                      <button
+                        className="page-link"
+                        onClick={paginaSiguiente}
+                        disabled={paginaActual === totalPaginas}
+                        style={{
+                          background: darkMode ? '#2d3748' : '#fff',
+                          color: darkMode ? '#e2e8f0' : '#1a202c',
+                          border: darkMode ? '1px solid #4a5568' : '1px solid #cbd5e0',
+                          borderRadius: '8px'
+                        }}
+                      >
+                        Siguiente ›
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             )}
           </div>

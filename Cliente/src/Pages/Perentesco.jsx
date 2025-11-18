@@ -18,7 +18,7 @@ const Parentesco = () => {
   
   // Estados de paginación
   const [paginaActual, setPaginaActual] = useState(1);
-  const [registrosPorPagina, setRegistrosPorPagina] = useState(10);
+  const [registrosPorPagina, setRegistrosPorPagina] = useState(1);
 
   const add = () => {
     if (!Parentesco_Nombre.trim()) {

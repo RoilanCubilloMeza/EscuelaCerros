@@ -49,7 +49,7 @@ app.put("/actualizarNotaFinales", (req, res) => {
   );
 });
 
-app.delete("/deleteAsistencia/:Nota_Id", (req, res) => {
+app.delete("/deleteNotaFinal/:Nota_Id", (req, res) => {
   const Nota_Id = req.params.Nota_Id;
   connection.query(
     "DELETE FROM Nota_Final WHERE Nota_Id=?",

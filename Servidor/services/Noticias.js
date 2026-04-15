@@ -3,6 +3,7 @@ const app = express.Router();
 const dotenv = require("dotenv");
 const multer = require("multer");
 const { connection } = require("../config");
+const { verifyToken } = require("../middleware/auth");
 
 dotenv.config();
 app.use(express.json());
@@ -26,7 +27,7 @@ const upload = multer({
   }
 });
 
-app.post("/createEventos", upload.single("Eventos_Imagen"), (req, res) => {
+app.post("/createEventos", verifyToken, upload.single("Eventos_Imagen"), (req, res) => {
   const { Eventos_Nombre } = req.body;
   const Eventos_Imagen = req.file ? req.file.buffer : null;
 
@@ -68,7 +69,7 @@ app.get("/obtenerEventos", (req, res) => {
   });
 });
 
-app.put("/actualizarEventos", upload.single("Eventos_Imagen"), (req, res) => {
+app.put("/actualizarEventos", verifyToken, upload.single("Eventos_Imagen"), (req, res) => {
   const { Evento_id, Eventos_Nombre } = req.body;
   const Eventos_Imagen = req.file ? req.file.buffer : null;
 
@@ -100,7 +101,7 @@ app.put("/actualizarEventos", upload.single("Eventos_Imagen"), (req, res) => {
   });
 });
 
-app.delete("/deleteEvento/:Evento_id", (req, res) => {
+app.delete("/deleteEvento/:Evento_id", verifyToken, (req, res) => {
   const Evento_id = req.params.Evento_id;
 
   connection.query(

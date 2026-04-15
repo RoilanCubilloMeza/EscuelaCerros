@@ -3,7 +3,7 @@ import Axios from 'axios';
 import Swal from 'sweetalert2';
 import { useTheme } from '../components/Theme';
 import { Link } from 'react-router-dom';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { authFetch } from '../config/api';
 
 const Encargado = () => {
   const { darkMode } = useTheme();
@@ -58,7 +58,7 @@ const Encargado = () => {
       const url = `${API_BASE_URL}/obtenerEncargados?page=${page}&limit=${limit}&search=${encodeURIComponent(searchTerm)}`;
       console.log('🔍 Solicitando:', url);
       
-      const response = await fetch(url);
+      const response = await authFetch(url);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');

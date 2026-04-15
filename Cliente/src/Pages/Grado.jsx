@@ -3,7 +3,7 @@ import Axios from 'axios';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../components/Theme';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { authFetch } from '../config/api';
 
 const Grado = () => {
   const { darkMode } = useTheme();
@@ -41,7 +41,7 @@ const Grado = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerGrado`);
+      const response = await authFetch(`${API_BASE_URL}/obtenerGrado`);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -119,7 +119,11 @@ const Grado = () => {
       document.body.classList.remove('bg-dark', 'text-white', 'bg-light', 'text-dark');
     };
   }, [darkMode]);
-  getLista();
+
+  useEffect(() => {
+    getLista();
+  }, []);
+
   return (
     <div className={`noticias-container ${darkMode ? 'noticias-dark' : 'noticias-light'}`}>
       <div className="container py-4">

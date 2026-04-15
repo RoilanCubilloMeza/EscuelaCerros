@@ -3,7 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
-import API_BASE_URL from "../config/api";
+import API_BASE_URL, { authFetch } from "../config/api";
 
 const Roles = () => {
   const { darkMode } = useTheme();
@@ -44,7 +44,7 @@ const Roles = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerRoles`);
+      const response = await authFetch(`${API_BASE_URL}/obtenerRoles`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -57,7 +57,9 @@ const Roles = () => {
     }
   };
 
-  getLista();
+  useEffect(() => {
+    getLista();
+  }, []);
 
   const editarAdecuacion = (val) => {
     setEditar(true);

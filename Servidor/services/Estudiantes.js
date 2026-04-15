@@ -151,44 +151,67 @@ const verificarColumnasExtendidas = () => {
   });
 };
 
+const asegurarIndice = (conn, nombreIndice, createIndexQuery, callback) => {
+  conn.query(
+    "SHOW INDEX FROM Estudiantes WHERE Key_name = ?",
+    [nombreIndice],
+    (err, result) => {
+      if (err) {
+        console.log(`⚠️ Info: Índice ${nombreIndice}:`, err.code);
+        callback();
+        return;
+      }
+
+      if (result.length > 0) {
+        callback();
+        return;
+      }
+
+      conn.query(createIndexQuery, (createErr) => {
+        if (createErr && createErr.code !== 'ER_DUP_KEYNAME') {
+          console.log(`⚠️ Info: Índice ${nombreIndice}:`, createErr.code);
+        }
+
+        callback();
+      });
+    }
+  );
+};
+
 // Función para crear índices optimizados
 const crearIndicesOptimizados = () => {
   connection.getConnection((connErr, conn) => {
     if (connErr) return;
 
-    // Índice para Persona_Id (búsquedas frecuentes)
-    conn.query(
-      "CREATE INDEX IF NOT EXISTS idx_estudiantes_persona ON Estudiantes(Persona_Id)",
-      (err) => {
-        if (err && err.code !== 'ER_DUP_KEYNAME') {
-          console.log('⚠️ Info: Índice idx_estudiantes_persona:', err.code);
-        }
+    const indices = [
+      {
+        nombre: 'idx_estudiantes_persona',
+        query: 'CREATE INDEX idx_estudiantes_persona ON Estudiantes(Persona_Id)'
+      },
+      {
+        nombre: 'idx_estudiantes_estado',
+        query: 'CREATE INDEX idx_estudiantes_estado ON Estudiantes(Estudiantes_Estado)'
+      },
+      {
+        nombre: 'idx_estudiantes_busqueda',
+        query: 'CREATE INDEX idx_estudiantes_busqueda ON Estudiantes(Estudiantes_Estado, Estudiantes_id)'
       }
-    );
+    ];
 
-    // Índice para estado (filtros frecuentes)
-    conn.query(
-      "CREATE INDEX IF NOT EXISTS idx_estudiantes_estado ON Estudiantes(Estudiantes_Estado)",
-      (err) => {
-        if (err && err.code !== 'ER_DUP_KEYNAME') {
-          console.log('⚠️ Info: Índice idx_estudiantes_estado:', err.code);
-        }
+    let pendientes = indices.length;
+
+    const finalizar = () => {
+      pendientes -= 1;
+
+      if (pendientes === 0) {
+        console.log('✓ Índices de optimización verificados');
+        conn.release();
       }
-    );
+    };
 
-    // Índice compuesto para búsquedas y ordenamiento
-    conn.query(
-      "CREATE INDEX IF NOT EXISTS idx_estudiantes_busqueda ON Estudiantes(Estudiantes_Estado, Estudiantes_id)",
-      (err) => {
-        if (err && err.code !== 'ER_DUP_KEYNAME') {
-          console.log('⚠️ Info: Índice idx_estudiantes_busqueda:', err.code);
-        } else {
-          console.log('✓ Índices de optimización verificados');
-        }
-      }
-    );
-
-    conn.release();
+    indices.forEach((indice) => {
+      asegurarIndice(conn, indice.nombre, indice.query, finalizar);
+    });
   });
 };
 

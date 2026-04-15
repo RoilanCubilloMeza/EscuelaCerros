@@ -8,6 +8,8 @@
  * Producción: https://escuelacerros.onrender.com
  */
 
+import Axios from 'axios';
+
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isProduction = process.env.NODE_ENV === 'production';
@@ -171,4 +173,46 @@ export const API_ENDPOINTS = {
   // Registro
   createRegistroPersona: `${API_BASE_URL}/createRegistroPersona`,
   createRegistroUsuario: `${API_BASE_URL}/createRegistroUsuario`,
+};
+
+// ===================================
+// Interceptor de Axios para JWT
+// ===================================
+Axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+Axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Token inválido o expirado - redirigir al login
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      localStorage.removeItem("role");
+      if (window.location.pathname !== "/login" && window.location.pathname !== "/") {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+/**
+ * Fetch autenticado - agrega el token JWT automáticamente
+ */
+export const authFetch = (url, options = {}) => {
+  const token = localStorage.getItem("token");
+  const headers = { ...options.headers };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return fetch(url, { ...options, headers });
 };

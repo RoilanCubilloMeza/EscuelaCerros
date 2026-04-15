@@ -3,7 +3,7 @@ import Axios from 'axios';
 import Swal from 'sweetalert2';
 import { useTheme } from '../components/Theme';
 import { Link } from 'react-router-dom';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { authFetch } from '../config/api';
 
 const Escolaridad = () => {
   const { darkMode } = useTheme();
@@ -40,7 +40,7 @@ const Escolaridad = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerEscolaridad`);
+      const response = await authFetch(`${API_BASE_URL}/obtenerEscolaridad`);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -52,7 +52,10 @@ const Escolaridad = () => {
       console.error('Error fetching data:', error);
     }
   };
-  getLista();
+
+  useEffect(() => {
+    getLista();
+  }, []);
 
   const editarEscolaridad = (val) => {
     setEditar(true);

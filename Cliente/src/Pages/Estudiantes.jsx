@@ -3,7 +3,7 @@ import Axios from "axios";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
-import API_BASE_URL from "../config/api";
+import API_BASE_URL, { authFetch } from "../config/api";
 
 const Persona = () => {
   const { darkMode } = useTheme();
@@ -70,7 +70,7 @@ const Persona = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerPersonas`);
+      const response = await authFetch(`${API_BASE_URL}/obtenerPersonas`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -83,7 +83,10 @@ const Persona = () => {
       console.error("Error fetching data:", error);
     }
   };
-  getLista();
+
+  useEffect(() => {
+    getLista();
+  }, []);
 
   // Efecto para filtrar estudiantes
   useEffect(() => {

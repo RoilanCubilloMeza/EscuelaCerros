@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useTheme } from "../components/Theme";
 import { Link } from "react-router-dom";
-import API_BASE_URL from "../config/api";
+import API_BASE_URL, { authFetch } from "../config/api";
 import { 
   FaUser, 
   FaBook, 
@@ -74,7 +74,7 @@ const Notas = () => {
 
   const cargarConfiguracionPorcentajes = async (profId) => {
     try {
-      const response = await fetch(
+      const response = await authFetch(
         `${API_BASE_URL}/obtenerConfiguracionPorcentajes/${profId}`
       );
       if (!response.ok) {
@@ -110,7 +110,7 @@ const Notas = () => {
 
     setCargandoEstadisticas(true);
     try {
-      const response = await fetch(
+      const response = await authFetch(
         `${API_BASE_URL}/calcularEstadisticasEstudiante/${Estudiantes_id}/${Materias_id}/${Nota_Periodo}`
       );
       if (!response.ok) {
@@ -173,7 +173,7 @@ const Notas = () => {
 
   const getListaMatricula = async () => {
     try {
-      const response = await fetch(
+      const response = await authFetch(
         `${API_BASE_URL}/obtenerMatriculaNombre`
       );
       if (!response.ok) {
@@ -188,7 +188,7 @@ const Notas = () => {
 
   const getListaMaterias = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerMaterias`);
+      const response = await authFetch(`${API_BASE_URL}/obtenerMaterias`);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -223,7 +223,7 @@ const Notas = () => {
         url += `&Nota_Periodo=${Nota_Periodo}`;
       }
 
-      const response = await fetch(url);
+      const response = await authFetch(url);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }

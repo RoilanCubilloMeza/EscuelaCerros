@@ -3,7 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
-import API_BASE_URL from "../config/api";
+import API_BASE_URL, { authFetch } from "../config/api";
 import authService from "../services/authService";
 
 const JustificacionProfesor = () => {
@@ -56,7 +56,7 @@ const JustificacionProfesor = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerJustificion`);
+      const response = await authFetch(`${API_BASE_URL}/obtenerJustificion`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -74,7 +74,7 @@ const JustificacionProfesor = () => {
     try {
       console.log('🔍 Obteniendo notificaciones para profesor ID:', profesorId);
       
-      const response = await fetch(
+      const response = await authFetch(
         `${API_BASE_URL}/obtenerNotificacionesNoLeidas/${profesorId}`
       );
 

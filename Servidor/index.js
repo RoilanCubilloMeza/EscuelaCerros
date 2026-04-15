@@ -1,6 +1,7 @@
 const express = require("express");
 //const session = require("express-session");
 const app = express();
+const { verifyToken, verifyRole } = require("./middleware/auth");
 
 //nos ayuda a analizar el cuerpo de la solicitud POST
 app.use(express.json());
@@ -48,34 +49,38 @@ app.get('/', (req, res) => {
 });
 
 //cargamos el archivo de rutas
-app.use(require('./services/Encargado'));
-app.use(require('./services/Enfermedades'));
-app.use(require('./services/Escolaridad'));
-app.use(require('./services/Estudiantes'));
-app.use(require('./services/Funcionario'));
-app.use(require('./services/Ocupacion'));
-app.use(require('./services/Parentesco'));
-app.use(require('./services/Personas'));
-app.use(require('./services/Adecuacion'));
-app.use(require('./services/Residente'));
-app.use(require('./services/Prueba'));
-app.use(require('./services/Grado'));
-app.use(require('./services/ValorTareas'));
-app.use(require('./services/Materias'))
-app.use(require('./services/Cotidiano'))
-app.use(require('./services/Asistencia'))
-app.use(require('./services/Usuarios'))
-app.use(require('./services/Roles'))
-app.use(require('./services/Parentesco'))
-app.use(require('./services/Examen'))
-app.use(require('./services/Justificacion'))
-app.use(require('./services/Noticias'))
-app.use(require('./services/Notas'))
-app.use(require('./services/NotasFinales'))
-app.use(require('./services/Profesores'))
-app.use('/notificaciones', require('./services/Notificaciones')) // 📬 Nuevo servicio
-app.use(require('./services/AsistenciaEstudiantes')) // 📋 Gestión de asistencia y tareas
-app.use(require('./services/ConfiguracionPorcentajes')) // 📊 Configuración de porcentajes
+
+// Rutas públicas (sin autenticación)
+app.use(require('./services/Funcionario'));   // login, registro, logout
+app.use(require('./services/Noticias'));      // eventos públicos + imágenes
+app.use(require('./services/Usuarios').publicRouter); // verificación, recuperación de contraseña
+
+// Rutas protegidas (requieren token JWT)
+app.use(verifyToken, require('./services/Encargado'));
+app.use(verifyToken, require('./services/Enfermedades'));
+app.use(verifyToken, require('./services/Escolaridad'));
+app.use(verifyToken, require('./services/Estudiantes'));
+app.use(verifyToken, require('./services/Ocupacion'));
+app.use(verifyToken, require('./services/Parentesco'));
+app.use(verifyToken, require('./services/Personas'));
+app.use(verifyToken, require('./services/Adecuacion'));
+app.use(verifyToken, require('./services/Residente'));
+app.use(verifyToken, require('./services/Prueba'));
+app.use(verifyToken, require('./services/Grado'));
+app.use(verifyToken, require('./services/ValorTareas'));
+app.use(verifyToken, require('./services/Materias'));
+app.use(verifyToken, require('./services/Cotidiano'));
+app.use(verifyToken, require('./services/Asistencia'));
+app.use(verifyToken, require('./services/Usuarios'));
+app.use(verifyToken, require('./services/Roles'));
+app.use(verifyToken, require('./services/Examen'));
+app.use(verifyToken, require('./services/Justificacion'));
+app.use(verifyToken, require('./services/Notas'));
+app.use(verifyToken, require('./services/NotasFinales'));
+app.use(verifyToken, require('./services/Profesores'));
+app.use('/notificaciones', verifyToken, require('./services/Notificaciones'));
+app.use(verifyToken, require('./services/AsistenciaEstudiantes'));
+app.use(verifyToken, require('./services/ConfiguracionPorcentajes'));
 
 
 app.listen(process.env.PORT||3001,() => {

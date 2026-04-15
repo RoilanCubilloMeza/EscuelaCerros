@@ -12,7 +12,6 @@ try {
         user: process.env.DBUSER,
         password: process.env.DBPASS,
         database: process.env.DBNAME,
-        multipleStatements: true,
         ssl: {
             rejectUnauthorized: false
         },

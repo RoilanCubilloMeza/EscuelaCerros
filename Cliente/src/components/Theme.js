@@ -11,8 +11,14 @@ export const ThemeProvider = ({ children }) => {
   });
   
   useEffect(() => {
+    const root = document.documentElement;
+    const themeName = darkMode ? 'dark' : 'light';
+
     // Guardar el tema en localStorage cada vez que cambia
     localStorage.setItem('darkMode', darkMode);
+    root.setAttribute('data-theme', themeName);
+    document.body.setAttribute('data-theme', themeName);
+    root.style.colorScheme = themeName;
     
     // Agregar clase de transición suave al body (estilo Telegram)
     document.body.style.transition = 'background-color 0.7s cubic-bezier(0.4, 0.0, 0.2, 1), color 0.7s cubic-bezier(0.4, 0.0, 0.2, 1)';

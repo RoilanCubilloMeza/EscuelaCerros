@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express.Router();
+const publicRouter = express.Router();
 const bcrypt = require("bcryptjs");
 
 const dotenv = require("dotenv");
@@ -7,8 +8,8 @@ dotenv.config();
 //conexión con la base de datos
 const { connection } = require("../config");
 
-// Endpoint para verificar si ya existe usuario, cédula o correo
-app.post("/verificarDuplicados", (req, res) => {
+// Endpoint para verificar si ya existe usuario, cédula o correo (PÚBLICO - usado en registro)
+publicRouter.post("/verificarDuplicados", (req, res) => {
   const { Usuarios_Nombre, Persona_Cedula, Persona_Correo } = req.body;
 
   // Verificar usuario
@@ -167,7 +168,7 @@ app.post("/createRegistroUsuario", async (req, res) => {
 
 
 app.get("/obtenerUsuariosLogin", (req, res) => {
-  connection.query("SELECT * FROM Usuarios", (err, result) => {
+  connection.query("SELECT Usuarios_Id, Usuarios_Nombre, Roles_Id, Persona_Id, Pregunta_Seguridad FROM Usuarios", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -245,8 +246,8 @@ app.delete("/deleteUsuariosLogin/:Usuarios_Id", (req, res) => {
   );
 });
 
-// Endpoint para verificar si el usuario existe y obtener pregunta de seguridad
-app.post("/verificarUsuario", (req, res) => {
+// Endpoint para verificar si el usuario existe y obtener pregunta de seguridad (PÚBLICO - recuperación)
+publicRouter.post("/verificarUsuario", (req, res) => {
   const { Usuarios_Nombre } = req.body;
 
   connection.query(
@@ -285,8 +286,8 @@ app.post("/verificarUsuario", (req, res) => {
   );
 });
 
-// Endpoint para verificar la respuesta de seguridad
-app.post("/verificarRespuesta", (req, res) => {
+// Endpoint para verificar la respuesta de seguridad (PÚBLICO - recuperación)
+publicRouter.post("/verificarRespuesta", (req, res) => {
   const { usuarioId, respuesta } = req.body;
 
   connection.query(
@@ -324,8 +325,8 @@ app.post("/verificarRespuesta", (req, res) => {
   );
 });
 
-// Endpoint para cambiar la contraseña
-app.post("/cambiarContrasena", async (req, res) => {
+// Endpoint para cambiar la contraseña (PÚBLICO - recuperación)
+publicRouter.post("/cambiarContrasena", async (req, res) => {
   const { usuarioId, nuevaContraseña } = req.body;
 
   console.log("Intentando cambiar contraseña para usuario:", usuarioId);
@@ -433,3 +434,4 @@ app.post("/actualizarPreguntaSeguridad", (req, res) => {
 });
 
 module.exports = app;
+module.exports.publicRouter = publicRouter;

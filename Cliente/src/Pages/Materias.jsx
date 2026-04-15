@@ -3,7 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
-import API_BASE_URL from "../config/api";
+import API_BASE_URL, { authFetch } from "../config/api";
 
 const Materias = () => {
   const { darkMode } = useTheme();
@@ -46,7 +46,7 @@ const Materias = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerMaterias`);
+      const response = await authFetch(`${API_BASE_URL}/obtenerMaterias`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -118,7 +118,10 @@ const Materias = () => {
       }
     });
   };
-  getLista();
+
+  useEffect(() => {
+    getLista();
+  }, []);
 
   useEffect(() => {
     if (darkMode) {

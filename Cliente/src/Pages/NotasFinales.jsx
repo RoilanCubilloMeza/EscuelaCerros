@@ -3,7 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
-import API_BASE_URL from "../config/api";
+import API_BASE_URL, { authFetch } from "../config/api";
 
 const NotasFinales = () => {
   const { darkMode } = useTheme();
@@ -39,7 +39,7 @@ const NotasFinales = () => {
   // Fetch list of notas
   const getLista = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerNotaFinales`);
+      const response = await authFetch(`${API_BASE_URL}/obtenerNotaFinales`);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -97,7 +97,7 @@ const NotasFinales = () => {
       confirmButtonText: "Sí, eliminar",
     }).then((res) => {
       if (res.isConfirmed) {
-        Axios.delete(`${API_BASE_URL}/deleteAsistencia/${Nota_Id}`).then(() => {
+        Axios.delete(`${API_BASE_URL}/deleteNotaFinal/${Nota_Id}`).then(() => {
           getLista();
           limpiarDatos();
         });

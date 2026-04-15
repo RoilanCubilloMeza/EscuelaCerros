@@ -1,0 +1,10 @@
+[
+  {
+    "Materias_Nombre": "Materia de ejemplo 1",
+    "Materias_Tipo": "Academica"
+  },
+  {
+    "Materias_Nombre": "Materia de ejemplo 2",
+    "Materias_Tipo": "Complementaria"
+  }
+]

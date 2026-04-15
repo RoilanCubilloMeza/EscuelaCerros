@@ -3,7 +3,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
-import API_BASE_URL from "../config/api";
+import API_BASE_URL, { authFetch } from "../config/api";
 
 const Cotidiano = () => {
   const { darkMode } = useTheme();
@@ -45,7 +45,7 @@ const Cotidiano = () => {
 
   const getLista = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/obtenerCotidiano`);
+      const response = await authFetch(`${API_BASE_URL}/obtenerCotidiano`);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -65,7 +65,10 @@ const Cotidiano = () => {
     setPuntos(val.Cotidiano_Puntos);
   };
 
-  getLista();
+  useEffect(() => {
+    getLista();
+  }, []);
+
   const actualizar = () => {
     Axios.put(`${API_BASE_URL}/actualizarCotidiano`, {
       Cotidiano_Puntos: Cotidiano_Puntos,

@@ -90,8 +90,9 @@ app.post("/login", async (req, res) => {
               }
 
               const token = sign(
-                { Usuarios_Nombre, Roles_Id },
-                process.env.JWT_SECRET
+                { Usuarios_Nombre, Roles_Id, Usuarios_Id: usuario.Usuarios_Id, Persona_Id },
+                process.env.JWT_SECRET,
+                { expiresIn: "8h" }
               );
 
               res.json({
@@ -121,21 +122,31 @@ app.post("/login", async (req, res) => {
   );
 });
 
-app.post("/createRegistroUsuario", (req, res) => {
+app.post("/createRegistroUsuario", async (req, res) => {
   const { Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id } = req.body;
 
-  connection.query(
-    "INSERT INTO Usuarios (Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id) VALUES (?, ?, ?, ?)",
-    [Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Error al crear el registro de usuario");
-      } else {
-        res.send("Registro de usuario creado exitosamente");
+  if (!Usuarios_Nombre || !Usuarios_contraseña || !Roles_Id || !Persona_Id) {
+    return res.status(400).json({ error: "Todos los campos son requeridos" });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(Usuarios_contraseña, 10);
+    connection.query(
+      "INSERT INTO Usuarios (Usuarios_Nombre, Usuarios_contraseña, Roles_Id, Persona_Id) VALUES (?, ?, ?, ?)",
+      [Usuarios_Nombre, hashedPassword, Roles_Id, Persona_Id],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send("Error al crear el registro de usuario");
+        } else {
+          res.send("Registro de usuario creado exitosamente");
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.error("Error al hashear contraseña:", error);
+    res.status(500).send("Error interno del servidor");
+  }
 });
 
 app.post("/createRegistroPersona", (req, res) => {

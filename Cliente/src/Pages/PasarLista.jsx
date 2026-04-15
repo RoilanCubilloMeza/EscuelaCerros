@@ -4,27 +4,27 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/Theme";
 import API_BASE_URL from "../config/api";
-
+import authService from "../services/authService";
 const PasarLista = () => {
   const { darkMode } = useTheme();
   const [activeTab, setActiveTab] = useState("asistencia");
-  
-  // Estados para autenticación del profesor
+  const [userRole, setUserRole] = useState(null);
+  const [secciones, setSecciones] = useState([]);
+  const [seccionSeleccionada, setSeccionSeleccionada] = useState("");
+  const [detalleSeccion, setDetalleSeccion] = useState(null);
+
   const [profesorId, setProfesorId] = useState(null);
   const [profesorNombre, setProfesorNombre] = useState("");
-  
-  // Estados para estudiantes
+
   const [estudiantes, setEstudiantes] = useState([]);
   const [cargandoEstudiantes, setCargandoEstudiantes] = useState(true);
-  
-  // Estados para asistencia
+
   const [fechaAsistencia, setFechaAsistencia] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [asistenciaData, setAsistenciaData] = useState({});
   const [asistenciaGuardada, setAsistenciaGuardada] = useState(false);
-  
-  // Estados para tareas
+
   const [fechaTarea, setFechaTarea] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -33,7 +33,6 @@ const PasarLista = () => {
   const [materias, setMaterias] = useState([]);
   const [tareasData, setTareasData] = useState({});
 
-  // Estados para examen
   const [fechaExamen, setFechaExamen] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -42,7 +41,6 @@ const PasarLista = () => {
   const [periodoExamen, setPeriodoExamen] = useState(1);
   const [examenData, setExamenData] = useState({});
 
-  // Estados para cotidiano
   const [fechaCotidiano, setFechaCotidiano] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -51,130 +49,174 @@ const PasarLista = () => {
   const [periodoCotidiano, setPeriodoCotidiano] = useState(1);
   const [cotidianoData, setCotidianoData] = useState({});
 
-  // Estados para historial/tablas de resumen
   const [historialAsistencias, setHistorialAsistencias] = useState([]);
   const [historialTareas, setHistorialTareas] = useState([]);
   const [historialExamenes, setHistorialExamenes] = useState([]);
   const [historialCotidianos, setHistorialCotidianos] = useState([]);
-  const [mostrarHistorial, setMostrarHistorial] = useState(true); // Mostrar por defecto
-  
-  // Estados para edición de registros existentes
+  const [mostrarHistorial, setMostrarHistorial] = useState(true);
+
   const [modoEdicion, setModoEdicion] = useState(false);
   const [registroEditando, setRegistroEditando] = useState(null);
-  
-  // Estados específicos para saber si estamos editando cada tipo
+
   const [editandoTarea, setEditandoTarea] = useState(false);
   const [editandoExamen, setEditandoExamen] = useState(false);
   const [editandoCotidiano, setEditandoCotidiano] = useState(false);
-  
-  // Flags para controlar auto-carga (YA NO SE USAN - carga automática deshabilitada)
-  // const [deshabilitarAutoLoadTarea, setDeshabilitarAutoLoadTarea] = useState(false);
-  // const [deshabilitarAutoLoadExamen, setDeshabilitarAutoLoadExamen] = useState(false);
-  // const [deshabilitarAutoLoadCotidiano, setDeshabilitarAutoLoadCotidiano] = useState(false);
-  
-  // Estados para filtros de historial
+
   const [filtroMateriaHistorial, setFiltroMateriaHistorial] = useState("");
   const [filtroPeriodoHistorial, setFiltroPeriodoHistorial] = useState("");
 
-  // Obtener el ID del profesor logueado
-  useEffect(() => {
-    // Obtener datos del usuario desde localStorage
-    const profesorIdStorage = localStorage.getItem("profesorId");
-    const nombreCompleto = localStorage.getItem("nombreCompleto");
-    const username = localStorage.getItem("username");
-    
-    console.log("Datos de localStorage:", {
-      profesorIdStorage,
-      nombreCompleto,
-      username
+  const esAdmin = userRole === 1;
+  const gradoSeleccionadoId = seccionSeleccionada ? parseInt(seccionSeleccionada, 10) : null;
+  const profesorConsultaId = esAdmin ? 0 : profesorId || 0;
+  const profesorResponsableId = esAdmin
+    ? (detalleSeccion?.Profesor_Id ? parseInt(detalleSeccion.Profesor_Id, 10) : null)
+    : profesorId;
+  const backLink = esAdmin ? "/AdminDashboard" : "/ProfesorDashboard";
+
+  const construirUrlConSeccion = useCallback(
+    (url) => {
+      if (!gradoSeleccionadoId) {
+        return url;
+      }
+
+      const separator = url.includes("?") ? "&" : "?";
+      return `${url}${separator}gradoId=${gradoSeleccionadoId}`;
+    },
+    [gradoSeleccionadoId]
+  );
+
+  const inicializarRegistrosPorEstudiantes = useCallback((listaEstudiantes) => {
+    const asistenciaInicial = {};
+    const tareasInicial = {};
+    const examenInicial = {};
+    const cotidianoInicial = {};
+
+    listaEstudiantes.forEach((estudiante) => {
+      asistenciaInicial[estudiante.Estudiantes_id] = {
+        estado: "Presente",
+        observaciones: "",
+      };
+
+      tareasInicial[estudiante.Estudiantes_id] = {
+        estado: "No Entregado",
+        calificacion: "",
+        observaciones: "",
+      };
+
+      examenInicial[estudiante.Estudiantes_id] = {
+        calificacion: "",
+        observaciones: "",
+      };
+
+      cotidianoInicial[estudiante.Estudiantes_id] = {
+        calificacion: "",
+        observaciones: "",
+      };
     });
-    
-    if (profesorIdStorage) {
-      setProfesorId(parseInt(profesorIdStorage));
-      setProfesorNombre(nombreCompleto || username || "Profesor");
-    } else {
-      // Verificar si es un usuario con rol de profesor
-      const userRole = localStorage.getItem("userRole");
-      console.log("Rol del usuario:", userRole);
-      
+
+    setAsistenciaData(asistenciaInicial);
+    setTareasData(tareasInicial);
+    setExamenData(examenInicial);
+    setCotidianoData(cotidianoInicial);
+  }, []);
+
+  useEffect(() => {
+    const usuarioActual = authService.getCurrentUser();
+
+    if (!usuarioActual) {
       Swal.fire({
         icon: "error",
         title: "Error de autenticación",
-        text: "No se pudo identificar al profesor. Por favor, inicie sesión nuevamente.",
+        text: "No se pudo identificar la sesión actual. Por favor, inicie sesión nuevamente.",
       }).then(() => {
-        // Limpiar sesión y redirigir al login
-        localStorage.clear();
+        authService.clearSession();
         window.location.href = "/login";
+      });
+
+      return;
+    }
+
+    setUserRole(usuarioActual.userRole);
+    setProfesorId(usuarioActual.profesorId);
+    setProfesorNombre(
+      usuarioActual.nombreCompleto ||
+        usuarioActual.username ||
+        (usuarioActual.userRole === 1 ? "Administrador" : "Profesor")
+    );
+
+    if (usuarioActual.userRole === 2 && !usuarioActual.profesorId) {
+      Swal.fire({
+        icon: "error",
+        title: "Profesor no vinculado",
+        text: "Tu usuario no tiene un profesor asignado. Contacta al administrador.",
       });
     }
   }, []);
 
-  // Cargar estudiantes del profesor
-  const cargarEstudiantes = useCallback(async () => {
-    if (!profesorId) return;
-    
-    setCargandoEstudiantes(true);
+  const cargarSecciones = useCallback(async () => {
+    if (userRole === null) {
+      return;
+    }
+
+    if (userRole === 2 && !profesorId) {
+      return;
+    }
+
     try {
-      console.log("🔄 Cargando estudiantes del profesor:", profesorId);
-      const response = await Axios.get(
-        `${API_BASE_URL}/obtenerEstudiantesProfesor/${profesorId}`
-      );
-      
-      console.log("✅ Estudiantes recibidos:", response.data);
-      setEstudiantes(response.data);
-      
-      // Inicializar datos de asistencia
-      const asistenciaInicial = {};
-      response.data.forEach((est) => {
-        asistenciaInicial[est.Estudiantes_id] = {
-          estado: "Presente",
-          observaciones: "",
-        };
+      const response = await Axios.get(`${API_BASE_URL}/obtenerSeccionesGestion`);
+      const listaSecciones = Array.isArray(response.data) ? response.data : [];
+
+      setSecciones(listaSecciones);
+
+      if (listaSecciones.length === 0) {
+        setSeccionSeleccionada("");
+        setDetalleSeccion(null);
+        setEstudiantes([]);
+        inicializarRegistrosPorEstudiantes([]);
+        return;
+      }
+
+      setSeccionSeleccionada((actual) => {
+        const existe = listaSecciones.some((seccion) => String(seccion.Grado_Id) === String(actual));
+        return existe ? actual : String(listaSecciones[0].Grado_Id);
       });
-      setAsistenciaData(asistenciaInicial);
-      
-      // Inicializar datos de tareas
-      const tareasInicial = {};
-      response.data.forEach((est) => {
-        tareasInicial[est.Estudiantes_id] = {
-          estado: "No Entregado",
-          calificacion: "",
-          observaciones: "",
-        };
+    } catch (error) {
+      console.error("❌ Error al cargar secciones:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudieron cargar las secciones disponibles.",
       });
-      setTareasData(tareasInicial);
-      
-      // Inicializar datos de examen
-      const examenInicial = {};
-      response.data.forEach((est) => {
-        examenInicial[est.Estudiantes_id] = {
-          calificacion: "",
-          observaciones: "",
-        };
-      });
-      setExamenData(examenInicial);
-      
-      // Inicializar datos de cotidiano
-      const cotidianoInicial = {};
-      response.data.forEach((est) => {
-        cotidianoInicial[est.Estudiantes_id] = {
-          calificacion: "",
-          observaciones: "",
-        };
-      });
-      setCotidianoData(cotidianoInicial);
-      
+    }
+  }, [userRole, profesorId, inicializarRegistrosPorEstudiantes]);
+
+  const cargarEstudiantes = useCallback(async () => {
+    if (!gradoSeleccionadoId) {
+      setEstudiantes([]);
+      inicializarRegistrosPorEstudiantes([]);
+      setCargandoEstudiantes(false);
+      return;
+    }
+
+    setCargandoEstudiantes(true);
+
+    try {
+      const response = await Axios.get(`${API_BASE_URL}/obtenerEstudiantesSeccion/${gradoSeleccionadoId}`);
+      const listaEstudiantes = Array.isArray(response.data) ? response.data : [];
+
+      setEstudiantes(listaEstudiantes);
+      inicializarRegistrosPorEstudiantes(listaEstudiantes);
     } catch (error) {
       console.error("❌ Error al cargar estudiantes:", error);
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "No se pudieron cargar los estudiantes asignados.",
+        text: "No se pudieron cargar los estudiantes de la sección seleccionada.",
       });
     } finally {
       setCargandoEstudiantes(false);
     }
-  }, [profesorId]);
+  }, [gradoSeleccionadoId, inicializarRegistrosPorEstudiantes]);
 
   const cargarMaterias = useCallback(async () => {
     try {
@@ -186,11 +228,11 @@ const PasarLista = () => {
   }, []);
 
   const cargarAsistenciaDelDia = useCallback(async () => {
-    if (!profesorId || !fechaAsistencia) return;
+    if (!fechaAsistencia || !gradoSeleccionadoId) return;
     
     try {
       const response = await Axios.get(
-        `${API_BASE_URL}/obtenerAsistenciaFecha/${profesorId}/${fechaAsistencia}`
+        construirUrlConSeccion(`${API_BASE_URL}/obtenerAsistenciaFecha/${profesorConsultaId}/${fechaAsistencia}`)
       );
       
       if (response.data.length > 0) {
@@ -209,69 +251,69 @@ const PasarLista = () => {
     } catch (error) {
       console.error("Error al cargar asistencia del día:", error);
     }
-  }, [profesorId, fechaAsistencia]);
+  }, [fechaAsistencia, gradoSeleccionadoId, profesorConsultaId, construirUrlConSeccion]);
 
   // Cargar historial de asistencias
   const cargarHistorialAsistencias = useCallback(async () => {
-    if (!profesorId) return;
+    if (!gradoSeleccionadoId) return;
     
     try {
       const response = await Axios.get(
-        `${API_BASE_URL}/obtenerHistorialAsistencias/${profesorId}`
+        construirUrlConSeccion(`${API_BASE_URL}/obtenerHistorialAsistencias/${profesorConsultaId}`)
       );
       setHistorialAsistencias(response.data);
     } catch (error) {
       console.error("Error al cargar historial de asistencias:", error);
     }
-  }, [profesorId]);
+  }, [gradoSeleccionadoId, profesorConsultaId, construirUrlConSeccion]);
 
   // Cargar historial de tareas (con filtros opcionales)
   const cargarHistorialTareas = useCallback(async () => {
-    if (!profesorId) return;
+    if (!gradoSeleccionadoId) return;
     
     try {
       const response = await Axios.get(
-        `${API_BASE_URL}/obtenerHistorialTareas/${profesorId}`
+        construirUrlConSeccion(`${API_BASE_URL}/obtenerHistorialTareas/${profesorConsultaId}`)
       );
       setHistorialTareas(response.data);
     } catch (error) {
       console.error("Error al cargar historial de tareas:", error);
     }
-  }, [profesorId]);
+  }, [gradoSeleccionadoId, profesorConsultaId, construirUrlConSeccion]);
 
   // Cargar historial de exámenes
   const cargarHistorialExamenes = useCallback(async () => {
-    if (!profesorId) return;
+    if (!gradoSeleccionadoId) return;
     
     try {
       const response = await Axios.get(
-        `${API_BASE_URL}/obtenerHistorialExamenes/${profesorId}`
+        construirUrlConSeccion(`${API_BASE_URL}/obtenerHistorialExamenes/${profesorConsultaId}`)
       );
       setHistorialExamenes(response.data);
     } catch (error) {
       console.error("Error al cargar historial de exámenes:", error);
     }
-  }, [profesorId]);
+  }, [gradoSeleccionadoId, profesorConsultaId, construirUrlConSeccion]);
 
   // Cargar historial de cotidianos
   const cargarHistorialCotidianos = useCallback(async () => {
-    if (!profesorId) return;
+    if (!gradoSeleccionadoId) return;
     
     try {
       const response = await Axios.get(
-        `${API_BASE_URL}/obtenerHistorialCotidianos/${profesorId}`
+        construirUrlConSeccion(`${API_BASE_URL}/obtenerHistorialCotidianos/${profesorConsultaId}`)
       );
       setHistorialCotidianos(response.data);
     } catch (error) {
       console.error("Error al cargar historial de cotidianos:", error);
     }
-  }, [profesorId]);
+  }, [gradoSeleccionadoId, profesorConsultaId, construirUrlConSeccion]);
 
   // Función para cargar datos de tarea específica desde historial
   const cargarTareaPorNombre = useCallback(async (nombreTarea, materiaId, fecha, desdeBotonEditar = false) => {
-    console.log("🔍 cargarTareaPorNombre llamada con:", { nombreTarea, materiaId, fecha, desdeBotonEditar, profesorId });
-    if (!profesorId || !nombreTarea) {
-      console.log("⚠️ Saliendo porque falta profesorId o nombreTarea");
+    console.log("🔍 cargarTareaPorNombre llamada con:", { nombreTarea, materiaId, fecha, desdeBotonEditar, profesorConsultaId, gradoSeleccionadoId });
+    if (!nombreTarea || !gradoSeleccionadoId) {
+      console.log("⚠️ Saliendo porque falta nombreTarea o sección activa");
       return;
     }
     
@@ -283,7 +325,7 @@ const PasarLista = () => {
     // }
     
     try {
-      const url = `${API_BASE_URL}/obtenerTareaPorNombre/${profesorId}/${encodeURIComponent(nombreTarea)}/${fecha}`;
+      const url = construirUrlConSeccion(`${API_BASE_URL}/obtenerTareaPorNombre/${profesorConsultaId}/${encodeURIComponent(nombreTarea)}/${fecha}`);
       console.log("📡 Haciendo petición a:", url);
       const response = await Axios.get(url);
       console.log("✅ Respuesta recibida:", response.data);
@@ -380,13 +422,13 @@ const PasarLista = () => {
       //   }, 500);
       // }
     }
-  }, [profesorId, fechaTarea]);
+  }, [profesorConsultaId, fechaTarea, gradoSeleccionadoId, construirUrlConSeccion]);
 
   // Función para cargar datos de examen específico desde historial
   const cargarExamenPorNombre = useCallback(async (nombreExamen, materiaId, periodo, fecha, desdeBotonEditar = false) => {
-    console.log("🔍 cargarExamenPorNombre llamada con:", { nombreExamen, materiaId, periodo, fecha, desdeBotonEditar, profesorId });
-    if (!profesorId || !nombreExamen) {
-      console.log("⚠️ Saliendo porque falta profesorId o nombreExamen");
+    console.log("🔍 cargarExamenPorNombre llamada con:", { nombreExamen, materiaId, periodo, fecha, desdeBotonEditar, profesorConsultaId, gradoSeleccionadoId });
+    if (!nombreExamen || !gradoSeleccionadoId) {
+      console.log("⚠️ Saliendo porque falta nombreExamen o sección activa");
       return;
     }
     
@@ -398,7 +440,7 @@ const PasarLista = () => {
     // }
     
     try {
-      const url = `${API_BASE_URL}/obtenerExamenPorNombre/${profesorId}/${encodeURIComponent(nombreExamen)}/${periodo}/${fecha}`;
+      const url = construirUrlConSeccion(`${API_BASE_URL}/obtenerExamenPorNombre/${profesorConsultaId}/${encodeURIComponent(nombreExamen)}/${periodo}/${fecha}`);
       console.log("📡 Haciendo petición a:", url);
       const response = await Axios.get(url);
       console.log("✅ Respuesta recibida:", response.data);
@@ -492,13 +534,13 @@ const PasarLista = () => {
       //   }, 500);
       // }
     }
-  }, [profesorId, fechaExamen]);
+  }, [profesorConsultaId, fechaExamen, gradoSeleccionadoId, construirUrlConSeccion]);
 
   // Función para cargar datos de cotidiano específico desde historial
   const cargarCotidianoPorNombre = useCallback(async (nombreCotidiano, materiaId, periodo, fecha, desdeBotonEditar = false) => {
-    console.log("🔍 cargarCotidianoPorNombre llamada con:", { nombreCotidiano, materiaId, periodo, fecha, desdeBotonEditar, profesorId });
-    if (!profesorId || !nombreCotidiano) {
-      console.log("⚠️ Saliendo porque falta profesorId o nombreCotidiano");
+    console.log("🔍 cargarCotidianoPorNombre llamada con:", { nombreCotidiano, materiaId, periodo, fecha, desdeBotonEditar, profesorConsultaId, gradoSeleccionadoId });
+    if (!nombreCotidiano || !gradoSeleccionadoId) {
+      console.log("⚠️ Saliendo porque falta nombreCotidiano o sección activa");
       return;
     }
     
@@ -510,7 +552,7 @@ const PasarLista = () => {
     // }
     
     try {
-      const url = `${API_BASE_URL}/obtenerCotidianoPorNombre/${profesorId}/${encodeURIComponent(nombreCotidiano)}/${periodo}/${fecha}`;
+      const url = construirUrlConSeccion(`${API_BASE_URL}/obtenerCotidianoPorNombre/${profesorConsultaId}/${encodeURIComponent(nombreCotidiano)}/${periodo}/${fecha}`);
       console.log("📡 Haciendo petición a:", url);
       const response = await Axios.get(url);
       console.log("✅ Respuesta recibida:", response.data);
@@ -604,7 +646,7 @@ const PasarLista = () => {
       //   }, 500);
       // }
     }
-  }, [profesorId, fechaCotidiano]);
+  }, [profesorConsultaId, fechaCotidiano, gradoSeleccionadoId, construirUrlConSeccion]);
 
   // FUNCIONES DE CARGA AUTOMÁTICA YA NO SE USAN - Se comentan para evitar warnings
   /*
@@ -712,22 +754,57 @@ const PasarLista = () => {
   */
 
   useEffect(() => {
-    if (profesorId) {
-      cargarEstudiantes();
+    if (userRole !== null && (esAdmin || profesorId)) {
+      cargarSecciones();
       cargarMaterias();
-      cargarHistorialAsistencias();
-      cargarHistorialTareas();
-      cargarHistorialExamenes();
-      cargarHistorialCotidianos();
     }
-  }, [profesorId, cargarEstudiantes, cargarMaterias, cargarHistorialAsistencias, cargarHistorialTareas, cargarHistorialExamenes, cargarHistorialCotidianos]);
+  }, [userRole, esAdmin, profesorId, cargarSecciones, cargarMaterias]);
+
+  useEffect(() => {
+    const seccionActual = secciones.find(
+      (seccion) => String(seccion.Grado_Id) === String(seccionSeleccionada)
+    ) || null;
+
+    setDetalleSeccion(seccionActual);
+  }, [secciones, seccionSeleccionada]);
+
+  useEffect(() => {
+    if (!gradoSeleccionadoId) {
+      setEstudiantes([]);
+      setHistorialAsistencias([]);
+      setHistorialTareas([]);
+      setHistorialExamenes([]);
+      setHistorialCotidianos([]);
+      return;
+    }
+
+    setAsistenciaGuardada(false);
+    setModoEdicion(false);
+    setRegistroEditando(null);
+    setEditandoTarea(false);
+    setEditandoExamen(false);
+    setEditandoCotidiano(false);
+
+    cargarEstudiantes();
+    cargarHistorialAsistencias();
+    cargarHistorialTareas();
+    cargarHistorialExamenes();
+    cargarHistorialCotidianos();
+  }, [
+    gradoSeleccionadoId,
+    cargarEstudiantes,
+    cargarHistorialAsistencias,
+    cargarHistorialTareas,
+    cargarHistorialExamenes,
+    cargarHistorialCotidianos,
+  ]);
 
   // Cargar asistencia cuando cambia la fecha
   useEffect(() => {
-    if (profesorId && fechaAsistencia) {
+    if (gradoSeleccionadoId && fechaAsistencia) {
       cargarAsistenciaDelDia();
     }
-  }, [profesorId, fechaAsistencia, cargarAsistenciaDelDia]);
+  }, [gradoSeleccionadoId, fechaAsistencia, cargarAsistenciaDelDia]);
 
   // NOTA: Carga automática de tareas, exámenes y cotidianos deshabilitada
   // Solo se cargan cuando el usuario hace clic en "Editar" desde el historial
@@ -815,6 +892,15 @@ const PasarLista = () => {
       return;
     }
 
+    if (!profesorResponsableId) {
+      Swal.fire({
+        icon: "warning",
+        title: "Sección sin profesor asignado",
+        text: "Asigne un profesor a esta sección desde Matrícula antes de registrar datos.",
+      });
+      return;
+    }
+
     const asistencias = estudiantes.map((est) => ({
       estudianteId: est.Estudiantes_id,
       fecha: fechaAsistencia,
@@ -825,7 +911,7 @@ const PasarLista = () => {
     try {
       await Axios.post(`${API_BASE_URL}/registrarAsistencia`, {
         asistencias,
-        profesorId,
+        profesorId: profesorResponsableId,
       });
 
       Swal.fire({
@@ -865,6 +951,15 @@ const PasarLista = () => {
       return;
     }
 
+    if (!profesorResponsableId) {
+      Swal.fire({
+        icon: "warning",
+        title: "Sección sin profesor asignado",
+        text: "Asigne un profesor a esta sección desde Matrícula antes de registrar datos.",
+      });
+      return;
+    }
+
     const entregas = estudiantes.map((est) => ({
       estudianteId: est.Estudiantes_id,
       estado: tareasData[est.Estudiantes_id]?.estado || "No Entregado",
@@ -882,7 +977,7 @@ const PasarLista = () => {
       
       const datosEnviar = {
         entregas,
-        profesorId,
+        profesorId: profesorResponsableId,
         nombreTarea,
         fecha: fechaTarea,
         materiaId: materiaId || null,
@@ -938,6 +1033,15 @@ const PasarLista = () => {
       return;
     }
 
+    if (!profesorResponsableId) {
+      Swal.fire({
+        icon: "warning",
+        title: "Sección sin profesor asignado",
+        text: "Asigne un profesor a esta sección desde Matrícula antes de registrar datos.",
+      });
+      return;
+    }
+
     if (!nombreExamen.trim()) {
       Swal.fire({
         icon: "warning",
@@ -989,7 +1093,7 @@ const PasarLista = () => {
       
       await Axios[metodo](endpoint, {
         calificaciones,
-        profesorId,
+        profesorId: profesorResponsableId,
         nombreExamen,
         fecha: fechaExamen,
         materiaId: materiaExamen || null,
@@ -1033,6 +1137,15 @@ const PasarLista = () => {
         icon: "warning",
         title: "Fecha requerida",
         text: "Por favor seleccione una fecha.",
+      });
+      return;
+    }
+
+    if (!profesorResponsableId) {
+      Swal.fire({
+        icon: "warning",
+        title: "Sección sin profesor asignado",
+        text: "Asigne un profesor a esta sección desde Matrícula antes de registrar datos.",
       });
       return;
     }
@@ -1088,7 +1201,7 @@ const PasarLista = () => {
       
       await Axios[metodo](endpoint, {
         calificaciones,
-        profesorId,
+        profesorId: profesorResponsableId,
         nombreCotidiano,
         fecha: fechaCotidiano,
         materiaId: materiaCotidiano || null,
@@ -1163,7 +1276,11 @@ const PasarLista = () => {
 
     if (result.isConfirmed) {
       try {
-        await Axios.delete(`${API_BASE_URL}/eliminarTareaPorNombre/${profesorId}/${encodeURIComponent(nombreTarea)}/${fecha}`);
+        await Axios.delete(
+          construirUrlConSeccion(
+            `${API_BASE_URL}/eliminarTareaPorNombre/${profesorConsultaId}/${encodeURIComponent(nombreTarea)}/${fecha}`
+          )
+        );
         
         Swal.fire({
           icon: 'success',
@@ -1201,7 +1318,11 @@ const PasarLista = () => {
 
     if (result.isConfirmed) {
       try {
-        await Axios.delete(`${API_BASE_URL}/eliminarExamenPorNombre/${profesorId}/${encodeURIComponent(nombreExamen)}/${periodo}/${fecha}`);
+        await Axios.delete(
+          construirUrlConSeccion(
+            `${API_BASE_URL}/eliminarExamenPorNombre/${profesorConsultaId}/${encodeURIComponent(nombreExamen)}/${periodo}/${fecha}`
+          )
+        );
         
         Swal.fire({
           icon: 'success',
@@ -1239,7 +1360,11 @@ const PasarLista = () => {
 
     if (result.isConfirmed) {
       try {
-        await Axios.delete(`${API_BASE_URL}/eliminarCotidianoPorNombre/${profesorId}/${encodeURIComponent(nombreCotidiano)}/${periodo}/${fecha}`);
+        await Axios.delete(
+          construirUrlConSeccion(
+            `${API_BASE_URL}/eliminarCotidianoPorNombre/${profesorConsultaId}/${encodeURIComponent(nombreCotidiano)}/${periodo}/${fecha}`
+          )
+        );
         
         Swal.fire({
           icon: 'success',
@@ -1280,7 +1405,7 @@ const PasarLista = () => {
     };
   }, [darkMode]);
 
-  if (!profesorId) {
+  if (userRole === null) {
     return (
       <div className={`noticias-container ${darkMode ? "noticias-dark" : "noticias-light"}`}>
         <div className="container py-5">
@@ -1297,9 +1422,32 @@ const PasarLista = () => {
                 Si este mensaje persiste, es posible que necesites:
               </p>
               <ul className="text-start" style={{ maxWidth: "500px", margin: "0 auto" }}>
-                <li>Verificar que tu cuenta tiene un registro de profesor</li>
+                <li>Verificar que tu cuenta tenga el rol y vínculo correctos</li>
                 <li>Cerrar sesión e iniciar sesión nuevamente</li>
                 <li>Contactar al administrador del sistema</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (userRole === 2 && !profesorId) {
+    return (
+      <div className={`noticias-container ${darkMode ? "noticias-dark" : "noticias-light"}`}>
+        <div className="container py-5">
+          <div className="noticias-table-card">
+            <div className="empty-state">
+              <div className="empty-icon">⚠️</div>
+              <h3>Profesor no vinculado</h3>
+              <p className="mt-3 text-muted">
+                Tu usuario no tiene un profesor asociado, por lo que no se puede cargar la gestión por sección.
+              </p>
+              <ul className="text-start" style={{ maxWidth: "500px", margin: "0 auto" }}>
+                <li>Verifica que tu cuenta tenga un profesor asignado</li>
+                <li>Cierra sesión e inicia sesión nuevamente</li>
+                <li>Solicita al administrador revisar tu vínculo</li>
               </ul>
             </div>
           </div>
@@ -1317,13 +1465,13 @@ const PasarLista = () => {
             <div className="d-flex align-items-center gap-3">
               <div className="title-icon">📋</div>
               <div>
-                <h1 className="noticias-title mb-1">Gestión de Asistencia y Tareas</h1>
+                <h1 className="noticias-title mb-1">Gestión Académica por Sección</h1>
                 <p className="noticias-subtitle mb-0">
-                  Profesor: {profesorNombre} | Total estudiantes: {estudiantes.length}
+                  {esAdmin ? "Administrador" : "Profesor"}: {profesorNombre} | Total estudiantes: {estudiantes.length}
                 </p>
               </div>
             </div>
-            <Link to="/profesordashboard" className="btn-back">
+            <Link to={backLink} className="btn-back">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path
                   d="M12.5 15L7.5 10L12.5 5"
@@ -1335,6 +1483,54 @@ const PasarLista = () => {
               </svg>
               Menú Principal
             </Link>
+          </div>
+        </div>
+
+        <div className="noticias-form-card mb-4">
+          <div className="card-body-custom">
+            <div className="row g-3 align-items-end">
+              <div className="col-lg-5">
+                <label htmlFor="seccionSeleccionada" className="form-label-modern">
+                  <span className="label-icon">🏫</span>
+                  Sección activa
+                </label>
+                <select
+                  id="seccionSeleccionada"
+                  className="form-control-modern"
+                  value={seccionSeleccionada}
+                  onChange={(e) => setSeccionSeleccionada(e.target.value)}
+                >
+                  {secciones.length === 0 ? (
+                    <option value="">No hay secciones disponibles</option>
+                  ) : (
+                    secciones.map((seccion) => (
+                      <option key={seccion.Grado_Id} value={seccion.Grado_Id}>
+                        {seccion.Grado_Nombre} {seccion.Grado_Aula ? `- Aula ${seccion.Grado_Aula}` : ""}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+
+              <div className="col-lg-7">
+                <div className="d-flex flex-wrap gap-2 justify-content-lg-end">
+                  <span className="badge rounded-pill text-bg-primary px-3 py-2">
+                    {detalleSeccion?.Grado_Nombre || "Sin sección"}
+                  </span>
+                  {detalleSeccion?.Grado_Aula && (
+                    <span className="badge rounded-pill text-bg-secondary px-3 py-2">
+                      Aula {detalleSeccion.Grado_Aula}
+                    </span>
+                  )}
+                  <span className="badge rounded-pill text-bg-success px-3 py-2">
+                    {estudiantes.length} estudiantes
+                  </span>
+                  <span className="badge rounded-pill text-bg-dark px-3 py-2">
+                    {detalleSeccion?.ProfesorNombre || (esAdmin ? "Sin profesor asignado" : profesorNombre)}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1395,8 +1591,12 @@ const PasarLista = () => {
           <div className="noticias-table-card">
             <div className="empty-state">
               <div className="empty-icon">👥</div>
-              <p>No tienes estudiantes asignados</p>
-              <small>Contacta con el administrador para asignar estudiantes a tu cuenta</small>
+              <p>{esAdmin ? "Esta sección no tiene estudiantes activos" : "No tienes estudiantes asignados en esta sección"}</p>
+              <small>
+                {esAdmin
+                  ? "Puedes cambiar de sección o revisar la asignación en Matrícula."
+                  : "Contacta con el administrador para asignar estudiantes a tu cuenta."}
+              </small>
             </div>
           </div>
         ) : (

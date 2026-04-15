@@ -19,9 +19,7 @@ import {
   FaCalendarAlt,
   FaCog,
   FaChartBar,
-  FaShieldAlt,
   FaClipboardCheck,
-  FaFileAlt,
   FaHandsHelping,
 } from "react-icons/fa";
 import { HiAdjustments } from "react-icons/hi";
@@ -149,15 +147,6 @@ const AdminDashboard = () => {
         ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
         : "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
     },
-    {
-      category: "Roles",
-      description: "Permisos del sistema",
-      icon: <FaShieldAlt size={28} />,
-      path: "/Roles",
-      gradient: darkMode 
-        ? "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)"
-        : "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
-    },
   ];
 
   const academicItems = [
@@ -219,40 +208,13 @@ const AdminDashboard = () => {
 
   const evaluationItems = [
     {
-      category: "Asistencia",
-      description: "Control de asistencia",
+      category: "Gestión por Sección",
+      description: "Asistencia, tareas, exámenes y cotidiano",
       icon: <FaClipboardCheck size={28} />,
-      path: "/Asistencia",
+      path: "/PasarLista",
       gradient: darkMode
-        ? "linear-gradient(135deg, #059669 0%, #047857 100%)"
-        : "linear-gradient(135deg, #0ba360 0%, #3cba92 100%)",
-    },
-    {
-      category: "Tareas",
-      description: "Valores de tareas",
-      icon: <FaFileAlt size={28} />,
-      path: "/Tareas",
-      gradient: darkMode
-        ? "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)"
-        : "linear-gradient(135deg, #2196f3 0%, #21cbf3 100%)",
-    },
-    {
-      category: "Exámenes",
-      description: "Configuración de exámenes",
-      icon: <FaClipboardList size={28} />,
-      path: "/Examen",
-      gradient: darkMode
-        ? "linear-gradient(135deg, #d946ef 0%, #a21caf 100%)"
-        : "linear-gradient(135deg, #e040fb 0%, #7c4dff 100%)",
-    },
-    {
-      category: "Cotidiano",
-      description: "Evaluación diaria",
-      icon: <FaChartBar size={28} />,
-      path: "/Cotidiano",
-      gradient: darkMode
-        ? "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)"
-        : "linear-gradient(135deg, #ff6a00 0%, #ee0979 100%)",
+        ? "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)"
+        : "linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)",
     },
   ];
 

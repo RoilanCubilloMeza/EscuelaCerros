@@ -86,7 +86,7 @@ function AppRoutes() {
             <Route path="/Residente" element={<MultiRoleRoute allowedRoles={[1, 2]}><LugarResidencia /></MultiRoleRoute>} />
 
             {/* Profesor */}
-            <Route path="/PasarLista" element={<ProfesorRoute><PasarLista /></ProfesorRoute>} />
+            <Route path="/PasarLista" element={<MultiRoleRoute allowedRoles={[1, 2]}><PasarLista /></MultiRoleRoute>} />
             <Route path="/ConfiguracionPorcentajes" element={<ProfesorRoute><ConfiguracionPorcentajes /></ProfesorRoute>} />
             <Route path="/Notas" element={<MultiRoleRoute allowedRoles={[1, 2]}><Notas /></MultiRoleRoute>} />
             <Route path="/NotasFinales" element={<MultiRoleRoute allowedRoles={[1, 2]}><NotasFinales /></MultiRoleRoute>} />

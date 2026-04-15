@@ -161,6 +161,68 @@ crearTablaControlTareas();
 crearTablaCalificacionesExamen();
 crearTablaCalificacionesCotidiano();
 
+const ROLE_ADMIN = 1;
+const ROLE_PROFESOR = 2;
+
+const parsePositiveInt = (value) => {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+};
+
+const normalizarFecha = (value) => String(value).split("T")[0];
+
+const obtenerContextoGestion = (req) => ({
+  roleId: req.user?.Roles_Id || null,
+  profesorId: parsePositiveInt(req.user?.Profesor_Id),
+  isAdmin: req.user?.Roles_Id === ROLE_ADMIN,
+  isProfesor: req.user?.Roles_Id === ROLE_PROFESOR,
+});
+
+const resolverProfesorFiltro = (req, profesorIdRaw) => {
+  const contexto = obtenerContextoGestion(req);
+  const profesorIdParam = parsePositiveInt(profesorIdRaw);
+
+  if (contexto.isAdmin) {
+    return profesorIdParam;
+  }
+
+  return contexto.profesorId || profesorIdParam;
+};
+
+const resolverProfesorRegistro = (req, profesorIdRaw) => {
+  const contexto = obtenerContextoGestion(req);
+  const profesorIdParam = parsePositiveInt(profesorIdRaw);
+
+  if (contexto.isAdmin) {
+    return profesorIdParam;
+  }
+
+  return contexto.profesorId || profesorIdParam;
+};
+
+const resolverGradoFiltro = (req) => {
+  return parsePositiveInt(req.query.gradoId || req.body.gradoId);
+};
+
+const construirFiltrosGestion = (req, profesorIdRaw, campos = {}) => {
+  const profesorId = resolverProfesorFiltro(req, profesorIdRaw);
+  const gradoId = resolverGradoFiltro(req);
+  const conditions = [];
+  const params = [];
+
+  if (profesorId && campos.profesor) {
+    conditions.push(`${campos.profesor} = ?`);
+    params.push(profesorId);
+  }
+
+  if (gradoId && campos.grado) {
+    conditions.push(`${campos.grado} = ?`);
+    params.push(gradoId);
+  }
+
+  return { profesorId, gradoId, conditions, params };
+};
+
 // ========== ENDPOINTS DE ASISTENCIA DIARIA ==========
 
 // Obtener estudiantes asignados a un profesor
@@ -197,17 +259,117 @@ app.get("/obtenerEstudiantesProfesor/:profesorId", (req, res) => {
   });
 });
 
+app.get("/obtenerSeccionesGestion", (req, res) => {
+  const contexto = obtenerContextoGestion(req);
+
+  if (!contexto.isAdmin && !resolverProfesorFiltro(req)) {
+    return res.status(400).json({ error: "No se pudo identificar el profesor autenticado" });
+  }
+
+  const filtros = construirFiltrosGestion(req, null, { profesor: "e.Profesor_Id" });
+  const condiciones = ["e.Estudiantes_Estado IN ('Activo', 'Matriculado')", ...filtros.conditions];
+
+  const query = `
+    SELECT
+      g.Grado_Id,
+      g.Grado_Nombre,
+      g.Grado_Aula,
+      COUNT(DISTINCT e.Estudiantes_id) AS TotalEstudiantes,
+      MAX(e.Profesor_Id) AS Profesor_Id,
+      MAX(CONCAT(per.Persona_Nombre, ' ', per.Persona_PApellido, ' ', per.Persona_SApellido)) AS ProfesorNombre
+    FROM Grado g
+    INNER JOIN Estudiantes e ON e.Grado_Id = g.Grado_Id
+    LEFT JOIN Profesores prof ON e.Profesor_Id = prof.Profesor_Id
+    LEFT JOIN Personas per ON prof.Persona_Id = per.Persona_Id
+    WHERE ${condiciones.join(" AND ")}
+    GROUP BY g.Grado_Id, g.Grado_Nombre, g.Grado_Aula
+    HAVING COUNT(DISTINCT e.Estudiantes_id) > 0
+    ORDER BY g.Grado_Nombre ASC, g.Grado_Aula ASC
+  `;
+
+  connection.query(query, filtros.params, (err, result) => {
+    if (err) {
+      console.error("❌ Error al obtener secciones de gestión:", err);
+      return res.status(500).json({ error: "Error al obtener secciones" });
+    }
+
+    res.json(result);
+  });
+});
+
+app.get("/obtenerEstudiantesSeccion/:gradoId", (req, res) => {
+  const contexto = obtenerContextoGestion(req);
+  const gradoId = parsePositiveInt(req.params.gradoId);
+  const profesorId = resolverProfesorFiltro(req);
+
+  if (!gradoId) {
+    return res.status(400).json({ error: "Sección inválida" });
+  }
+
+  if (!contexto.isAdmin && !profesorId) {
+    return res.status(400).json({ error: "No se pudo identificar el profesor autenticado" });
+  }
+
+  const params = [gradoId];
+  let whereClause = `
+    e.Grado_Id = ?
+    AND e.Estudiantes_Estado IN ('Activo', 'Matriculado')
+  `;
+
+  if (!contexto.isAdmin && profesorId) {
+    whereClause += " AND e.Profesor_Id = ?";
+    params.push(profesorId);
+  }
+
+  const query = `
+    SELECT
+      e.Estudiantes_id,
+      e.Persona_Id,
+      e.Profesor_Id,
+      e.Grado_Id,
+      CONCAT(p.Persona_Nombre, ' ', p.Persona_PApellido, ' ', p.Persona_SApellido) AS NombreCompleto,
+      p.Persona_Nombre,
+      p.Persona_PApellido,
+      p.Persona_SApellido,
+      e.Estudiantes_Estado,
+      g.Grado_Nombre,
+      g.Grado_Aula,
+      CONCAT(perProf.Persona_Nombre, ' ', perProf.Persona_PApellido, ' ', perProf.Persona_SApellido) AS NombreProfesor
+    FROM Estudiantes e
+    INNER JOIN Personas p ON e.Persona_Id = p.Persona_Id
+    LEFT JOIN Grado g ON e.Grado_Id = g.Grado_Id
+    LEFT JOIN Profesores prof ON e.Profesor_Id = prof.Profesor_Id
+    LEFT JOIN Personas perProf ON prof.Persona_Id = perProf.Persona_Id
+    WHERE ${whereClause}
+    ORDER BY p.Persona_Nombre, p.Persona_PApellido
+  `;
+
+  connection.query(query, params, (err, result) => {
+    if (err) {
+      console.error("❌ Error al obtener estudiantes por sección:", err);
+      return res.status(500).json({ error: "Error al obtener estudiantes de la sección" });
+    }
+
+    res.json(result);
+  });
+});
+
 // Registrar o actualizar asistencia diaria (múltiples estudiantes)
 app.post("/registrarAsistencia", (req, res) => {
   const { asistencias, profesorId } = req.body;
+  const profesorResponsable = resolverProfesorRegistro(req, profesorId);
   
   if (!asistencias || !Array.isArray(asistencias) || asistencias.length === 0) {
     return res.status(400).json({ error: "Datos de asistencia inválidos" });
   }
 
+  if (!profesorResponsable) {
+    return res.status(400).json({ error: "No se pudo determinar el profesor responsable de la sección" });
+  }
+
   const values = asistencias.map(a => [
     a.estudianteId,
-    profesorId,
+    profesorResponsable,
     a.fecha,
     a.estado,
     a.observaciones || null
@@ -241,7 +403,14 @@ app.post("/registrarAsistencia", (req, res) => {
 // Obtener asistencia de una fecha específica para un profesor
 app.get("/obtenerAsistenciaFecha/:profesorId/:fecha", (req, res) => {
   const { profesorId, fecha } = req.params;
-  
+  const fechaNormalizada = normalizarFecha(fecha);
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "ad.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
+  const condiciones = ["ad.Fecha = ?", ...filtros.conditions];
+  const params = [fechaNormalizada, ...filtros.params];
+
   const query = `
     SELECT 
       ad.Asistencia_Id,
@@ -253,11 +422,11 @@ app.get("/obtenerAsistenciaFecha/:profesorId/:fecha", (req, res) => {
     FROM Asistencia_Diaria ad
     INNER JOIN Estudiantes e ON ad.Estudiante_Id = e.Estudiantes_id
     INNER JOIN Personas p ON e.Persona_Id = p.Persona_Id
-    WHERE ad.Profesor_Id = ? AND ad.Fecha = ?
+    WHERE ${condiciones.join(" AND ")}
     ORDER BY p.Persona_Nombre, p.Persona_PApellido
   `;
-  
-  connection.query(query, [profesorId, fecha], (err, result) => {
+
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.log(err);
       res.status(500).json({ error: "Error al obtener asistencia" });
@@ -334,17 +503,22 @@ app.get("/estadisticasAsistencia/:estudianteId", (req, res) => {
 // Registrar entrega de tareas (múltiples estudiantes)
 app.post("/registrarEntregaTareas", (req, res) => {
   const { entregas, profesorId, nombreTarea, fecha, materiaId } = req.body;
+  const profesorResponsable = resolverProfesorRegistro(req, profesorId);
   
   if (!entregas || !Array.isArray(entregas) || entregas.length === 0) {
     return res.status(400).json({ error: "Datos de entregas inválidos" });
   }
 
+  if (!profesorResponsable) {
+    return res.status(400).json({ error: "No se pudo determinar el profesor responsable de la sección" });
+  }
+
   // Normalizar fecha para INSERT
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
 
   const values = entregas.map(e => [
     e.estudianteId,
-    profesorId,
+    profesorResponsable,
     materiaId || null,
     fechaNormalizada,
     nombreTarea,
@@ -376,16 +550,27 @@ app.post("/registrarEntregaTareas", (req, res) => {
 // Actualizar entrega de tareas (múltiples estudiantes) - Solo para edición
 app.put("/actualizarEntregaTareas", (req, res) => {
   const { entregas, profesorId, nombreTarea, fecha, materiaId } = req.body;
+  const profesorResponsable = resolverProfesorRegistro(req, profesorId);
   
   if (!entregas || !Array.isArray(entregas) || entregas.length === 0) {
     return res.status(400).json({ error: "Datos de entregas inválidos" });
   }
 
+  if (!profesorResponsable) {
+    return res.status(400).json({ error: "No se pudo determinar el profesor responsable de la sección" });
+  }
+
+  const estudianteIds = entregas.map((entrega) => entrega.estudianteId).filter(Boolean);
+
+  if (estudianteIds.length === 0) {
+    return res.status(400).json({ error: "No se enviaron estudiantes para actualizar" });
+  }
+
   // Normalizar fecha para UPDATE
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
   
   console.log("🔄 actualizarEntregaTareas - Parámetros:", {
-    profesorId,
+    profesorId: profesorResponsable,
     nombreTarea,
     fechaNormalizada,
     materiaId,
@@ -398,9 +583,10 @@ app.put("/actualizarEntregaTareas", (req, res) => {
     WHERE Profesor_Id = ? 
       AND Nombre_Tarea = ? 
       AND DATE(Fecha) = ?
+      AND Estudiante_Id IN (?)
   `;
 
-  connection.query(deleteQuery, [profesorId, nombreTarea, fechaNormalizada], (deleteErr, deleteResult) => {
+  connection.query(deleteQuery, [profesorResponsable, nombreTarea, fechaNormalizada, estudianteIds], (deleteErr, deleteResult) => {
     if (deleteErr) {
       console.error("❌ Error al eliminar registros antiguos:", deleteErr);
       return res.status(500).json({ error: "Error al actualizar entrega de tareas" });
@@ -416,7 +602,7 @@ app.put("/actualizarEntregaTareas", (req, res) => {
     // Luego insertar los nuevos registros
     const values = entregas.map(e => [
       e.estudianteId,
-      profesorId,
+      profesorResponsable,
       materiaId || null,
       fechaNormalizada,
       nombreTarea,
@@ -620,13 +806,18 @@ app.delete("/eliminarTarea/:controlId", (req, res) => {
 // Registrar/Actualizar calificaciones de examen para múltiples estudiantes
 app.post("/registrarCalificacionesExamen", (req, res) => {
   const { calificaciones, profesorId, materiaId, nombreExamen, fecha, periodo } = req.body;
+  const profesorResponsable = resolverProfesorRegistro(req, profesorId);
   
   if (!calificaciones || calificaciones.length === 0) {
     return res.status(400).json({ error: "No se enviaron calificaciones" });
   }
 
+  if (!profesorResponsable) {
+    return res.status(400).json({ error: "No se pudo determinar el profesor responsable de la sección" });
+  }
+
   // Normalizar fecha para INSERT
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
 
   const queries = calificaciones.map((cal) => {
     return new Promise((resolve, reject) => {
@@ -658,7 +849,7 @@ app.post("/registrarCalificacionesExamen", (req, res) => {
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
               [
                 cal.estudianteId,
-                profesorId,
+                profesorResponsable,
                 materiaId || null,
                 fechaNormalizada,
                 nombreExamen,
@@ -695,16 +886,27 @@ app.post("/registrarCalificacionesExamen", (req, res) => {
 // Actualizar calificaciones de examen (múltiples estudiantes) - Solo para edición
 app.put("/actualizarCalificacionesExamen", (req, res) => {
   const { calificaciones, profesorId, materiaId, nombreExamen, fecha, periodo } = req.body;
+  const profesorResponsable = resolverProfesorRegistro(req, profesorId);
   
   if (!calificaciones || calificaciones.length === 0) {
     return res.status(400).json({ error: "No se enviaron calificaciones" });
   }
 
+  if (!profesorResponsable) {
+    return res.status(400).json({ error: "No se pudo determinar el profesor responsable de la sección" });
+  }
+
+  const estudianteIds = calificaciones.map((calificacion) => calificacion.estudianteId).filter(Boolean);
+
+  if (estudianteIds.length === 0) {
+    return res.status(400).json({ error: "No se enviaron estudiantes para actualizar" });
+  }
+
   // Normalizar fecha
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
   
   console.log("🔄 actualizarCalificacionesExamen - Parámetros:", {
-    profesorId,
+    profesorId: profesorResponsable,
     nombreExamen,
     periodo,
     fechaNormalizada,
@@ -719,9 +921,10 @@ app.put("/actualizarCalificacionesExamen", (req, res) => {
       AND Nombre_Examen = ? 
       AND Periodo = ?
       AND DATE(Fecha) = ?
+      AND Estudiante_Id IN (?)
   `;
 
-  connection.query(deleteQuery, [profesorId, nombreExamen, periodo, fechaNormalizada], (deleteErr, deleteResult) => {
+  connection.query(deleteQuery, [profesorResponsable, nombreExamen, periodo, fechaNormalizada, estudianteIds], (deleteErr, deleteResult) => {
     if (deleteErr) {
       console.error("❌ Error al eliminar registros antiguos:", deleteErr);
       return res.status(500).json({ error: "Error al actualizar calificaciones de examen" });
@@ -736,7 +939,7 @@ app.put("/actualizarCalificacionesExamen", (req, res) => {
     // Luego insertar los nuevos registros
     const values = calificaciones.map(cal => [
       cal.estudianteId,
-      profesorId,
+      profesorResponsable,
       materiaId || null,
       fechaNormalizada,
       nombreExamen,
@@ -798,13 +1001,18 @@ app.get("/obtenerCalificacionesExamen/:profesorId/:fecha/:nombreExamen", (req, r
 // Registrar/Actualizar calificaciones de cotidiano para múltiples estudiantes
 app.post("/registrarCalificacionesCotidiano", (req, res) => {
   const { calificaciones, profesorId, materiaId, nombreCotidiano, fecha, periodo } = req.body;
+  const profesorResponsable = resolverProfesorRegistro(req, profesorId);
   
   if (!calificaciones || calificaciones.length === 0) {
     return res.status(400).json({ error: "No se enviaron calificaciones" });
   }
 
+  if (!profesorResponsable) {
+    return res.status(400).json({ error: "No se pudo determinar el profesor responsable de la sección" });
+  }
+
   // Normalizar fecha para INSERT
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
 
   const queries = calificaciones.map((cal) => {
     return new Promise((resolve, reject) => {
@@ -836,7 +1044,7 @@ app.post("/registrarCalificacionesCotidiano", (req, res) => {
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
               [
                 cal.estudianteId,
-                profesorId,
+                profesorResponsable,
                 materiaId || null,
                 fechaNormalizada,
                 nombreCotidiano,
@@ -873,16 +1081,27 @@ app.post("/registrarCalificacionesCotidiano", (req, res) => {
 // Actualizar calificaciones de cotidiano (múltiples estudiantes) - Solo para edición
 app.put("/actualizarCalificacionesCotidiano", (req, res) => {
   const { calificaciones, profesorId, materiaId, nombreCotidiano, fecha, periodo } = req.body;
+  const profesorResponsable = resolverProfesorRegistro(req, profesorId);
   
   if (!calificaciones || calificaciones.length === 0) {
     return res.status(400).json({ error: "No se enviaron calificaciones" });
   }
 
+  if (!profesorResponsable) {
+    return res.status(400).json({ error: "No se pudo determinar el profesor responsable de la sección" });
+  }
+
+  const estudianteIds = calificaciones.map((calificacion) => calificacion.estudianteId).filter(Boolean);
+
+  if (estudianteIds.length === 0) {
+    return res.status(400).json({ error: "No se enviaron estudiantes para actualizar" });
+  }
+
   // Normalizar fecha
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
   
   console.log("🔄 actualizarCalificacionesCotidiano - Parámetros:", {
-    profesorId,
+    profesorId: profesorResponsable,
     nombreCotidiano,
     periodo,
     fechaNormalizada,
@@ -897,9 +1116,10 @@ app.put("/actualizarCalificacionesCotidiano", (req, res) => {
       AND Nombre_Cotidiano = ? 
       AND Periodo = ?
       AND DATE(Fecha) = ?
+      AND Estudiante_Id IN (?)
   `;
 
-  connection.query(deleteQuery, [profesorId, nombreCotidiano, periodo, fechaNormalizada], (deleteErr, deleteResult) => {
+  connection.query(deleteQuery, [profesorResponsable, nombreCotidiano, periodo, fechaNormalizada, estudianteIds], (deleteErr, deleteResult) => {
     if (deleteErr) {
       console.error("❌ Error al eliminar registros antiguos:", deleteErr);
       return res.status(500).json({ error: "Error al actualizar calificaciones de cotidiano" });
@@ -914,7 +1134,7 @@ app.put("/actualizarCalificacionesCotidiano", (req, res) => {
     // Luego insertar los nuevos registros
     const values = calificaciones.map(cal => [
       cal.estudianteId,
-      profesorId,
+      profesorResponsable,
       materiaId || null,
       fechaNormalizada,
       nombreCotidiano,
@@ -1220,6 +1440,12 @@ app.get("/calcularEstadisticasEstudiante/:estudianteId/:materiaId/:periodo", (re
 // Historial de asistencias
 app.get("/obtenerHistorialAsistencias/:profesorId", (req, res) => {
   const { profesorId } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "ad.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
+  const condiciones = [...filtros.conditions];
+  const params = [...filtros.params];
   
   const query = `
     SELECT 
@@ -1230,13 +1456,14 @@ app.get("/obtenerHistorialAsistencias/:profesorId", (req, res) => {
       SUM(CASE WHEN Estado = 'Justificado' THEN 1 ELSE 0 END) as justificados,
       MAX(updatedAt) as ultima_actualizacion
     FROM Asistencia_Diaria
-    WHERE Profesor_Id = ?
+    INNER JOIN Estudiantes e ON Asistencia_Diaria.Estudiante_Id = e.Estudiantes_id
+    ${condiciones.length > 0 ? `WHERE ${condiciones.join(" AND ")}` : ""}
     GROUP BY Fecha
     ORDER BY Fecha DESC
     LIMIT 50
   `;
   
-  connection.query(query, [profesorId], (err, result) => {
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.error("Error al obtener historial de asistencias:", err);
       return res.status(500).json({ error: "Error al obtener historial" });
@@ -1248,6 +1475,12 @@ app.get("/obtenerHistorialAsistencias/:profesorId", (req, res) => {
 // Historial de tareas
 app.get("/obtenerHistorialTareas/:profesorId", (req, res) => {
   const { profesorId } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "ct.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
+  const condiciones = [...filtros.conditions];
+  const params = [...filtros.params];
   
   const query = `
     SELECT 
@@ -1261,14 +1494,15 @@ app.get("/obtenerHistorialTareas/:profesorId", (req, res) => {
       SUM(CASE WHEN ct.Estado = 'Entregado Tarde' THEN 1 ELSE 0 END) as entregados_tarde,
       MAX(ct.updatedAt) as ultima_actualizacion
     FROM Control_Tareas ct
+    INNER JOIN Estudiantes e ON ct.Estudiante_Id = e.Estudiantes_id
     LEFT JOIN Materias m ON ct.Materia_Id = m.Materias_id
-    WHERE ct.Profesor_Id = ?
+    ${condiciones.length > 0 ? `WHERE ${condiciones.join(" AND ")}` : ""}
     GROUP BY ct.Fecha, ct.Nombre_Tarea, ct.Materia_Id, m.Materias_Nombre
     ORDER BY ct.Fecha DESC
     LIMIT 50
   `;
   
-  connection.query(query, [profesorId], (err, result) => {
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.error("Error al obtener historial de tareas:", err);
       return res.status(500).json({ error: "Error al obtener historial" });
@@ -1280,6 +1514,12 @@ app.get("/obtenerHistorialTareas/:profesorId", (req, res) => {
 // Historial de exámenes
 app.get("/obtenerHistorialExamenes/:profesorId", (req, res) => {
   const { profesorId } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "ce.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
+  const condiciones = [...filtros.conditions];
+  const params = [...filtros.params];
   
   const query = `
     SELECT 
@@ -1294,14 +1534,15 @@ app.get("/obtenerHistorialExamenes/:profesorId", (req, res) => {
       MIN(ce.Calificacion) as calificacion_menor,
       MAX(ce.updatedAt) as ultima_actualizacion
     FROM Calificaciones_Examen ce
+    INNER JOIN Estudiantes e ON ce.Estudiante_Id = e.Estudiantes_id
     LEFT JOIN Materias m ON ce.Materia_Id = m.Materias_id
-    WHERE ce.Profesor_Id = ?
+    ${condiciones.length > 0 ? `WHERE ${condiciones.join(" AND ")}` : ""}
     GROUP BY ce.Fecha, ce.Nombre_Examen, ce.Materia_Id, m.Materias_Nombre, ce.Periodo
     ORDER BY ce.Fecha DESC
     LIMIT 50
   `;
   
-  connection.query(query, [profesorId], (err, result) => {
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.error("Error al obtener historial de exámenes:", err);
       return res.status(500).json({ error: "Error al obtener historial" });
@@ -1313,6 +1554,12 @@ app.get("/obtenerHistorialExamenes/:profesorId", (req, res) => {
 // Historial de cotidianos
 app.get("/obtenerHistorialCotidianos/:profesorId", (req, res) => {
   const { profesorId } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "cc.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
+  const condiciones = [...filtros.conditions];
+  const params = [...filtros.params];
   
   const query = `
     SELECT 
@@ -1327,14 +1574,15 @@ app.get("/obtenerHistorialCotidianos/:profesorId", (req, res) => {
       MIN(cc.Calificacion) as calificacion_menor,
       MAX(cc.updatedAt) as ultima_actualizacion
     FROM Calificaciones_Cotidiano cc
+    INNER JOIN Estudiantes e ON cc.Estudiante_Id = e.Estudiantes_id
     LEFT JOIN Materias m ON cc.Materia_Id = m.Materias_id
-    WHERE cc.Profesor_Id = ?
+    ${condiciones.length > 0 ? `WHERE ${condiciones.join(" AND ")}` : ""}
     GROUP BY cc.Fecha, cc.Nombre_Cotidiano, cc.Materia_Id, m.Materias_Nombre, cc.Periodo
     ORDER BY cc.Fecha DESC
     LIMIT 50
   `;
   
-  connection.query(query, [profesorId], (err, result) => {
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.error("Error al obtener historial de cotidianos:", err);
       return res.status(500).json({ error: "Error al obtener historial" });
@@ -1351,9 +1599,19 @@ app.get("/obtenerHistorialCotidianos/:profesorId", (req, res) => {
 // Cargar datos de tarea específica por nombre y fecha
 app.get("/obtenerTareaPorNombre/:profesorId/:nombreTarea/:fecha", (req, res) => {
   const { profesorId, nombreTarea, fecha } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "ct.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
   
   // Normalizar fecha para comparar solo la parte de fecha (sin hora)
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
+  const condiciones = [
+    "ct.Nombre_Tarea = ?",
+    "DATE(ct.Fecha) = ?",
+    ...filtros.conditions,
+  ];
+  const params = [decodeURIComponent(nombreTarea), fechaNormalizada, ...filtros.params];
   
   console.log("🔍 obtenerTareaPorNombre - Parámetros recibidos:", {
     profesorId,
@@ -1369,13 +1627,12 @@ app.get("/obtenerTareaPorNombre/:profesorId/:nombreTarea/:fecha", (req, res) => 
       ct.Calificacion,
       ct.Observaciones
     FROM Control_Tareas ct
-    WHERE ct.Profesor_Id = ? 
-      AND ct.Nombre_Tarea = ?
-      AND DATE(ct.Fecha) = ?
+    INNER JOIN Estudiantes e ON ct.Estudiante_Id = e.Estudiantes_id
+    WHERE ${condiciones.join(" AND ")}
     ORDER BY ct.Estudiante_Id
   `;
   
-  connection.query(query, [profesorId, decodeURIComponent(nombreTarea), fechaNormalizada], (err, result) => {
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.error("❌ Error al cargar tarea:", err);
       return res.status(500).json({ error: "Error al cargar tarea" });
@@ -1388,9 +1645,20 @@ app.get("/obtenerTareaPorNombre/:profesorId/:nombreTarea/:fecha", (req, res) => 
 // Cargar datos de examen específico por nombre, periodo y fecha
 app.get("/obtenerExamenPorNombre/:profesorId/:nombreExamen/:periodo/:fecha", (req, res) => {
   const { profesorId, nombreExamen, periodo, fecha } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "ce.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
   
   // Normalizar fecha para comparar solo la parte de fecha (sin hora)
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
+  const condiciones = [
+    "ce.Nombre_Examen = ?",
+    "ce.Periodo = ?",
+    "DATE(ce.Fecha) = ?",
+    ...filtros.conditions,
+  ];
+  const params = [decodeURIComponent(nombreExamen), periodo, fechaNormalizada, ...filtros.params];
   
   console.log("🔍 obtenerExamenPorNombre - Parámetros recibidos:", {
     profesorId,
@@ -1407,14 +1675,11 @@ app.get("/obtenerExamenPorNombre/:profesorId/:nombreExamen/:periodo/:fecha", (re
       ce.Observaciones,
       ce.Nombre_Examen
     FROM Calificaciones_Examen ce
-    WHERE ce.Profesor_Id = ? 
-      AND ce.Nombre_Examen = ?
-      AND ce.Periodo = ?
-      AND DATE(ce.Fecha) = ?
+    INNER JOIN Estudiantes e ON ce.Estudiante_Id = e.Estudiantes_id
+    WHERE ${condiciones.join(" AND ")}
     ORDER BY ce.Estudiante_Id
   `;
-  
-  const params = [profesorId, decodeURIComponent(nombreExamen), periodo, fechaNormalizada];
+
   console.log("📊 Ejecutando query con parámetros:", params);
   
   connection.query(query, params, (err, result) => {
@@ -1433,9 +1698,20 @@ app.get("/obtenerExamenPorNombre/:profesorId/:nombreExamen/:periodo/:fecha", (re
 // Cargar datos de cotidiano específico por nombre, periodo y fecha
 app.get("/obtenerCotidianoPorNombre/:profesorId/:nombreCotidiano/:periodo/:fecha", (req, res) => {
   const { profesorId, nombreCotidiano, periodo, fecha } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "cc.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
   
   // Normalizar fecha para comparar solo la parte de fecha (sin hora)
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
+  const condiciones = [
+    "cc.Nombre_Cotidiano = ?",
+    "cc.Periodo = ?",
+    "DATE(cc.Fecha) = ?",
+    ...filtros.conditions,
+  ];
+  const params = [decodeURIComponent(nombreCotidiano), periodo, fechaNormalizada, ...filtros.params];
   
   console.log("🔍 obtenerCotidianoPorNombre - Parámetros recibidos:", {
     profesorId,
@@ -1451,14 +1727,12 @@ app.get("/obtenerCotidianoPorNombre/:profesorId/:nombreCotidiano/:periodo/:fecha
       cc.Calificacion,
       cc.Observaciones
     FROM Calificaciones_Cotidiano cc
-    WHERE cc.Profesor_Id = ? 
-      AND cc.Nombre_Cotidiano = ?
-      AND cc.Periodo = ?
-      AND DATE(cc.Fecha) = ?
+    INNER JOIN Estudiantes e ON cc.Estudiante_Id = e.Estudiantes_id
+    WHERE ${condiciones.join(" AND ")}
     ORDER BY cc.Estudiante_Id
   `;
   
-  connection.query(query, [profesorId, decodeURIComponent(nombreCotidiano), periodo, fechaNormalizada], (err, result) => {
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.error("❌ Error al cargar cotidiano:", err);
       return res.status(500).json({ error: "Error al cargar cotidiano" });
@@ -1529,9 +1803,19 @@ app.get("/obtenerCotidianosPorFecha/:profesorId/:fecha", (req, res) => {
 // Eliminar todas las tareas con un nombre específico y fecha
 app.delete("/eliminarTareaPorNombre/:profesorId/:nombreTarea/:fecha", (req, res) => {
   const { profesorId, nombreTarea, fecha } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "ct.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
   
   // Normalizar fecha para comparación
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
+  const condiciones = [
+    "ct.Nombre_Tarea = ?",
+    "DATE(ct.Fecha) = ?",
+    ...filtros.conditions,
+  ];
+  const params = [decodeURIComponent(nombreTarea), fechaNormalizada, ...filtros.params];
   
   console.log("🗑️ eliminarTareaPorNombre - Parámetros:", {
     profesorId,
@@ -1540,13 +1824,13 @@ app.delete("/eliminarTareaPorNombre/:profesorId/:nombreTarea/:fecha", (req, res)
   });
   
   const query = `
-    DELETE FROM Control_Tareas 
-    WHERE Profesor_Id = ? 
-      AND Nombre_Tarea = ? 
-      AND DATE(Fecha) = ?
+    DELETE ct
+    FROM Control_Tareas ct
+    INNER JOIN Estudiantes e ON ct.Estudiante_Id = e.Estudiantes_id
+    WHERE ${condiciones.join(" AND ")}
   `;
   
-  connection.query(query, [profesorId, nombreTarea, fechaNormalizada], (err, result) => {
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.error("❌ Error al eliminar tarea:", err);
       res.status(500).json({ error: "Error al eliminar tarea" });
@@ -1564,9 +1848,20 @@ app.delete("/eliminarTareaPorNombre/:profesorId/:nombreTarea/:fecha", (req, res)
 // Eliminar todos los exámenes con un nombre específico, periodo y fecha
 app.delete("/eliminarExamenPorNombre/:profesorId/:nombreExamen/:periodo/:fecha", (req, res) => {
   const { profesorId, nombreExamen, periodo, fecha } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "ce.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
   
   // Normalizar fecha para comparación
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
+  const condiciones = [
+    "ce.Nombre_Examen = ?",
+    "ce.Periodo = ?",
+    "DATE(ce.Fecha) = ?",
+    ...filtros.conditions,
+  ];
+  const params = [decodeURIComponent(nombreExamen), periodo, fechaNormalizada, ...filtros.params];
   
   console.log("🗑️ eliminarExamenPorNombre - Parámetros:", {
     profesorId,
@@ -1576,14 +1871,13 @@ app.delete("/eliminarExamenPorNombre/:profesorId/:nombreExamen/:periodo/:fecha",
   });
   
   const query = `
-    DELETE FROM Calificaciones_Examen 
-    WHERE Profesor_Id = ? 
-      AND Nombre_Examen = ? 
-      AND Periodo = ?
-      AND DATE(Fecha) = ?
+    DELETE ce
+    FROM Calificaciones_Examen ce
+    INNER JOIN Estudiantes e ON ce.Estudiante_Id = e.Estudiantes_id
+    WHERE ${condiciones.join(" AND ")}
   `;
   
-  connection.query(query, [profesorId, nombreExamen, periodo, fechaNormalizada], (err, result) => {
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.error("❌ Error al eliminar examen:", err);
       res.status(500).json({ error: "Error al eliminar examen" });
@@ -1601,9 +1895,20 @@ app.delete("/eliminarExamenPorNombre/:profesorId/:nombreExamen/:periodo/:fecha",
 // Eliminar todos los cotidianos con un nombre específico, periodo y fecha
 app.delete("/eliminarCotidianoPorNombre/:profesorId/:nombreCotidiano/:periodo/:fecha", (req, res) => {
   const { profesorId, nombreCotidiano, periodo, fecha } = req.params;
+  const filtros = construirFiltrosGestion(req, profesorId, {
+    profesor: "cc.Profesor_Id",
+    grado: "e.Grado_Id",
+  });
   
   // Normalizar fecha para comparación
-  const fechaNormalizada = fecha.split('T')[0];
+  const fechaNormalizada = normalizarFecha(fecha);
+  const condiciones = [
+    "cc.Nombre_Cotidiano = ?",
+    "cc.Periodo = ?",
+    "DATE(cc.Fecha) = ?",
+    ...filtros.conditions,
+  ];
+  const params = [decodeURIComponent(nombreCotidiano), periodo, fechaNormalizada, ...filtros.params];
   
   console.log("🗑️ eliminarCotidianoPorNombre - Parámetros:", {
     profesorId,
@@ -1613,14 +1918,13 @@ app.delete("/eliminarCotidianoPorNombre/:profesorId/:nombreCotidiano/:periodo/:f
   });
   
   const query = `
-    DELETE FROM Calificaciones_Cotidiano 
-    WHERE Profesor_Id = ? 
-      AND Nombre_Cotidiano = ? 
-      AND Periodo = ?
-      AND DATE(Fecha) = ?
+    DELETE cc
+    FROM Calificaciones_Cotidiano cc
+    INNER JOIN Estudiantes e ON cc.Estudiante_Id = e.Estudiantes_id
+    WHERE ${condiciones.join(" AND ")}
   `;
   
-  connection.query(query, [profesorId, nombreCotidiano, periodo, fechaNormalizada], (err, result) => {
+  connection.query(query, params, (err, result) => {
     if (err) {
       console.error("❌ Error al eliminar cotidiano:", err);
       res.status(500).json({ error: "Error al eliminar cotidiano" });

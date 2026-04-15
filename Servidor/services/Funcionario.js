@@ -90,7 +90,14 @@ app.post("/login", async (req, res) => {
               }
 
               const token = sign(
-                { Usuarios_Nombre, Roles_Id, Usuarios_Id: usuario.Usuarios_Id, Persona_Id },
+                {
+                  Usuarios_Nombre,
+                  Roles_Id,
+                  Usuarios_Id: usuario.Usuarios_Id,
+                  Persona_Id,
+                  Profesor_Id,
+                  Estudiante_Id,
+                },
                 process.env.JWT_SECRET,
                 { expiresIn: "8h" }
               );
